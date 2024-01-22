@@ -91,5 +91,12 @@ public class ChessPiece {
                 '}';
     }
 
+    public void kingMoves(ChessBoard board, ChessPosition position){
+        int y = position.getColumn();
+        int x = position.getRow();
+        {
+
+        }
+    }
 
 }
