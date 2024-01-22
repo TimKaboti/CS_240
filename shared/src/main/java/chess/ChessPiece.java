@@ -52,7 +52,23 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (board.getPiece(myPosition).getPieceType()) {
+            case KING -> System.out.print("hi");
+
+//            case QUEEN -> ;
+
+//            case BISHOP -> ;
+
+//            case KNIGHT -> ;
+
+//            case ROOK -> ;
+
+//            case PAWN -> ;
+
+
+        }
+
+        return null;
     }
 
     @Override
@@ -74,4 +90,6 @@ public class ChessPiece {
                 ", type=" + type +
                 '}';
     }
+
+
 }

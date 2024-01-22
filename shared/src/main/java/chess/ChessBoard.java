@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Arrays;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -86,9 +88,24 @@ public class ChessBoard {
         /* QUEENS */
         addPiece(new ChessPosition(0,3), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN));
         addPiece(new ChessPosition(7,3), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN));
-
-
     }
-    /* ask about the position of the kings and queens. on boards ive seen they are switched.
-     */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessBoard that)) return false;
+        return Arrays.deepEquals(chess_board, that.chess_board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(chess_board);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "chess_board=" + Arrays.deepToString(chess_board) +
+                '}';
+    }
 }
