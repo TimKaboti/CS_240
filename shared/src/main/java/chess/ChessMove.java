@@ -52,7 +52,7 @@ public class ChessMove {
                 "start=" + start +
                 ", end=" + end +
                 ", promotionPiece=" + promotionPiece +
-                '}';
+                '}' + '\n';
     }
 
     @Override
