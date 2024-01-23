@@ -55,27 +55,23 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (board.getPiece(myPosition).getPieceType()) {
             case KING:
-                kingMoves(board, myPosition);
-                break;
+                return kingMoves(board, myPosition);
+
 
             case QUEEN:
-                queenMoves(board, myPosition);
-                break;
+                return queenMoves(board, myPosition);
+
 
             case BISHOP:
-                bishopMoves(board, myPosition);
-                break;
+                return bishopMoves(board, myPosition);
 
 //            case KNIGHT -> ;
 
             case ROOK:
-                rookMoves(board, myPosition);
-                break;
+                return rookMoves(board, myPosition);
 
             case PAWN:
-                pawnMoves(board, myPosition);
-                break;
-
+                return pawnMoves(board, myPosition);
 
         }
 
@@ -102,7 +98,7 @@ public class ChessPiece {
                 '}';
     }
 
-    public void kingMoves(ChessBoard board, ChessPosition position) {
+    private HashSet<ChessMove> kingMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> myHash = new HashSet<>();
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
@@ -110,50 +106,144 @@ public class ChessPiece {
         if (board.getPiece(new ChessPosition(x + 1, y)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
             myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
         }
-        if (board.getPiece(new ChessPosition(x - 1, y)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x - 1, y)) == null || board.getPiece(new ChessPosition(x - 1, y)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x -1 , y), null));
         }
-        if (board.getPiece(new ChessPosition(x, y + 1)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x, y + 1)) == null || board.getPiece(new ChessPosition(x, y + 1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x, y +1), null));
         }
-        if (board.getPiece(new ChessPosition(x, y-1)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x, y-1)) == null || board.getPiece(new ChessPosition(x, y-1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x, y-1), null));
         }
-        if (board.getPiece(new ChessPosition(x+1, y+1)) == null || board.getPiece(new ChessPosition(x+1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x+1, y+1)) == null || board.getPiece(new ChessPosition(x+1, y+1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), null));
         }
-        if (board.getPiece(new ChessPosition(x-1, y-1)) == null || board.getPiece(new ChessPosition(x+1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x-1, y-1)) == null || board.getPiece(new ChessPosition(x-1, y-1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), null));
         }
-        if (board.getPiece(new ChessPosition(x+1, y-1)) == null || board.getPiece(new ChessPosition(x+1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x+1, y-1)) == null || board.getPiece(new ChessPosition(x+1, y-1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), null));
         }
-        if (board.getPiece(new ChessPosition(x-1, y+1)) == null || board.getPiece(new ChessPosition(x+1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+        if (board.getPiece(new ChessPosition(x-1, y+1)) == null || board.getPiece(new ChessPosition(x-1, y+1)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), null));
         }
+        return myHash;
     }
-
-    public void pawnMoves(ChessBoard board, ChessPosition position) {
+//    public static HashSet<ChessMoves>
+    private HashSet<ChessMove> pawnMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> myHash = new HashSet<>();
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
         int x = position.getRow();
-        if (board.getPiece(new ChessPosition(x + 1, y)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
+        if (myColor == ChessGame.TeamColor.WHITE) {
+//            if (board.getPiece(new ChessPosition(x + 1, y)) == null) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+//            }
+
+//            if (board.getPiece(new ChessPosition(x + 1, y + 1)) != null && board.getPiece(new ChessPosition(x + 1, y + 1)).getTeamColor() != myColor) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x + 1, y + 1), null));
+//            }
+
+//            if (board.getPiece(new ChessPosition(x + 1, y - 1)) != null && board.getPiece(new ChessPosition(x + 1, y - 1)).getTeamColor() != myColor) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x + 1, y - 1), null));
+//            }
+            if (board.getPiece(new ChessPosition(x + 1, y)) == null) {
+                if (x+1 == 8) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.QUEEN));
+                }
+                else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+                }
+            }
+            if (board.getPiece(new ChessPosition(x + 1, y+1)) != null && board.getPiece(new ChessPosition(x + 1, y + 1)).getTeamColor() != myColor) {
+                if (x+1 == 8) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.QUEEN));
+                }else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y + 1), null));
+                }
+            }
+            if (board.getPiece(new ChessPosition(x + 1, y-1)) != null && board.getPiece(new ChessPosition(x + 1, y - 1)).getTeamColor() != myColor) {
+                if (x+1 == 8) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.QUEEN));
+                }
+                else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x + 1, y - 1), null));
+                }
+            }
         }
-        if (board.getPiece(new ChessPosition(x + 2, y)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
-        }
-        if (board.getPiece(new ChessPosition(x + 1, y+1)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
-        }
-        if (board.getPiece(new ChessPosition(x + 1, y-1)) == null || board.getPiece(new ChessPosition(x + 1, y)).getTeamColor() != myColor) {
-            myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
+        if (myColor == ChessGame.TeamColor.BLACK) {
+//            if (board.getPiece(new ChessPosition(x -1 , y)) == null || board.getPiece(new ChessPosition(x - 1, y)).getTeamColor() != myColor) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), null));
+//            }
+
+//            if (board.getPiece(new ChessPosition(x - 1, y + 1)) != null && board.getPiece(new ChessPosition(x - 1, y + 1)).getTeamColor() != myColor) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x - 1, y + 1), null));
+//            }
+
+//            if (board.getPiece(new ChessPosition(x - 1, y - 1)) != null && board.getPiece(new ChessPosition(x - 1, y - 1)).getTeamColor() != myColor) {
+//                myHash.add(new ChessMove(position, new ChessPosition(x - 1, y - 1), null));
+//            }
+            if (board.getPiece(new ChessPosition(x - 1, y)) == null || board.getPiece(new ChessPosition(x - 1, y)).getTeamColor() != myColor) {
+                if (x - 1 == 1) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.QUEEN));
+                }
+                else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), null));
+                }
+            }
+            if (board.getPiece(new ChessPosition(x - 1, y+1)) != null && board.getPiece(new ChessPosition(x - 1, y + 1)).getTeamColor() != myColor) {
+                if (x -1 == 1) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.QUEEN));
+                }
+                else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y + 1), null));
+                }
+            }
+
+            if (board.getPiece(new ChessPosition(x - 1, y-1)) != null && board.getPiece(new ChessPosition(x - 1, y - 1)).getTeamColor() != myColor) {
+                if (x -1 == 1) {
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.ROOK));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.KNIGHT));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.BISHOP));
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.QUEEN));
+                }
+                else{
+                    myHash.add(new ChessMove(position, new ChessPosition(x - 1, y - 1), null));
+                }
+            }
         }
 
+        if (myColor == ChessGame.TeamColor.WHITE && x == 2) {
+            if (board.getPiece(new ChessPosition(x + 2, y)) == null && board.getPiece(new ChessPosition(x + 1, y)) == null) {
+                myHash.add(new ChessMove(position, new ChessPosition(x + 2, y), null));
+                myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
+            }
+        }
+        if (myColor == ChessGame.TeamColor.BLACK && x == 7) {
+            if (board.getPiece(new ChessPosition(x - 2, y)) == null && board.getPiece(new ChessPosition(x -1, y)) == null) {
+                myHash.add(new ChessMove(position, new ChessPosition(x - 2, y), null));
+                myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), null));
+            }
+        }
+        return myHash;
     }
 
-    public void rookMoves(ChessBoard board, ChessPosition position) {
+    private HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> myHash = new HashSet<>();
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
@@ -164,27 +254,35 @@ public class ChessPiece {
             }
             y++; // Increment the loop variable
         }
+        y = position.getColumn();
+
         while (y > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             y--; // Increment the loop variable
         }
+        y = position.getColumn();
+
         while (x < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             x++; // Increment the loop variable
         }
+        x = position.getColumn();
+
         while (x > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             x--; // Increment the loop variable
         }
+        x = position.getColumn();
+        return myHash;
     }
 
-    public void bishopMoves(ChessBoard board, ChessPosition position) {
+    private HashSet<ChessMove> bishopMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> myHash = new HashSet<>();
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
@@ -196,6 +294,8 @@ public class ChessPiece {
             y++; // Increment the loop variable
             x++;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (y > -1 && x > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -203,6 +303,8 @@ public class ChessPiece {
             y--; // Increment the loop variable
             x--;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (x < 8 && y > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -210,6 +312,8 @@ public class ChessPiece {
             x++; // Increment the loop variable
             y--;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (x > -1 && y < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -217,9 +321,12 @@ public class ChessPiece {
             x--; // Increment the loop variable
             y++;
         }
+        y = position.getColumn();
+        x = position.getRow();
+        return myHash;
     }
 
-    public void queenMoves(ChessBoard board, ChessPosition position) {
+    private HashSet<ChessMove> queenMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> myHash = new HashSet<>();
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
@@ -230,24 +337,28 @@ public class ChessPiece {
             }
             y++; // Increment the loop variable
         }
+        y = position.getColumn();
         while (y > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             y--; // Increment the loop variable
         }
+        y = position.getColumn();
         while (x < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             x++; // Increment the loop variable
         }
+        x = position.getRow();
         while (x > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
             }
             x--; // Increment the loop variable
         }
+        x = position.getRow();
         while (y < 8 && x < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -255,6 +366,8 @@ public class ChessPiece {
             y++; // Increment the loop variable
             x++;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (y > -1 && x > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -262,6 +375,8 @@ public class ChessPiece {
             y--; // Increment the loop variable
             x--;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (x < 8 && y > -1) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -269,6 +384,8 @@ public class ChessPiece {
             x++; // Increment the loop variable
             y--;
         }
+        y = position.getColumn();
+        x = position.getRow();
         while (x > -1 && y < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
@@ -276,6 +393,25 @@ public class ChessPiece {
             x--; // Increment the loop variable
             y++;
         }
+        y = position.getColumn();
+        x = position.getRow();
+        return myHash;
     }
+
+    private HashSet<ChessMove> knightMoves(ChessBoard board, ChessPosition position) {
+        HashSet<ChessMove> myHash = new HashSet<>();
+        ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
+        int y = position.getColumn();
+        int x = position.getRow();
+        if (board.getPiece(new ChessPosition(x + 3, y-1)) == null || board.getPiece(new ChessPosition(x + 3, y)).getTeamColor() != myColor) {
+            myHash.add(new ChessMove(position, new ChessPosition(x + 3, y), null));
+        }
+
+
+
+        return myHash;
+    }
+
+
 
 }
