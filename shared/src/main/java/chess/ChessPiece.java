@@ -58,7 +58,9 @@ public class ChessPiece {
                 kingMoves(board, myPosition);
                 break;
 
-//            case QUEEN -> ;
+            case QUEEN:
+                queenMoves(board, myPosition);
+                break;
 
             case BISHOP:
                 bishopMoves(board, myPosition);
@@ -187,6 +189,65 @@ public class ChessPiece {
         ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
         int y = position.getColumn();
         int x = position.getRow();
+        while (y < 8 && x < 8) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            y++; // Increment the loop variable
+            x++;
+        }
+        while (y > -1 && x > -1) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            y--; // Increment the loop variable
+            x--;
+        }
+        while (x < 8 && y > -1) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            x++; // Increment the loop variable
+            y--;
+        }
+        while (x > -1 && y < 8) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            x--; // Increment the loop variable
+            y++;
+        }
+    }
+
+    public void queenMoves(ChessBoard board, ChessPosition position) {
+        HashSet<ChessMove> myHash = new HashSet<>();
+        ChessGame.TeamColor myColor = board.getPiece(position).getTeamColor();
+        int y = position.getColumn();
+        int x = position.getRow();
+        while (y < 8) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            y++; // Increment the loop variable
+        }
+        while (y > -1) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            y--; // Increment the loop variable
+        }
+        while (x < 8) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            x++; // Increment the loop variable
+        }
+        while (x > -1) {
+            if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
+                myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
+            }
+            x--; // Increment the loop variable
+        }
         while (y < 8 && x < 8) {
             if (board.getPiece(new ChessPosition(x, y)) == null || board.getPiece(new ChessPosition(x, y)).getTeamColor() != myColor) {
                 myHash.add(new ChessMove(position, new ChessPosition(x, y), null));
