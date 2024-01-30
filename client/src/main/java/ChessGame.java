@@ -32,4 +32,8 @@ public class ChessGame {
         return false;
     }
 
+    private void setBoard(ChessBoard board) {
+        board.resetBoard();
+    }
+
 }
