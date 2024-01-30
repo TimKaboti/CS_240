@@ -1,6 +1,8 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -11,8 +13,11 @@ import java.util.Collection;
 public class ChessGame {
 
     public ChessGame() {
-
+        board = new ChessBoard();
+        turn = chess.ChessGame.TeamColor.WHITE;
     }
+    ChessBoard board;
+    chess.ChessGame.TeamColor turn;
 
     /**
      * @return Which team's turn it is
@@ -66,7 +71,26 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition position = null;
+        HashSet<ChessMove> opponentMoves = new HashSet<>();
+        boolean inCheck = false;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                if (board.getPiece(new ChessPosition(i, j)).getTeamColor() == turn && board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING) {
+                    position = new ChessPosition(i, j);
+                } else if (board.getPiece(new ChessPosition(i, j)).getTeamColor() != turn) {
+                    opponentMoves.addAll(board.getPiece(new ChessPosition(i, j)).pieceMoves(board, new ChessPosition(i, j)));
+                }
+
+            }
+        }
+        for (ChessMove move : opponentMoves) {
+            if (move.getEndPosition() == position) {
+                inCheck = true;
+                break;
+            }
+        }
+        return inCheck;
     }
 
     /**
@@ -76,7 +100,30 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition position = null;
+        HashSet<ChessMove> opponentMoves = new HashSet<>();
+        HashSet<ChessMove> myMoves = new HashSet<>();
+        boolean inCheckMate = false;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                if (board.getPiece(new ChessPosition(i, j)).getTeamColor() == turn && board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING) {
+                    position = new ChessPosition(i, j);
+                } else if (board.getPiece(new ChessPosition(i, j)).getTeamColor() != turn) {
+                    opponentMoves.addAll(board.getPiece(new ChessPosition(i, j)).pieceMoves(board, new ChessPosition(i, j)));
+                }
+
+            }
+        }
+        myMoves.addAll(board.getPiece(new ChessPosition(position.getRow(), position.getColumn())).pieceMoves(board, position));
+        for (ChessMove enemyMove : opponentMoves) {
+            for (ChessMove myMove : myMoves) {
+                if (enemyMove.getEndPosition() == myMove.getEndPosition()) {
+                    inCheckMate = true;
+                    break;
+                }
+            }
+        }
+        return inCheckMate;
     }
 
     /**
@@ -96,7 +143,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -105,6 +152,26 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessGame chessGame)) return false;
+        return Objects.equals(getBoard(), chessGame.getBoard()) && turn == chessGame.turn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getBoard(), turn);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board +
+                ", turn=" + turn +
+                '}';
     }
 }
