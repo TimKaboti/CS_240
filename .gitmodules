@@ -1,0 +1,3 @@
+[submodule "softwareconstruction"]
+	path = softwareconstruction
+	url = https://github.com/softwareconstruction240/softwareconstruction.git

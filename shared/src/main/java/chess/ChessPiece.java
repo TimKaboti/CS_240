@@ -57,10 +57,8 @@ public class ChessPiece {
             case KING:
                 return kingMoves(board, myPosition);
 
-
             case QUEEN:
                 return queenMoves(board, myPosition);
-
 
             case BISHOP:
                 return bishopMoves(board, myPosition);
