@@ -36,4 +36,7 @@ public class ChessGame {
         board.resetBoard();
     }
 
+    public ChessBoard getBoard() {
+        return board;
+    }
 }
