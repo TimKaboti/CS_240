@@ -14,16 +14,17 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-        turn = chess.ChessGame.TeamColor.WHITE;
+        turn = TeamColor.WHITE;
     }
     ChessBoard board;
-    chess.ChessGame.TeamColor turn;
+    TeamColor turn;
+
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        return turn;
     }
 
     /**
@@ -51,7 +52,26 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> opponentMoves = new HashSet<>();
+        HashSet<ChessMove> myMoves = new HashSet<>();
+        myMoves.addAll(board.getPiece(startPosition).pieceMoves(board, startPosition));
+        TeamColor myColor;
+        if (board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())) == null) {
+            myMoves = null;
+        } else {
+            myColor = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())).getTeamColor();
+            for (int i = 1; i < 9; i++) {
+                for (int j = 1; j < 9; j++) {
+                    if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() != myColor) {
+                        opponentMoves.addAll(board.getPiece(startPosition).pieceMoves(board, new ChessPosition(i, j)));
+                    }
+                }
+            }
+        }
+        for (ChessMove enemyMove : opponentMoves){
+            myMoves.removeIf(myMove -> enemyMove.getEndPosition().equals(myMove.getEndPosition()));
+        }
+        return myMoves;
     }
 
     /**
@@ -61,7 +81,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        HashSet<ChessMove> valid_moves = new HashSet<>();
+        ChessPosition start_position = move.getStartPosition();
+        valid_moves.addAll(validMoves(start_position));
     }
 
     /**
