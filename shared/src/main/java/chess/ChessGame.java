@@ -97,8 +97,13 @@ public class ChessGame {
         if (!valid_moves.contains(move)){
             throw new InvalidMoveException("Move does not Exist");
         } else if (getTeamTurn() == this_piece.getTeamColor()) {
-            board.deletePiece(start_position);
-            board.addPiece(move.getEndPosition(),this_piece);
+            if (move.getPromotionPiece() != null) {
+                board.deletePiece(start_position);
+                board.addPiece(move.getEndPosition(), new ChessPiece(this_piece.getTeamColor(),move.getPromotionPiece()));
+            } else {
+                board.deletePiece(start_position);
+                board.addPiece(move.getEndPosition(), this_piece);
+            }
             if (this_piece.getTeamColor() == WHITE) {
                 turn = BLACK;
             }
