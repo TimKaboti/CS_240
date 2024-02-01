@@ -63,6 +63,7 @@ public class ChessGame {
         for(ChessMove move : myMoves){
             TeamColor myColor = board.getPiece(move.getStartPosition()).getTeamColor();
             ChessPiece this_piece = board.getPiece(move.getStartPosition());
+            ChessPiece other_piece = board.getPiece(move.getEndPosition());
             board.addPiece(move.getEndPosition(), this_piece);
             board.deletePiece(move.getStartPosition());
             if (isInCheck(myColor) == false){
@@ -70,8 +71,8 @@ public class ChessGame {
             }
             board.addPiece(move.getStartPosition(),this_piece);
             board.deletePiece(move.getEndPosition());
+            board.addPiece(move.getEndPosition(), other_piece);
         }
-
         return goodMoves;
     }
 
@@ -89,9 +90,9 @@ public class ChessGame {
         if (!valid_moves.contains(move)){
             throw new InvalidMoveException("Move does not Exist");
         }
-        if (isInCheck(board.getPiece(start_position).getTeamColor())){
-            throw new InvalidMoveException("King is in Check");
-        }
+//        if (isInCheck(board.getPiece(start_position).getTeamColor())){
+//            throw new InvalidMoveException("King is in Check");
+//        }
         else if (getTeamTurn() == this_piece.getTeamColor()) {
             if (move.getPromotionPiece() != null) {
                 board.deletePiece(start_position);
