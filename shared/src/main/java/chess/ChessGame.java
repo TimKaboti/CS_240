@@ -54,7 +54,9 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         HashSet<ChessMove> opponentMoves = new HashSet<>();
         HashSet<ChessMove> myMoves = new HashSet<>();
-        myMoves.addAll(board.getPiece(startPosition).pieceMoves(board, startPosition));
+        if (board.getPiece(startPosition) != null){
+            myMoves.addAll(board.getPiece(startPosition).pieceMoves(board, startPosition));
+        }
         TeamColor myColor;
         if (board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn())) == null) {
             myMoves = null;
@@ -129,7 +131,8 @@ public class ChessGame {
         boolean inCheckMate = false;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor && board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING) {
+                if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() == teamColor
+                        && board.getPiece(new ChessPosition(i, j)).getPieceType() == ChessPiece.PieceType.KING) {
                     position = new ChessPosition(i, j);
                 } else if (board.getPiece(new ChessPosition(i, j)) != null && board.getPiece(new ChessPosition(i, j)).getTeamColor() != teamColor) {
                     opponentMoves.addAll(board.getPiece(new ChessPosition(i, j)).pieceMoves(board, new ChessPosition(i, j)));

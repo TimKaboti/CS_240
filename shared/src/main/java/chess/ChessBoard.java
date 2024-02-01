@@ -52,8 +52,8 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        for (int i = 0; i < chess_board.length; i++){
-            for (int j = 0; j < chess_board.length; j++){
+        for (int i = 1; i < 8; i++){
+            for (int j = 1; j < 8; j++){
                 deletePiece(new ChessPosition(i,j));
             }
         }

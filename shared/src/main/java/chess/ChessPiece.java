@@ -144,7 +144,7 @@ public class ChessPiece {
         int y = position.getColumn();
         int x = position.getRow();
         if (myColor == ChessGame.TeamColor.WHITE) {
-            if (board.getPiece(new ChessPosition(x + 1, y)) == null) {
+            if (inBounds(new ChessPosition(x + 1, y)) && board.getPiece(new ChessPosition(x + 1, y)) == null) {
                 if (x+1 == 8) {
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), PieceType.KNIGHT));
@@ -155,7 +155,7 @@ public class ChessPiece {
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y), null));
                 }
             }
-            if (board.getPiece(new ChessPosition(x + 1, y+1)) != null && board.getPiece(new ChessPosition(x + 1, y + 1)).getTeamColor() != myColor) {
+            if (inBounds(new ChessPosition(x + 1, y+1)) && board.getPiece(new ChessPosition(x + 1, y+1)) != null && board.getPiece(new ChessPosition(x + 1, y + 1)).getTeamColor() != myColor) {
                 if (x+1 == 8) {
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y+1), PieceType.KNIGHT));
@@ -165,7 +165,7 @@ public class ChessPiece {
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y + 1), null));
                 }
             }
-            if (board.getPiece(new ChessPosition(x + 1, y-1)) != null && board.getPiece(new ChessPosition(x + 1, y - 1)).getTeamColor() != myColor) {
+            if (inBounds(new ChessPosition(x + 1, y-1)) && board.getPiece(new ChessPosition(x + 1, y-1)) != null && board.getPiece(new ChessPosition(x + 1, y - 1)).getTeamColor() != myColor) {
                 if (x+1 == 8) {
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x + 1, y-1), PieceType.KNIGHT));
@@ -178,7 +178,7 @@ public class ChessPiece {
             }
         }
         if (myColor == ChessGame.TeamColor.BLACK) {
-            if (board.getPiece(new ChessPosition(x - 1, y)) == null || board.getPiece(new ChessPosition(x - 1, y)).getTeamColor() != myColor) {
+            if (inBounds(new ChessPosition(x - 1, y)) && board.getPiece(new ChessPosition(x - 1, y)) == null || board.getPiece(new ChessPosition(x - 1, y)).getTeamColor() != myColor) {
                 if (x - 1 == 1) {
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), PieceType.KNIGHT));
@@ -189,7 +189,7 @@ public class ChessPiece {
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y), null));
                 }
             }
-            if (board.getPiece(new ChessPosition(x - 1, y+1)) != null && board.getPiece(new ChessPosition(x - 1, y + 1)).getTeamColor() != myColor) {
+            if (inBounds(new ChessPosition(x - 1, y + 1)) && board.getPiece(new ChessPosition(x - 1, y+1)) != null && board.getPiece(new ChessPosition(x - 1, y + 1)).getTeamColor() != myColor) {
                 if (x -1 == 1) {
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y+1), PieceType.KNIGHT));
@@ -201,7 +201,7 @@ public class ChessPiece {
                 }
             }
 
-            if (board.getPiece(new ChessPosition(x - 1, y-1)) != null && board.getPiece(new ChessPosition(x - 1, y - 1)).getTeamColor() != myColor) {
+            if (inBounds(new ChessPosition(x - 1, y - 1)) && board.getPiece(new ChessPosition(x - 1, y-1)) != null && board.getPiece(new ChessPosition(x - 1, y - 1)).getTeamColor() != myColor) {
                 if (x -1 == 1) {
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.ROOK));
                     myHash.add(new ChessMove(position, new ChessPosition(x - 1, y-1), PieceType.KNIGHT));
