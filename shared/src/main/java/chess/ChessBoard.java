@@ -29,7 +29,7 @@ public class ChessBoard {
      * @param position; position to set equal to null
      */
     public void deletePiece(ChessPosition position) {
-        chess_board[position.getRow()][position.getColumn()] = null;
+        chess_board[position.getRow()-1][position.getColumn()-1] = null;
     }
 
     public void removePiece(ChessPosition position) {

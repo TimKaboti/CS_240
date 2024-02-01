@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
@@ -14,7 +17,7 @@ public class ChessGame {
 
     public ChessGame() {
         board = new ChessBoard();
-        turn = TeamColor.WHITE;
+        turn = WHITE;
     }
     ChessBoard board;
     TeamColor turn;
@@ -71,7 +74,11 @@ public class ChessGame {
             }
         }
         for (ChessMove enemyMove : opponentMoves){
-            myMoves.removeIf(myMove -> enemyMove.getEndPosition().equals(myMove.getEndPosition()));
+            for (ChessMove myMove : myMoves){
+                if(enemyMove.getEndPosition().equals(myMove.getEndPosition()) && board.getPiece(startPosition).getPieceType() == ChessPiece.PieceType.KING){
+                    myMoves.remove(myMove);
+                }
+            }
         }
         return myMoves;
     }
@@ -86,6 +93,21 @@ public class ChessGame {
         HashSet<ChessMove> valid_moves = new HashSet<>();
         ChessPosition start_position = move.getStartPosition();
         valid_moves.addAll(validMoves(start_position));
+        ChessPiece this_piece = new ChessPiece(board.getPiece(start_position).getTeamColor(),board.getPiece(start_position).getPieceType());
+        if (!valid_moves.contains(move)){
+            throw new InvalidMoveException("Move does not Exist");
+        } else if (getTeamTurn() == this_piece.getTeamColor()) {
+            board.deletePiece(start_position);
+            board.addPiece(move.getEndPosition(),this_piece);
+            if (this_piece.getTeamColor() == WHITE) {
+                turn = BLACK;
+            }
+            if (this_piece.getTeamColor() == BLACK) {
+                turn = WHITE;
+            }
+        } else {
+            throw new InvalidMoveException("Move does not Exist");
+        }
     }
 
     /**
