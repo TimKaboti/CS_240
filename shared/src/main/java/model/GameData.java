@@ -7,8 +7,8 @@ import java.util.Objects;
 public class GameData {
 
     private final int gameID;
-    private final String whiteUsername;
-    private final String blackUsername;
+    private String whiteUsername;
+    private String blackUsername;
     private final String gameName;
     private final ChessGame game;
 
@@ -38,6 +38,13 @@ public class GameData {
 
     public ChessGame getGame() {
         return game;
+    }
+
+    public void renameUser(String color, String name){
+        if(color.equals("black")){blackUsername = name;}
+        else{
+            whiteUsername = name;
+        }
     }
 
     @Override

@@ -19,4 +19,5 @@ public interface DataAccessInterface {
     public String CreateAuth(String username);
     public AuthData getAuth(String token);
     public void deleteAuth(String token);
+    public void joinGame(String username, String color, Integer gameID);
 }

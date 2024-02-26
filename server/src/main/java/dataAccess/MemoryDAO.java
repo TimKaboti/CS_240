@@ -80,4 +80,13 @@ public class MemoryDAO implements DataAccessInterface{
         authData.remove(token);
 
     }
+
+    @Override
+    public void joinGame(String username, String color, Integer gameID) {
+        if (gameData.get(gameID) != null) {
+            GameData game = gameData.get(gameID);
+            game.renameUser(color, username);
+        }
+    }
+
 }
