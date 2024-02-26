@@ -1,14 +1,20 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class DataAccessObject implements DataAccessInterface{
+public class MemoryDAO implements DataAccessInterface{
 
+    public Map<String, UserData> userData = null;
+    public Map<Integer, GameData> gameData = null;
+    public Map<String, AuthData> authData = null;
     @Override
     public void clear() {
         userData.clear();
@@ -58,17 +64,20 @@ public class DataAccessObject implements DataAccessInterface{
     }
 
     @Override
-    public String authToken() {
-        return null;
+    public String CreateAuth(String username) {
+        String authToken = UUID.randomUUID().toString();
+        authData.put(authToken, new AuthData(authToken, username));
+        return authToken;
     }
 
     @Override
-    public void getAuth() {
-
+    public AuthData getAuth(String token) {
+        return authData.get(token);
     }
 
     @Override
-    public void deleteAuth() {
+    public void deleteAuth(String token) {
+        authData.remove(token);
 
     }
 }
