@@ -3,14 +3,21 @@ package model;
 import java.util.Objects;
 
 public class AuthData {
-    String authToken = "";
-    String username = "";
+    private final String authToken;
+    private final String username;
 
     public AuthData(String authToken, String username) {
         this.authToken = authToken;
         this.username = username;
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
     @Override
     public boolean equals(Object o) {
