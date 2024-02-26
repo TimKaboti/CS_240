@@ -2,6 +2,8 @@ package model;
 
 import java.util.Objects;
 
+//record UserData(String username, String password, String email) {}
+
 public class UserData {
 
     private final String username;
