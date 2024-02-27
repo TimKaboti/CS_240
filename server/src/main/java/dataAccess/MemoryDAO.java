@@ -22,6 +22,8 @@ public class MemoryDAO implements DataAccessInterface{
         gameData.clear();
     }
 
+    /** find out which methods should throw the dataAccessException **/
+
     @Override
     public void createUser(String username, String password, String email) {
         userData.put(username, new UserData(username,password,email));
