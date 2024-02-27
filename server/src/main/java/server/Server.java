@@ -1,6 +1,4 @@
 package server;
-import Request.RegisterRequest;
-import Request.LoginRequest;
 import model.*;
 import service.*;
 import com.google.gson.Gson;
@@ -10,8 +8,6 @@ import dataAccess.MemoryUserDAO;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
-
-import java.util.Map;
 
 public class Server {
 
@@ -26,8 +22,8 @@ public class Server {
         Spark.post( "/user",(((request, response) -> RegisterHandler(request, response, UserDAO, AuthDAO))));
         Spark.post( "/session",(((request, response) -> LoginHandler(request, response, UserDAO, AuthDAO))));
         Spark.delete( "/session",(((request, response) -> LogoutHandler(request, response, AuthDAO))));
-//        Spark.get( "/game",(((request, response) -> ListGameHandler(request, response, GameDAO, AuthDAO))));
-//        Spark.post( "/game",(((request, response) -> CreateGameHandler(request, response, GameDAO))));
+        Spark.get( "/game",(((request, response) -> ListGameHandler(request, response, GameDAO, AuthDAO))));
+//        Spark.post( "/game",(((request, response) -> CreateGameHandler(request, response, GameDAO, AuthDAO))));
 //        Spark.put( "/game",(((request, response) -> JoinGameHandler(request, response, GameDAO, AuthDAO))));
         Spark.awaitInitialization();
         return Spark.port();
@@ -64,7 +60,7 @@ public class Server {
 
     private Object LogoutHandler(Request req, Response res, MemoryAuthDAO auth) {
         Gson serializer = new Gson();
-        LogoutRecord logoutRecord = serializer.fromJson(req.body(), LogoutRecord.class);
+        LogoutRecord logoutRecord = serializer.fromJson(req.headers("Authorization"), LogoutRecord.class);
         LogoutService logoutService = new LogoutService();
         var result = logoutService.logout(logoutRecord, auth);
         return new Gson().toJson(result);
@@ -75,6 +71,17 @@ public class Server {
         ListGameRecord listGameRecord = serializer.fromJson(req.headers("Authorization"), ListGameRecord.class);
         ListGamesService listGamesService = new ListGamesService();
         var result = listGamesService.gameList(listGameRecord, gameMemory, auth);
+        return new Gson().toJson(result);
+    }
+
+    private Object CreateGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
+        Gson serializer = new Gson();
+        CreateGameRecord createGameRecord = serializer.fromJson(req.body(), CreateGameRecord.class);
+        CreateGameService createGameService = new CreateGameService();
+        String authToken = req.headers("Authorization");
+        if(auth.authData.containsKey(authToken)) {
+            var result = createGameService.newGame(createGameRecord, gameMemory);
+        }
         return new Gson().toJson(result);
     }
 
