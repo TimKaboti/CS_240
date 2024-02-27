@@ -1,4 +1,4 @@
 package model;
 
-public record RegisterRecord() {
+public record RegisterRecord(String username, String password, String email) {
 }

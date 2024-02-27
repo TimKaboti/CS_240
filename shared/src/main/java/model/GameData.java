@@ -41,8 +41,8 @@ public class GameData {
     }
 
     public void renameUser(String color, String name){
-        if(color.equals("black")){blackUsername = name;}
-        else{
+        if(color.equals("BLACK")){blackUsername = name;}
+        else if(color.equals("WHITE")){
             whiteUsername = name;
         }
     }
