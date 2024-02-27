@@ -16,6 +16,7 @@ public class MemoryAuthDAO implements AuthDAO {
         authData.clear();
     }
     @Override
+    /** creates an authToken and adds it paired with the username to authData. returns the token. **/
     public String CreateAuth(String username) {
         String authToken = UUID.randomUUID().toString();
         authData.put(authToken, new AuthData(authToken, username));
