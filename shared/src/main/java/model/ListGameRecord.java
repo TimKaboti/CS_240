@@ -1,4 +1,4 @@
 package model;
 
-public record ListGameRecord() {
+public record ListGameRecord(String authToken) {
 }
