@@ -79,8 +79,21 @@ public class Server {
         CreateGameRecord createGameRecord = serializer.fromJson(req.body(), CreateGameRecord.class);
         CreateGameService createGameService = new CreateGameService();
         String authToken = req.headers("Authorization");
-        if(auth.authData.containsKey(authToken)) {
-            var result = createGameService.newGame(createGameRecord, gameMemory);
+        Object result = (null);
+        if (auth.authData.containsKey(authToken)) {
+            result = createGameService.newGame(createGameRecord, gameMemory);
+        }
+        return new Gson().toJson(result);
+    }
+
+    private Object JoinGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
+        Gson serializer = new Gson();
+        JoinGameRecord joinGameRecord = serializer.fromJson(req.body(), JoinGameRecord.class);
+        JoinGameService joinGameService = new JoinGameService();
+        String authToken = req.headers("Authorization");
+        Object result = (null);
+        if (auth.authData.containsKey(authToken)) {
+            result = joinGameService.joinGame(joinGameRecord, gameMemory, String.valueOf(auth.authData.get(authToken)));
         }
         return new Gson().toJson(result);
     }
