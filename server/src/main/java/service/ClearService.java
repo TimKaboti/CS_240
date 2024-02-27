@@ -1,11 +1,11 @@
 package service;
 
-import dataAccess.MemoryDAO;
+import dataAccess.MemoryUserDAO;
 import model.ClearRecord;
 
 public class ClearService {
-    MemoryDAO server;
-    public ClearService(MemoryDAO server) {
+    MemoryUserDAO server;
+    public ClearService(MemoryUserDAO server) {
         this.server = server;
     }
     public void clearMemory() {
