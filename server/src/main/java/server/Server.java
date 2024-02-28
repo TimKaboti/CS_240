@@ -93,7 +93,7 @@ public class Server {
         String authToken = req.headers("Authorization");
         Object result = (null);
         if (auth.authData.containsKey(authToken)) {
-            result = joinGameService.joinGame(joinGameRecord, gameMemory, String.valueOf(auth.authData.get(authToken)));
+            result = joinGameService.joinGame(joinGameRecord, gameMemory, String.valueOf(auth.authData.get(authToken)), auth);
         }
         return new Gson().toJson(result);
     }
