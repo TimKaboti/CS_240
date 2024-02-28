@@ -13,4 +13,5 @@ public interface GameDAO {
     public List<GameData> listGames() throws DataAccessException;
     public void updateGame() throws DataAccessException;
     public void joinGame(String username, String color, Integer gameID) throws DataAccessException;
+    public boolean isNull (String name, Integer gameID) throws DataAccessException;
 }

@@ -8,11 +8,12 @@ import model.LogoutRecord;
 public class LogoutService {
 
     public Object logout(LogoutRecord token, MemoryAuthDAO auth){
-        LogoutResult out = new LogoutResult();
+        LogoutResult out = new LogoutResult(null);
         String key = token.authToken();
         if (auth.authData.containsKey(key)){
             auth.deleteAuth(key);
-        } /** may need an else statement here. set the data to not null. doesn't matter. **/
+        } else {out = new LogoutResult("Error: unauthorized");
+        }
         return out;
     }
 }

@@ -12,12 +12,15 @@ import java.util.UUID;
 public class CreateGameService {
 
     public Object newGame (CreateGameRecord gameName, MemoryGameDAO games){
+        CreateGameResult  newGameResult;
         Random randNum = new Random();
         String name = gameName.gameName();
         Integer gameID = randNum.nextInt();
         GameData game = new GameData(gameID, null, null, name, new ChessGame());
-        games.gameData.put(gameID, game);
-        CreateGameResult newGameResult = new CreateGameResult(gameID);
+        if(!games.gameData.containsValue(game)) {
+            games.gameData.put(gameID, game);
+            newGameResult = new CreateGameResult(gameID, null);
+        } else { newGameResult = new CreateGameResult(null, "Error: bad request");}
         return newGameResult;
     }
 }

@@ -3,12 +3,10 @@ package dataAccess;
 import chess.ChessGame;
 import model.GameData;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO{
-    public Map<Integer, GameData> gameData = null;
+    public Map<Integer, GameData> gameData = new HashMap<>();
 
 
     @Override
@@ -49,6 +47,14 @@ public class MemoryGameDAO implements GameDAO{
         if (gameData.get(gameID) != null) {
             GameData game = gameData.get(gameID);
             game.renameUser(color, username);
+        }
+    }
+
+    public boolean isNull (String name, Integer gameID){
+        GameData game = gameData.get(gameID);
+        if(Objects.equals(game.getBlackUsername(), name) || Objects.equals(game.getWhiteUsername(), name));{
+            return true;
+        }
         }
     }
 

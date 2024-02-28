@@ -10,15 +10,15 @@ import model.ListGameRecord;
 import java.util.List;
 
 public class ListGamesService {
-
     public Object gameList (ListGameRecord token, MemoryGameDAO games, MemoryAuthDAO auth){
+        ListGamesResult listResult = new ListGamesResult(null, null, "Error: unauthorized" );
         List<GameData> gameList = null;
         String key = token.authToken();
         if (auth.authData.containsKey(key)){
             gameList = games.listGames();
-            ListGamesResult listResult = new ListGamesResult("games", gameList);
+            listResult = new ListGamesResult("games", gameList, null);
         }
 
-        return gameList;
+        return listResult;
     }
 }
