@@ -11,12 +11,12 @@ import java.util.List;
 
 public class ListGamesService {
     public Object gameList (ListGameRecord token, MemoryGameDAO games, MemoryAuthDAO auth){
-        ListGamesResult listResult = new ListGamesResult(null, null, "Error: unauthorized" );
+        ListGamesResult listResult = new ListGamesResult( null, "Error: unauthorized" );
         List<GameData> gameList = null;
         String key = token.authToken();
         if (auth.authData.containsKey(key)){
             gameList = games.listGames();
-            listResult = new ListGamesResult("games", gameList, null);
+            listResult = new ListGamesResult( gameList, null);
         }
 
         return listResult;
