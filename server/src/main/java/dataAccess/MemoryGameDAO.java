@@ -31,10 +31,10 @@ public class MemoryGameDAO implements GameDAO{
 
 
     @Override
-    public List<ChessGame> listGames() {
-        List<ChessGame> list = new ArrayList<>();
+    public List<GameData> listGames() {
+        List<GameData> list = new ArrayList<>();
         for (GameData value: gameData.values()) {
-            list.add(value.getGame());
+            list.add(value);
         }
         return list;
     }
