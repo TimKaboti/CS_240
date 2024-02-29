@@ -1,6 +1,5 @@
 package server;
 import Result.CreateGameResult;
-import Result.HandlerResult;
 import Result.JoinGameResult;
 import model.*;
 import service.*;
