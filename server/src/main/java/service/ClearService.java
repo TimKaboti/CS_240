@@ -9,7 +9,7 @@ import model.ClearRecord;
 public class ClearService {
 
     public Object clearServers(MemoryUserDAO userServer, MemoryAuthDAO authServer, MemoryGameDAO gameServer) {
-        ClearResult cleared = new ClearResult();
+        ClearResult cleared = new ClearResult(null);
         userServer.clear();
         authServer.clear();
         gameServer.clear();

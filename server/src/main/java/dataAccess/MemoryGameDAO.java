@@ -55,7 +55,7 @@ public class MemoryGameDAO implements GameDAO{
         if(Objects.equals(game.getBlackUsername(), name) || Objects.equals(game.getWhiteUsername(), name));{
             return true;
         }
-        }
+
     }
 
 }

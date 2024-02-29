@@ -29,6 +29,16 @@ public class MemoryUserDAO implements UserDAO{
         }
     }
 
+    public String getPassword(String username) {
+        UserData user = userData.get(username);
+        if(user == null){
+            return null;
+        }
+        return user.getPassword();
+    }
 
+    {
+
+    }
 
 }
