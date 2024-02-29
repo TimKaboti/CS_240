@@ -14,8 +14,9 @@ public class JoinGameService {
             gameMemory.joinGame(username, record.color(), record.ID());
             joinResult = new JoinGameResult(null);
         } else {
-            joinResult = new JoinGameResult("Error: bad requesst");
+            joinResult = new JoinGameResult("Error: already taken");
         }
+        if(record.ID() == null) { joinResult = new JoinGameResult("Error: bad request");}
         return joinResult;
     }
 }

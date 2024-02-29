@@ -1,4 +1,7 @@
 package server;
+import Result.CreateGameResult;
+import Result.HandlerResult;
+import Result.JoinGameResult;
 import model.*;
 import service.*;
 import com.google.gson.Gson;
@@ -41,7 +44,8 @@ public class Server {
         ClearRecord clearRecord = serializer.fromJson(req.body(), ClearRecord.class);
         ClearService clearService = new ClearService();
         clearService.clearServers(user, auth, game);
-        if(Objects.equals(clearService.toString(), "Error: description")) { res.status(500);}
+        String message = clearService.toString();
+        if("Error: description".equals(message)) { res.status(500);}
         else { res.status(200);}
         return new Gson().toJson(clearService);
     }
@@ -56,10 +60,11 @@ public class Server {
        RegisterRecord registerRecord = serializer.fromJson(req.body(), RegisterRecord.class);
        RegistrationService registrationService = new RegistrationService();
        var result = registrationService.register(registerRecord, memory, auth);
-       if(Objects.equals(result.toString(), "Error: bad request")) { res.status(400);}
-       else if (Objects.equals(result.toString(), "Error: already taken")) { res.status(403);}
+       String message = result.toString();
+       if("Error: bad request".equals(message)) { res.status(400);}
+       else if ("Error: already taken".equals(message)) { res.status(403);}
        else{ res.status(200);}
-        return new Gson().toJson(result);
+       return new Gson().toJson(result);
     }
 
     private Object LoginHandler(Request req, Response res, MemoryUserDAO userMemory, MemoryAuthDAO auth) {
@@ -67,8 +72,9 @@ public class Server {
         LoginRecord loginRecord = serializer.fromJson(req.body(), LoginRecord.class);
         LoginService loginService = new LoginService();
         var result = loginService.login(loginRecord, userMemory, auth);
-        if(Objects.equals(result.toString(), "Error: unauthorized")) { res.status(401);}
-        else if (Objects.equals(result.toString(), "Error: description")) { res.status(500);}
+        String message = result.toString();
+        if("Error: unauthorized".equals(message)) { res.status(401);}
+        else if ("Error: description".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -78,8 +84,9 @@ public class Server {
         LogoutRecord logoutRecord = serializer.fromJson(req.headers("Authorization"), LogoutRecord.class);
         LogoutService logoutService = new LogoutService();
         var result = logoutService.logout(logoutRecord, auth);
-        if(Objects.equals(result.toString(), "Error: unauthorized")) { res.status(401);}
-        else if (Objects.equals(result.toString(), "Error: description")) { res.status(500);}
+        String message = result.toString();
+        if("Error: unauthorized".equals(message)) { res.status(401);}
+        else if ("Error: description".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -89,8 +96,9 @@ public class Server {
         ListGameRecord listGameRecord = serializer.fromJson(req.headers("Authorization"), ListGameRecord.class);
         ListGamesService listGamesService = new ListGamesService();
         var result = listGamesService.gameList(listGameRecord, gameMemory, auth);
-        if(Objects.equals(result.toString(), "Error: unauthorized")) { res.status(401);}
-        else if (Objects.equals(result.toString(), "Error: description")) { res.status(500);}
+        String message = result.toString();
+        if("Error: unauthorized".equals(message)) { res.status(401);}
+        else if ("Error: description".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -104,9 +112,11 @@ public class Server {
         if (auth.authData.containsKey(authToken)) {
             result = createGameService.newGame(createGameRecord, gameMemory);
         }
-        if(Objects.equals(result.toString(), "Error: bad request")) { res.status(400);}
-        else if (Objects.equals(result.toString(), "Error: unauthorized")) { res.status(401);}
-        else if (Objects.equals(result.toString(), "Error: desription")) { res.status(500);}
+        else { result = new CreateGameResult(null, "Error: unauthorized");}
+        String message = result.toString();
+        if("Error: bad request".equals(message)) { res.status(400);} // user does not provide gamename
+        else if ("Error: unauthorized".equals(message)) { res.status(401);}
+        else if ("Error: desription".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -120,10 +130,12 @@ public class Server {
         if (auth.authData.containsKey(authToken)) {
             result = joinGameService.joinGame(joinGameRecord, gameMemory, String.valueOf(auth.authData.get(authToken)), auth);
         }
-        if(Objects.equals(result.toString(), "Error: bad request")) { res.status(400);}
-        else if (Objects.equals(result.toString(), "Error: unauthorized")) { res.status(401);}
-        else if (Objects.equals(result.toString(), "Error: already taken")) { res.status(403);}
-        else if (Objects.equals(result.toString(), "Error: desription")) { res.status(500);}
+        else { result = new JoinGameResult("Error: unauthorized");}
+        String message = result.toString();
+        if("Error: bad request".equals(message)) { res.status(400);} // check game id
+        else if ("Error: unauthorized".equals(message)) { res.status(401);}
+        else if ("Error: already taken".equals(message)) { res.status(403);} //color already taken
+        else if ("Error: desription".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
