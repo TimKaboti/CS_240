@@ -13,11 +13,13 @@ public class LoginService {
     public Object login (LoginRecord login, MemoryUserDAO userMemory, MemoryAuthDAO auth) {
         String username = login.username();
         String password = login.password();
-        LoginResult log;
-        if (userMemory.userData.containsKey(username) || Objects.equals(userMemory.getPassword(username), password)) {
-            String token = auth.CreateAuth(username);
-            log = new LoginResult(username, token, null);
-        } else {log = new LoginResult(null, null, "Error: unauthorized");}
+        LoginResult log = new LoginResult(null, null, "Error: unauthorized");
+        if (userMemory.userData.containsKey(username)) {
+            if (userMemory.userData.containsKey(username) && userMemory.getPassword(username).equals(password)) {
+                String token = auth.CreateAuth(username);
+                log = new LoginResult(username, token, null);
+            }
+        }
         return log;
     }
 }
