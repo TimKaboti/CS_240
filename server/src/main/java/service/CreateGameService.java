@@ -15,7 +15,7 @@ public class CreateGameService {
         CreateGameResult  newGameResult;
         Random randNum = new Random();
         String name = gameName.gameName();
-        Integer gameID = randNum.nextInt();
+        Integer gameID = randNum.nextInt(999999)+1;
         GameData game = new GameData(gameID, null, null, name, new ChessGame());
         if(!games.gameData.containsValue(game)) {
             games.gameData.put(gameID, game);
