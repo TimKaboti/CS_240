@@ -8,15 +8,15 @@ import model.JoinGameRecord;
 public class JoinGameService {
 
     public JoinGameResult joinGame(JoinGameRecord record, MemoryGameDAO gameMemory, String authToken, MemoryAuthDAO authData){
-        JoinGameResult joinResult;
-        String username = String.valueOf(authData.getAuth(authToken));
-        if(gameMemory.isNull(username, record.ID())) {
-            gameMemory.joinGame(username, record.color(), record.ID());
-            joinResult = new JoinGameResult(null);
-        } else {
-            joinResult = new JoinGameResult("Error: already taken");
-        }
-        if(record.ID() == null) { joinResult = new JoinGameResult("Error: bad request");}
+        JoinGameResult joinResult = new JoinGameResult("Error: description");
+        String username = (authData.getAuth(authToken).getUsername());
+        if(gameMemory.isNull(record.gameID())) {
+            if(record.playerColor() == null){joinResult = new JoinGameResult(null);}
+            else if(gameMemory.taken(record.playerColor(), record.gameID())){ joinResult = new JoinGameResult("Error: already taken");}
+            else{gameMemory.joinGame(username, record.playerColor(), record.gameID());
+                joinResult = new JoinGameResult(null);}
+        }else{ joinResult = new JoinGameResult("Error: bad request");}
+        if(record.gameID() == null) { joinResult = new JoinGameResult("Error: bad request");}
         return joinResult;
     }
 }

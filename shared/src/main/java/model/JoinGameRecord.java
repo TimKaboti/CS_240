@@ -1,4 +1,4 @@
 package model;
 
-public record JoinGameRecord(String color, Integer ID) {
+public record JoinGameRecord(String playerColor, Integer gameID) {
 }

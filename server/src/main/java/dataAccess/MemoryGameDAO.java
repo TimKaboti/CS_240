@@ -50,13 +50,9 @@ public class MemoryGameDAO implements GameDAO{
         }
     }
 
-    public boolean isNull (String name, Integer gameID){
+    public boolean isNull (Integer gameID){
         GameData game = gameData.get(gameID);
-        if( game == null) {return false;}
-        if(Objects.equals(game.getBlackUsername(), name) || Objects.equals(game.getWhiteUsername(), name));{
-            return true;
-        }
-
+        return game != null;
     }
 
     public boolean taken(String color, Integer gameID) {

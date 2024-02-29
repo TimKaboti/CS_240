@@ -81,7 +81,7 @@ public class Server {
 
     private Object LogoutHandler(Request req, Response res, MemoryAuthDAO auth) {
         Gson serializer = new Gson();
-        LogoutRecord logoutRecord = serializer.fromJson(req.headers("Authorization"), LogoutRecord.class);
+        LogoutRecord logoutRecord = new LogoutRecord(req.headers("Authorization"));
         LogoutService logoutService = new LogoutService();
         var result = logoutService.logout(logoutRecord, auth);
         String message = result.toString();
@@ -93,7 +93,7 @@ public class Server {
 
     private Object ListGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
         Gson serializer = new Gson();
-        ListGameRecord listGameRecord = serializer.fromJson(req.headers("Authorization"), ListGameRecord.class);
+        ListGameRecord listGameRecord = new ListGameRecord (req.headers("Authorization"));
         ListGamesService listGamesService = new ListGamesService();
         var result = listGamesService.gameList(listGameRecord, gameMemory, auth);
         String message = result.toString();
@@ -128,7 +128,7 @@ public class Server {
         String authToken = req.headers("Authorization");
         Object result = (null);
         if (auth.authData.containsKey(authToken)) {
-            result = joinGameService.joinGame(joinGameRecord, gameMemory, String.valueOf(auth.authData.get(authToken)), auth);
+            result = joinGameService.joinGame(joinGameRecord, gameMemory,  authToken, auth);
         }
         else { result = new JoinGameResult("Error: unauthorized");}
         String message = result.toString();
