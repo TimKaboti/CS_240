@@ -1,6 +1,5 @@
 package dataAccess;
 
-import chess.ChessGame;
 import model.AuthData;
 
 import java.util.HashMap;
@@ -48,8 +47,9 @@ public class MemoryAuthDAO implements AuthDAO {
 
 
     @Override
-    public AuthData getAuth(String token) {
-        return authData.get(token);
+    public boolean getAuth(String token) {
+        //return authData.get(token).toString();
+        return true;
     }
 
     @Override

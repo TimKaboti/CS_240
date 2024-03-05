@@ -114,13 +114,13 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object CreateGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
+    private Object CreateGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         CreateGameRecord createGameRecord = serializer.fromJson(req.body(), CreateGameRecord.class);
         CreateGameService createGameService = new CreateGameService();
         String authToken = req.headers("Authorization");
         Object result = (null);
-        if (/*put in a check to see if the authtoken exists.*/) {
+        if (auth.getAuth(authToken)) {
             result = createGameService.newGame(createGameRecord, gameMemory);
         }
         else { result = new CreateGameResult(null, "Error: unauthorized");}
@@ -132,13 +132,13 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object JoinGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
+    private Object JoinGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         JoinGameRecord joinGameRecord = serializer.fromJson(req.body(), JoinGameRecord.class);
         JoinGameService joinGameService = new JoinGameService();
         String authToken = req.headers("Authorization");
         Object result = (null);
-        if (/*put in a check to see if the authtoken exists.*/) {
+        if (auth.getAuth(authToken)) {
             result = joinGameService.joinGame(joinGameRecord, gameMemory,  authToken, auth);
         }
         else { result = new JoinGameResult("Error: unauthorized");}

@@ -1,8 +1,7 @@
 package dataAccess;
 
-import model.AuthData;
-
 import java.sql.*;
+import java.util.UUID;
 
 public class AuthSQL implements AuthDAO{
 
@@ -37,17 +36,76 @@ public class AuthSQL implements AuthDAO{
     }
     @Override
     public String CreateAuth(String username) throws DataAccessException {
-        return null;
+        Connection connection;
+        String authToken = null;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT authToken FROM authData");
+            ResultSet tableResult = preparedStatement.executeQuery();
+            // Collect authTokens from the ResultSet
+            while (tableResult.next()) {
+                authToken = UUID.randomUUID().toString();
+                String existingAuthToken = tableResult.getString("authToken");
+                // Check if the generated authToken already exists
+                if (existingAuthToken.equals(authToken)) {
+                    // If the authToken exists, generate a new one
+                    continue;
+                } else {
+                    break;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO authData (username, authToken) VALUES (?, ?)");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, authToken);preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return authToken;
     }
 
     @Override
-    public AuthData getAuth(String token) throws DataAccessException {
-        return null;
+    /**
+     * checks to see if the given auth can be found in the database authData table.
+     */
+    public boolean getAuth(String token) throws DataAccessException {
+        Connection connection;
+        boolean bool = false;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT authToken FROM authData WHERE authToken = ?");
+            preparedStatement.setString(1, token);
+            ResultSet result = preparedStatement.executeQuery();
+            if (!result.wasNull()) {
+                bool = true;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return bool;
     }
 
     @Override
     public void deleteAuth(String token) throws DataAccessException {
-
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE authData SET authToken = ? WHERE authToken = ?");
+            preparedStatement.setString(1, null);
+            preparedStatement.setString(1, token);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
