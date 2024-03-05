@@ -1,13 +1,13 @@
 package service;
 
 import Result.JoinGameResult;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
 import model.JoinGameRecord;
 
 public class JoinGameService {
 
-    public JoinGameResult joinGame(JoinGameRecord record, MemoryGameDAO gameMemory, String authToken, MemoryAuthDAO authData){
+    public JoinGameResult joinGame(JoinGameRecord record, GameDAO gameMemory, String authToken, AuthDAO authData){
         JoinGameResult joinResult = new JoinGameResult("Error: description");
         String username = (authData.getAuth(authToken).getUsername());
         if(gameMemory.isNull(record.gameID())) {

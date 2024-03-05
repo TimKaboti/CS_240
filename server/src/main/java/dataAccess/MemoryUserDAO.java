@@ -4,7 +4,7 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MemoryUserDAO implements UserDAO{
+public abstract class MemoryUserDAO implements UserDAO{
 
     public Map<String, UserData> userData = new HashMap<>();
 
@@ -16,8 +16,8 @@ public class MemoryUserDAO implements UserDAO{
     /** find out which methods should throw the dataAccessException **/
 
     @Override
-    public void createUser(String username, String password, String email) {
-        userData.put(username, new UserData(username,password,email));
+    public void createUser(UserData user) {
+        userData.put(user.getUsername(), new UserData(user.getUsername(),user.getPassword(),user.getEmail()));
     }
 
     @Override
@@ -37,8 +37,5 @@ public class MemoryUserDAO implements UserDAO{
         return user.getPassword();
     }
 
-    {
-
-    }
 
 }

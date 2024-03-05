@@ -1,16 +1,13 @@
 package service;
 
 import Result.LoginResult;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
-import model.AuthData;
+import dataAccess.AuthDAO;
+import dataAccess.UserDAO;
 import model.LoginRecord;
-
-import java.util.Objects;
 
 public class LoginService {
 
-    public Object login (LoginRecord login, MemoryUserDAO userMemory, MemoryAuthDAO auth) {
+    public Object login (LoginRecord login, UserDAO userMemory, AuthDAO auth) {
         String username = login.username();
         String password = login.password();
         LoginResult log = new LoginResult(null, null, "Error: unauthorized");

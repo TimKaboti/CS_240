@@ -3,15 +3,13 @@ import java.util.Random;
 
 import Result.CreateGameResult;
 import chess.ChessGame;
-import dataAccess.MemoryGameDAO;
+import dataAccess.GameDAO;
 import model.CreateGameRecord;
 import model.GameData;
 
-import java.util.UUID;
-
 public class CreateGameService {
 
-    public Object newGame (CreateGameRecord gameName, MemoryGameDAO games){
+    public Object newGame (CreateGameRecord gameName, GameDAO games){
         CreateGameResult  newGameResult;
         Random randNum = new Random();
         String name = gameName.gameName();

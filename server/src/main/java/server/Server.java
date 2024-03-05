@@ -1,24 +1,28 @@
 package server;
 import Result.CreateGameResult;
 import Result.JoinGameResult;
+import dataAccess.*;
 import model.*;
 import service.*;
 import com.google.gson.Gson;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-import java.util.Objects;
+import static dataAccess.DatabaseManager.createDatabase;
 
 public class Server {
 
     public int run(int desiredPort) {
-        MemoryUserDAO UserDAO = new MemoryUserDAO();
-        MemoryGameDAO GameDAO = new MemoryGameDAO();
-        MemoryAuthDAO AuthDAO = new MemoryAuthDAO();
+        try {
+            createDatabase();
+        } catch(DataAccessException e) {
+            return -1;
+        }
+
+        UserDAO UserDAO = new UserSQL();
+        GameDAO GameDAO = new GameSQL();
+        AuthDAO AuthDAO = new AuthSQL();
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
@@ -38,7 +42,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object ClearHandler(Request req, Response res, MemoryUserDAO user, MemoryGameDAO game, MemoryAuthDAO auth) {
+    private Object ClearHandler(Request req, Response res, UserDAO user, GameDAO game, AuthDAO auth) {
         Gson serializer = new Gson();
         ClearRecord clearRecord = serializer.fromJson(req.body(), ClearRecord.class);
         ClearService clearService = new ClearService();
@@ -54,7 +58,7 @@ public class Server {
 //    bad request == bad input ie user already exists
 //
 
-    private Object RegisterHandler(Request req, Response res, MemoryUserDAO memory, MemoryAuthDAO auth) {
+    private Object RegisterHandler(Request req, Response res, UserDAO memory, AuthDAO auth) {
        Gson serializer = new Gson();
        RegisterRecord registerRecord = serializer.fromJson(req.body(), RegisterRecord.class);
        RegistrationService registrationService = new RegistrationService();
@@ -66,7 +70,7 @@ public class Server {
        return new Gson().toJson(result);
     }
 
-    private Object LoginHandler(Request req, Response res, MemoryUserDAO userMemory, MemoryAuthDAO auth) {
+    private Object LoginHandler(Request req, Response res, UserDAO userMemory, AuthDAO auth) {
         Gson serializer = new Gson();
         LoginRecord loginRecord = serializer.fromJson(req.body(), LoginRecord.class);
         LoginService loginService = new LoginService();
@@ -78,7 +82,7 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object LogoutHandler(Request req, Response res, MemoryAuthDAO auth) {
+    private Object LogoutHandler(Request req, Response res, AuthDAO auth) {
         Gson serializer = new Gson();
         LogoutRecord logoutRecord = new LogoutRecord(req.headers("Authorization"));
         LogoutService logoutService = new LogoutService();
@@ -90,7 +94,7 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object ListGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
+    private Object ListGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
         Gson serializer = new Gson();
         ListGameRecord listGameRecord = new ListGameRecord (req.headers("Authorization"));
         ListGamesService listGamesService = new ListGamesService();
@@ -102,7 +106,7 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object CreateGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
+    private Object CreateGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
         Gson serializer = new Gson();
         CreateGameRecord createGameRecord = serializer.fromJson(req.body(), CreateGameRecord.class);
         CreateGameService createGameService = new CreateGameService();
@@ -120,13 +124,13 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object JoinGameHandler(Request req, Response res, MemoryGameDAO gameMemory, MemoryAuthDAO auth) {
+    private Object JoinGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
         Gson serializer = new Gson();
         JoinGameRecord joinGameRecord = serializer.fromJson(req.body(), JoinGameRecord.class);
         JoinGameService joinGameService = new JoinGameService();
         String authToken = req.headers("Authorization");
         Object result = (null);
-        if (auth.authData.containsKey(authToken)) {
+        if (/*put in a check to see if the authtoken exists.*/) {
             result = joinGameService.joinGame(joinGameRecord, gameMemory,  authToken, auth);
         }
         else { result = new JoinGameResult("Error: unauthorized");}

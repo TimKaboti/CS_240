@@ -1,14 +1,11 @@
 package service;
 
 import Result.ClearResult;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
-import model.ClearRecord;
+import dataAccess.*;
 
 public class ClearService {
 
-    public Object clearServers(MemoryUserDAO userServer, MemoryAuthDAO authServer, MemoryGameDAO gameServer) {
+    public Object clearServers(UserDAO userServer, AuthDAO authServer, GameDAO gameServer) {
         ClearResult cleared = new ClearResult(null);
         userServer.clear();
         authServer.clear();

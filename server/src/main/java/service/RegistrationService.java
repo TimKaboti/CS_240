@@ -1,14 +1,12 @@
 package service;
 
 import Result.RegisterResult;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
-import model.AuthData;
+import dataAccess.AuthDAO;
+import dataAccess.UserDAO;
 import model.RegisterRecord;
-import model.UserData;
 
 public class RegistrationService {
-    public Object register(RegisterRecord user, MemoryUserDAO memory, MemoryAuthDAO auth) {
+    public Object register(RegisterRecord user, UserDAO memory, AuthDAO auth) {
         RegisterResult result;
         if(memory.getUser(user.username()) == null) {
             if(user.username() == null || user.password() == null || user.email() == null) {
