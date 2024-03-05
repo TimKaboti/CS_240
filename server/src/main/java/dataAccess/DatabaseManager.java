@@ -84,19 +84,19 @@ public class DatabaseManager {
             """
             CREATE TABLE IF NOT EXISTS  authData (
               `username` varchar(255) NOT NULL,
-              `authToken` varchar(255),
-              PRIMARY KEY (`username`),
+              `authToken` varchar(255) NOT NULL,
+              PRIMARY KEY (`authToken`),
               INDEX(username),
               INDEX(authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
 
             """
-            CREATE TABLE IF NOT EXISTS  userData (
+            CREATE TABLE IF NOT EXISTS  gameData (
               `gameID` int NOT NULL,
-              `whiteUsername` varchar(255),
-              `blackUsername` varchar(255),
-              `gameName` varchar(255),
+              `whiteUsername` varchar(255) DEFAULT NULL,
+              `blackUsername` varchar(255) DEFAULT NULL,
+              `gameName` varchar(255) NOT NULL,
               'game' BLOB NOT NULL,
               PRIMARY KEY (`gameID`),
               INDEX(gameID),

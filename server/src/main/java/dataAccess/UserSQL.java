@@ -48,16 +48,15 @@ public class UserSQL implements UserDAO{
      * @PARAM String username
      */
     public boolean getUser(String username) throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM userData WHERE username = ?");
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM userData WHERE username = ?")) {
+
             preparedStatement.setString(1, username);
-            ResultSet result = preparedStatement.executeQuery();
-            if(result.next()){
-                if(result.getString(username) == username){
-                    return true;
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    // Compare the retrieved username with the input username
+                    String retrievedUsername = result.getString("username");
+                    return username.equals(retrievedUsername);
                 }
             }
         } catch (SQLException e) {
@@ -67,6 +66,7 @@ public class UserSQL implements UserDAO{
     }
 
 
+
     @Override
     /**
      * returns the password associated with a given username.
@@ -74,72 +74,69 @@ public class UserSQL implements UserDAO{
      * @PARAM String username
      */
     public String getPassword(String username) throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT password FROM userData WHERE username = ?");
-            preparedStatement.setString(1, username);
-            ResultSet result = preparedStatement.executeQuery();
-            if (result.next()) {
-                String password = result.getString("password");
-                return password;
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT password FROM userData WHERE username = ?")) {
 
+            preparedStatement.setString(1, username);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    return result.getString("password");
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
+
 
     public String getEmail(String username) throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT email FROM userData WHERE username = ?");
-            preparedStatement.setString(1, username);
-            ResultSet result = preparedStatement.executeQuery();
-            if (result.next()) {
-                String email = result.getString("email");
-                return email;
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT email FROM userData WHERE username = ?")) {
 
+            preparedStatement.setString(1, username);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                if (result.next()) {
+                    return result.getString("email");
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
+
 
 
     @Override
     public void createUser(UserData user) throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO userData (username, password, email) VALUES (?, ?, ?)");
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)")) {
+
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getEmail());
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     @Override
     public void clear() throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE userData");
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE userData")) {
+
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 
 //    private int executeUpdate(String statement, Object... params) throws DataAccessException {

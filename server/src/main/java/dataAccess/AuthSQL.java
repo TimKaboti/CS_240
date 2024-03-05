@@ -36,57 +36,62 @@ public class AuthSQL implements AuthDAO{
     }
     @Override
     public String CreateAuth(String username) throws DataAccessException {
-        Connection connection;
         String authToken = null;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT authToken FROM authData");
-            ResultSet tableResult = preparedStatement.executeQuery();
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement selectStatement = connection.prepareStatement("SELECT authToken FROM authData");
+             ResultSet resultSet = selectStatement.executeQuery()) {
+
             // Collect authTokens from the ResultSet
-            while (tableResult.next()) {
+            while (resultSet.next()) {
                 authToken = UUID.randomUUID().toString();
-                String existingAuthToken = tableResult.getString("authToken");
+                String existingAuthToken = resultSet.getString("authToken");
+
                 // Check if the generated authToken already exists
                 if (existingAuthToken.equals(authToken)) {
                     // If the authToken exists, generate a new one
                     continue;
                 } else {
+                    // If the authToken is unique, break out of the loop
                     break;
                 }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO authData (username, authToken) VALUES (?, ?)");
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, authToken);preparedStatement.executeUpdate();
-            preparedStatement.executeUpdate();
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO authData (username, authToken) VALUES (?, ?)")) {
+
+            insertStatement.setString(1, username);
+            insertStatement.setString(2, authToken);
+            insertStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return authToken;
     }
+
 
     @Override
     /**
      * checks to see if the given auth can be found in the database authData table.
      */
     public boolean getAuth(String token) throws DataAccessException {
-        Connection connection;
         boolean bool = false;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT authToken FROM authData WHERE authToken = ?");
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT authToken FROM authData WHERE authToken = ?")) {
+
             preparedStatement.setString(1, token);
-            ResultSet result = preparedStatement.executeQuery();
-            if (!result.wasNull()) {
-                bool = true;
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                // Use result.next() to check if there is any result
+                if (result.next()) {
+                    bool = true;
+                }
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,30 +100,29 @@ public class AuthSQL implements AuthDAO{
 
     @Override
     public void deleteAuth(String token) throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE authData SET authToken = ? WHERE authToken = ?");
-            preparedStatement.setString(1, null);
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM authData WHERE authToken = ?")) {
+
             preparedStatement.setString(1, token);
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     @Override
     public void clear() throws DataAccessException {
-        Connection connection;
-        try {
-            // Establishing a connection to the database
-            connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE authData");
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE authData")) {
+
             preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
 }
