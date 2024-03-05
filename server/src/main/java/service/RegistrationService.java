@@ -12,7 +12,7 @@ public class RegistrationService {
             if(user.username() == null || user.password() == null || user.email() == null) {
                 result = new RegisterResult(null, null, "Error: bad request");
             } else {
-                memory.createUser(user.username(), user.password(), user.email());
+                memory.createUser(user);
                 String token = auth.CreateAuth(user.username());
                 result = new RegisterResult(user.username(), token, null);
             }

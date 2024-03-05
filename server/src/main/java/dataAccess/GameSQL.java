@@ -1,14 +1,55 @@
 package dataAccess;
 import chess.ChessGame;
 import model.GameData;
+
+import java.sql.*;
 import java.util.List;
 import com.google.gson.Gson;
 import java.io.*;
 import java.net.*;
 
 public class GameSQL implements GameDAO{
+
+    public void checkConnection() {
+        try {
+            // Establishing a connection
+            Connection connection = DatabaseManager.getConnection();
+
+            // Creating a statement
+            Statement statement = connection.createStatement();
+
+            // Executing a SELECT query
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table");
+
+            // Processing the result set
+            while (resultSet.next()) {
+                // Access columns by name or index
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+
+                // Process the data as needed
+                System.out.println("ID: " + id + ", Name: " + name);
+            }
+
+            // Closing resources
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void clear() throws DataAccessException {
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE gameData");
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

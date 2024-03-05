@@ -11,10 +11,6 @@ import java.util.Properties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import static com.mysql.cj.conf.PropertyKey.PASSWORD;
-import static com.mysql.cj.conf.PropertyKey.USER;
-import static dataAccess.DatabaseManager.password;
-import static dataAccess.DatabaseManager.user;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
@@ -57,13 +53,24 @@ public class UserSQL implements UserDAO{
     /**
      * Returns the userName from the database if the username can be found there.
      * in short, determines if there is an account associated with given username.
-     *
+     ******might want to make this return a boolean. you only need to know if it
+     * already exits
      * @PARAM String username
      */
     public UserData getUser(String username) throws DataAccessException {
-//        SELECT username FROM userdata;
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM userData WHERE username = ?");
+            preparedStatement.setString(1, username);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
+
 
     @Override
     /**
@@ -81,7 +88,7 @@ public class UserSQL implements UserDAO{
         try {
             // Establishing a connection to the database
             connection = DatabaseManager.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO userData (username, password, email) VALUES (?, ?, ?)");
             preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getEmail());
@@ -93,8 +100,17 @@ public class UserSQL implements UserDAO{
 
     @Override
     public void clear() throws DataAccessException {
-
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE userData");
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
 //    private int executeUpdate(String statement, Object... params) throws DataAccessException {
 //        try (var conn = DatabaseManager.getConnection()) {
