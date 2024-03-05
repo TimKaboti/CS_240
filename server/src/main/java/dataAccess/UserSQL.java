@@ -1,18 +1,8 @@
 package dataAccess;
-import chess.ChessGame;
 import model.UserData;
-import dataAccess.DatabaseManager;
-import com.google.gson.Gson;
-import java.io.*;
-import java.net.*;
-import java.io.InputStream;
-import java.sql.*;
-import java.util.Properties;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
+import java.sql.*;
+import java.sql.Connection;
 
 public class UserSQL implements UserDAO{
 
@@ -57,18 +47,23 @@ public class UserSQL implements UserDAO{
      * already exits
      * @PARAM String username
      */
-    public UserData getUser(String username) throws DataAccessException {
+    public boolean getUser(String username) throws DataAccessException {
         Connection connection;
         try {
             // Establishing a connection to the database
             connection = DatabaseManager.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM userData WHERE username = ?");
             preparedStatement.setString(1, username);
-            preparedStatement.executeUpdate();
+            ResultSet result = preparedStatement.executeQuery();
+            if(result.next()){
+                if(result.getString(username) == username){
+                    return true;
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return false;
     }
 
 
@@ -79,8 +74,43 @@ public class UserSQL implements UserDAO{
      * @PARAM String username
      */
     public String getPassword(String username) throws DataAccessException {
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT password FROM userData WHERE username = ?");
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                String password = result.getString("password");
+                return password;
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return null;
     }
+
+    public String getEmail(String username) throws DataAccessException {
+        Connection connection;
+        try {
+            // Establishing a connection to the database
+            connection = DatabaseManager.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT email FROM userData WHERE username = ?");
+            preparedStatement.setString(1, username);
+            ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                String email = result.getString("email");
+                return email;
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 
     @Override
     public void createUser(UserData user) throws DataAccessException {

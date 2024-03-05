@@ -21,7 +21,7 @@ public abstract class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) {
+    public boolean getUser(String username) {
         if (userData.get(username) == null) {
             return null;
         } else {
