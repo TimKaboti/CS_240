@@ -16,9 +16,17 @@ public class Server {
     public int run(int desiredPort) {
         try {
             createDatabase();
+            DatabaseManager.configureDatabase();
         } catch(DataAccessException e) {
             return -1;
         }
+
+
+        /** NOTE Service classes may throw errors right now.
+         * this is because you set the DAOs below to be new SQL DAOs.
+         * when the methods for the SQL DAOs are written, those errors
+         * should go away.
+         */
 
         UserDAO UserDAO = new UserSQL();
         GameDAO GameDAO = new GameSQL();
@@ -112,7 +120,7 @@ public class Server {
         CreateGameService createGameService = new CreateGameService();
         String authToken = req.headers("Authorization");
         Object result = (null);
-        if (auth.authData.containsKey(authToken)) {
+        if (/*put in a check to see if the authtoken exists.*/) {
             result = createGameService.newGame(createGameRecord, gameMemory);
         }
         else { result = new CreateGameResult(null, "Error: unauthorized");}

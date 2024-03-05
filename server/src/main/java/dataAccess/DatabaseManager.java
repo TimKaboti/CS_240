@@ -5,8 +5,8 @@ import java.util.Properties;
 
 public class DatabaseManager {
     private static final String databaseName;
-    private static final String user;
-    private static final String password;
+    public static final String user;
+    public static final String password;
     private static final String connectionUrl;
 
     /*
@@ -67,4 +67,59 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    private static final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  userData (
+              `username` varchar(255) NOT NULL,
+              `password` varchar(255) NOT NULL,
+              `email` varchar(255) NOT NULL,
+              PRIMARY KEY (`username`),
+              INDEX(username),
+              INDEX(password),
+              INDEX(email)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+
+            """
+            CREATE TABLE IF NOT EXISTS  authData (
+              `username` varchar(255) NOT NULL,
+              `authToken` varchar(255) NOT NULL,
+              PRIMARY KEY (`username`),
+              INDEX(username),
+              INDEX(authToken)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+
+            """
+            CREATE TABLE IF NOT EXISTS  userData (
+              `gameID` int NOT NULL,
+              `whiteUsername` varchar(255),
+              `blackUsername` varchar(255),
+              `gameName` varchar(255),
+              'game' BLOB NOT NULL,
+              PRIMARY KEY (`gameID`),
+              INDEX(gameID),
+              INDEX(whiteUsername),
+              INDEX(blackUsername),
+              INDEX(gameName),
+              INDEX(game)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+
+    public static void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("Unable to configure database: %s");
+        }
+    }
+
 }
