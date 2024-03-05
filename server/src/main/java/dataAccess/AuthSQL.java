@@ -14,7 +14,7 @@ public class AuthSQL implements AuthDAO{
             Statement statement = connection.createStatement();
 
             // Executing a SELECT query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM authData");
 
             // Processing the result set
             while (resultSet.next()) {

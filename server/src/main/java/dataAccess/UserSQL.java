@@ -18,7 +18,7 @@ public class UserSQL implements UserDAO{
             Statement statement = connection.createStatement();
 
             // Executing a SELECT query
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM your_table");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM userData");
 
             // Processing the result set
             while (resultSet.next()) {
