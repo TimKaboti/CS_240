@@ -15,7 +15,7 @@ public class JoinGameService {
         try {
             username = authData.getUsername(authToken);
         } catch (DataAccessException e) {
-            return new JoinGameResult("Error: Unable to retrieve username");
+            return new JoinGameResult("Error: description");
         }
 
         try {
