@@ -92,19 +92,19 @@ public class DatabaseManager {
             """,
 
             """
-            CREATE TABLE IF NOT EXISTS  gameData (
-              `gameID` int NOT NULL,
-              `whiteUsername` varchar(255) DEFAULT NULL,
-              `blackUsername` varchar(255) DEFAULT NULL,
-              `gameName` varchar(255) NOT NULL,
-              'game' BLOB NOT NULL,
-              PRIMARY KEY (`gameID`),
-              INDEX(gameID),
-              INDEX(whiteUsername),
-              INDEX(blackUsername),
-              INDEX(gameName),
-              INDEX(game)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            CREATE TABLE IF NOT EXISTS gameData (
+                `gameID` int NOT NULL,
+                `whiteUsername` varchar(255) DEFAULT NULL,
+                `blackUsername` varchar(255) DEFAULT NULL,
+                `gameName` varchar(255) NOT NULL,
+                `game` BLOB NOT NULL,
+                PRIMARY KEY (`gameID`),
+                INDEX(gameID),
+                INDEX(whiteUsername),
+                INDEX(blackUsername),
+                INDEX(gameName),
+                INDEX(`game`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """
     };
 

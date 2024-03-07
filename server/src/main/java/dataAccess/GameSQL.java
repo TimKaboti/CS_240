@@ -1,7 +1,9 @@
 package dataAccess;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
+import java.io.*;
 import java.sql.*;
 import java.util.List;
 
@@ -55,18 +57,16 @@ public class GameSQL implements GameDAO {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO gameData (gameID, gamename, game) VALUES (???)")) {
 
+            Gson serializer = new Gson();
+            String serializedGame = serializer.toJson(data);
+
             preparedStatement.setInt(1, ID);
             preparedStatement.setString(2, data.getGameName());
-            preparedStatement.setBlob(3, (Blob) data.getGame());
-            try (ResultSet result = preparedStatement.executeQuery()) {
-                // Use result.next() to check if there is any result
-                if (result.next()) {
-                    //chessGame = (ChessGame) result.getObject("game");
-                }
-            }
+            preparedStatement.setString(3, serializedGame);
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to create.");
         }
 
     }
@@ -74,20 +74,23 @@ public class GameSQL implements GameDAO {
     @Override
     public ChessGame getGame(Integer ID) throws DataAccessException {
         ChessGame chessGame = null;
+
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
 
             preparedStatement.setInt(1, ID);
+
             try (ResultSet result = preparedStatement.executeQuery()) {
-                // Use result.next() to check if there is any result
                 if (result.next()) {
-                    chessGame = (ChessGame) result.getObject("game");
+                    Gson serializer = new Gson();
+                    chessGame = serializer.fromJson(result.getString("game"), ChessGame.class);
                 }
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return chessGame;
     }
 
@@ -203,6 +206,24 @@ public class GameSQL implements GameDAO {
         }
 
         return bool;
+    }
+
+    private byte[] serializeObject(Serializable object) throws IOException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            oos.writeObject(object);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Helper method to deserialize a byte array to an object
+    private <T> T deserializeObject(byte[] data) throws IOException, ClassNotFoundException {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
+             ObjectInputStream ois = new ObjectInputStream(bis)) {
+            return (T) ois.readObject();
+        }
     }
 
 }

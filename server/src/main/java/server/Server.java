@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
-
 import static dataAccess.DatabaseManager.createDatabase;
 
 public class Server {
@@ -18,15 +17,10 @@ public class Server {
             //createDatabase();
             DatabaseManager.configureDatabase();
         } catch(DataAccessException e) {
+            e.printStackTrace();
             return -1;
         }
 
-
-        /** NOTE Service classes may throw errors right now.
-         * this is because you set the DAOs below to be new SQL DAOs.
-         * when the methods for the SQL DAOs are written, those errors
-         * should go away.
-         */
 
         UserDAO UserDAO = new UserSQL();
         GameDAO GameDAO = new GameSQL();

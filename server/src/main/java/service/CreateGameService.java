@@ -17,8 +17,9 @@ public class CreateGameService {
         Integer gameID = randNum.nextInt(999999)+1;
         GameData game = new GameData(gameID, null, null, name, new ChessGame());
         if(games.getGame(gameID) == null) {
-            games.createGame(gameID, game);
-            newGameResult = new CreateGameResult(gameID, null);
+            try{games.createGame(gameID, game);
+                newGameResult = new CreateGameResult(gameID, null);
+            } catch(DataAccessException e) {newGameResult = new CreateGameResult(null, "Error: description");}
         } else { newGameResult = new CreateGameResult(null, "Error: bad request");}
         return newGameResult;
     }

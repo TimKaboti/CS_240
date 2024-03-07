@@ -36,36 +36,25 @@ public class AuthSQL implements AuthDAO{
     }
     @Override
     public String CreateAuth(String username) throws DataAccessException {
-        String authToken = null;
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement selectStatement = connection.prepareStatement("SELECT authToken FROM authData");
-             ResultSet resultSet = selectStatement.executeQuery()) {
+        String authToken;
 
-            // Collect authTokens from the ResultSet
-            while (resultSet.next()) {
+        try (Connection connection = DatabaseManager.getConnection()) {
+            do {
+                // Generate a new authToken
                 authToken = UUID.randomUUID().toString();
-                String existingAuthToken = resultSet.getString("authToken");
 
-                // Check if the generated authToken already exists
-                if (existingAuthToken.equals(authToken)) {
-                    // If the authToken exists, generate a new one
-                    continue;
-                } else {
-                    // If the authToken is unique, break out of the loop
-                    break;
+                // Check if the authToken already exists in the database
+                if (!isAuthTokenExists(connection, authToken)) {
+                    break; // Break the loop if authToken is unique
                 }
+            } while (true);
+
+            // Insert the new authToken into the database
+            try (PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO authData (username, authToken) VALUES (?, ?)")) {
+                insertStatement.setString(1, username);
+                insertStatement.setString(2, authToken);
+                insertStatement.executeUpdate();
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO authData (username, authToken) VALUES (?, ?)")) {
-
-            insertStatement.setString(1, username);
-            insertStatement.setString(2, authToken);
-            insertStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,6 +62,21 @@ public class AuthSQL implements AuthDAO{
 
         return authToken;
     }
+
+    private boolean isAuthTokenExists(Connection connection, String authToken) throws SQLException {
+        try (PreparedStatement selectStatement = connection.prepareStatement("SELECT COUNT(*) FROM authData WHERE authToken = ?")) {
+            selectStatement.setString(1, authToken);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0; // If count is greater than 0, authToken exists
+                }
+            }
+        }
+        return false; // Error occurred, assume authToken doesn't exist
+    }
+
+
 
 
     @Override
