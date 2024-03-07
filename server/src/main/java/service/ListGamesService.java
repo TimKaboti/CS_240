@@ -1,5 +1,6 @@
 package service;
 
+import Result.ClearResult;
 import Result.ListGamesResult;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
@@ -15,8 +16,9 @@ public class ListGamesService {
         ListGamesResult listResult = new ListGamesResult(gameList , "Error: unauthorized" );
         String key = token.authToken();
         if (auth.getAuth(key)){
-            gameList = games.listGames();
-            listResult = new ListGamesResult( gameList, null);
+            try{gameList = games.listGames();
+            listResult = new ListGamesResult( gameList, null);}
+            catch (DataAccessException e) { listResult = new ListGamesResult(null,"Error: description");}
         }
 
         return listResult;

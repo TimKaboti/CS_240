@@ -1,5 +1,6 @@
 package service;
 
+import Result.ClearResult;
 import Result.LoginResult;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
@@ -14,8 +15,9 @@ public class LoginService {
         LoginResult log = new LoginResult(null, null, "Error: unauthorized");
         if (userMemory.getUser(username)) {
             if (userMemory.getUser(username) && userMemory.getPassword(username).equals(password)) {
-                String token = auth.CreateAuth(username);
-                log = new LoginResult(username, token, null);
+                try{String token = auth.CreateAuth(username);
+                log = new LoginResult(username, token, null);}
+                catch (DataAccessException e) { log = new LoginResult(null,null, "Error: description");}
             }
         }
         return log;

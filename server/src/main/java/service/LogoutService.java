@@ -1,5 +1,6 @@
 package service;
 
+import Result.ClearResult;
 import Result.LogoutResult;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
@@ -11,7 +12,8 @@ public class LogoutService {
         LogoutResult out = new LogoutResult(null);
         String key = token.authToken();
         if (auth.getAuth(key)){
-            auth.deleteAuth(key);
+            try{auth.deleteAuth(key);}
+            catch (DataAccessException e) { out = new LogoutResult("Error: description");}
         } else {out = new LogoutResult("Error: unauthorized");
         }
         return out;

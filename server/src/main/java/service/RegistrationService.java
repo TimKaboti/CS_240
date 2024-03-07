@@ -1,5 +1,6 @@
 package service;
 
+import Result.ClearResult;
 import Result.RegisterResult;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
@@ -15,9 +16,10 @@ public class RegistrationService {
             if(user.username() == null || user.password() == null || user.email() == null) {
                 result = new RegisterResult(null, null, "Error: bad request");
             } else {
-                userData.createUser(tempUser);
+               try{ userData.createUser(tempUser);
                 String token = authData.CreateAuth(user.username());
-                result = new RegisterResult(user.username(), token, null);
+                result = new RegisterResult(user.username(), token, null);}
+               catch (DataAccessException e) { result = new RegisterResult(null, null, "Error: description");}
             }
         } else {
             result = new RegisterResult(null, null, "Error: already taken");
