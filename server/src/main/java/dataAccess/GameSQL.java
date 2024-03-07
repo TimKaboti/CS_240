@@ -47,7 +47,7 @@ public class GameSQL implements GameDAO {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to clear");
         }
     }
 
@@ -66,7 +66,7 @@ public class GameSQL implements GameDAO {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("unable to create.");
+            throw new DataAccessException("unable to create");
         }
 
     }
@@ -88,7 +88,7 @@ public class GameSQL implements GameDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to getGame");
         }
 
         return chessGame;
@@ -110,7 +110,7 @@ public class GameSQL implements GameDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to list games");
         }
         return temp;
     }
@@ -145,7 +145,7 @@ public class GameSQL implements GameDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to join game");
         }
     }
 

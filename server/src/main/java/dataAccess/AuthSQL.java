@@ -57,7 +57,7 @@ public class AuthSQL implements AuthDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to create auth");
         }
 
         return authToken;
@@ -97,7 +97,7 @@ public class AuthSQL implements AuthDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to get auth");
         }
         return bool;
     }
@@ -116,7 +116,7 @@ public class AuthSQL implements AuthDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to get username");
         }
         return name;
     }
@@ -130,7 +130,7 @@ public class AuthSQL implements AuthDAO{
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to delete auth");
         }
     }
 
@@ -143,7 +143,7 @@ public class AuthSQL implements AuthDAO{
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to clear");
         }
     }
 

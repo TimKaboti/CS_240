@@ -60,7 +60,7 @@ public class UserSQL implements UserDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to get user");
         }
         return false;
     }
@@ -84,7 +84,7 @@ public class UserSQL implements UserDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to get password");
         }
         return null;
     }
@@ -101,7 +101,7 @@ public class UserSQL implements UserDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to get email");
         }
         return null;
     }
@@ -120,7 +120,7 @@ public class UserSQL implements UserDAO{
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to create user");
         }
     }
 
@@ -133,7 +133,7 @@ public class UserSQL implements UserDAO{
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to clear");
         }
     }
 
