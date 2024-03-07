@@ -55,7 +55,7 @@ public class GameSQL implements GameDAO {
     @Override
     public void createGame(Integer ID, GameData data) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO gameData (gameID, gamename, game) VALUES (???)")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO gameData (gameID, gamename, game) VALUES (?, ?, ?)")) {
 
             Gson serializer = new Gson();
             String serializedGame = serializer.toJson(data);
@@ -104,9 +104,8 @@ public class GameSQL implements GameDAO {
                 // Use result.next() to check if there is any result
                 while (result.next()) {
                     GameData data = new GameData(result.getInt("gameID"), result.getString("whiteUsername"), result.getString("blackUsername"), result.getString("gameName"), null);
-                    if (temp != null) {
                         temp.add(data);
-                    }
+
                 }
             }
         } catch (SQLException e) {
@@ -166,7 +165,7 @@ public class GameSQL implements GameDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("unable to confirm isNull.");
         }
     }
 
