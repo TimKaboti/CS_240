@@ -4,9 +4,6 @@ import model.GameData;
 
 import java.sql.*;
 import java.util.List;
-import com.google.gson.Gson;
-import java.io.*;
-import java.net.*;
 
 public class GameSQL implements GameDAO {
 
@@ -54,8 +51,23 @@ public class GameSQL implements GameDAO {
 
 
     @Override
-    public void createGame() throws DataAccessException {
-        new ChessGame();
+    public void createGame(Integer ID, GameData data) throws DataAccessException {
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO gameData (gameID, gamename, game) VALUES (???)")) {
+
+            preparedStatement.setInt(1, ID);
+            preparedStatement.setString(2, data.getGameName());
+            preparedStatement.setBlob(3, (Blob) data.getGame());
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                // Use result.next() to check if there is any result
+                if (result.next()) {
+                    //chessGame = (ChessGame) result.getObject("game");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

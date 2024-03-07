@@ -50,7 +50,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object ClearHandler(Request req, Response res, UserDAO user, GameDAO game, AuthDAO auth) {
+    private Object ClearHandler(Request req, Response res, UserDAO user, GameDAO game, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         ClearRecord clearRecord = serializer.fromJson(req.body(), ClearRecord.class);
         ClearService clearService = new ClearService();
@@ -66,7 +66,7 @@ public class Server {
 //    bad request == bad input ie user already exists
 //
 
-    private Object RegisterHandler(Request req, Response res, UserDAO memory, AuthDAO auth) {
+    private Object RegisterHandler(Request req, Response res, UserDAO memory, AuthDAO auth) throws DataAccessException {
        Gson serializer = new Gson();
        RegisterRecord registerRecord = serializer.fromJson(req.body(), RegisterRecord.class);
        RegistrationService registrationService = new RegistrationService();
@@ -78,7 +78,7 @@ public class Server {
        return new Gson().toJson(result);
     }
 
-    private Object LoginHandler(Request req, Response res, UserDAO userMemory, AuthDAO auth) {
+    private Object LoginHandler(Request req, Response res, UserDAO userMemory, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         LoginRecord loginRecord = serializer.fromJson(req.body(), LoginRecord.class);
         LoginService loginService = new LoginService();
@@ -90,7 +90,7 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object LogoutHandler(Request req, Response res, AuthDAO auth) {
+    private Object LogoutHandler(Request req, Response res, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         LogoutRecord logoutRecord = new LogoutRecord(req.headers("Authorization"));
         LogoutService logoutService = new LogoutService();
@@ -102,7 +102,7 @@ public class Server {
         return new Gson().toJson(result);
     }
 
-    private Object ListGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) {
+    private Object ListGameHandler(Request req, Response res, GameDAO gameMemory, AuthDAO auth) throws DataAccessException {
         Gson serializer = new Gson();
         ListGameRecord listGameRecord = new ListGameRecord (req.headers("Authorization"));
         ListGamesService listGamesService = new ListGamesService();

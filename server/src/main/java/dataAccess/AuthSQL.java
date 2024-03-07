@@ -98,6 +98,25 @@ public class AuthSQL implements AuthDAO{
         return bool;
     }
 
+    public String getUsername(String token) throws DataAccessException {
+        String name = null;
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT username FROM authData WHERE authToken = ?")) {
+
+            preparedStatement.setString(1, token);
+            try (ResultSet result = preparedStatement.executeQuery()) {
+                // Use result.next() to check if there is any result
+                if (result.next()) {
+                    name = result.getNString("username");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return name;
+    }
+
     @Override
     public void deleteAuth(String token) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();

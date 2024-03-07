@@ -5,7 +5,7 @@ import dataAccess.*;
 
 public class ClearService {
 
-    public Object clearServers(UserDAO userServer, AuthDAO authServer, GameDAO gameServer) {
+    public Object clearServers(UserDAO userServer, AuthDAO authServer, GameDAO gameServer) throws DataAccessException {
         ClearResult cleared = new ClearResult(null);
         userServer.clear();
         authServer.clear();

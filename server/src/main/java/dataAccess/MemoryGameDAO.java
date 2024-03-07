@@ -14,9 +14,10 @@ public class MemoryGameDAO implements GameDAO{
         gameData.clear();
     }
     @Override
-    public void createGame() {
+    public void createGame(Integer ID, GameData data) {
         new ChessGame();
     }
+
 
     @Override
     public ChessGame getGame(Integer ID) {

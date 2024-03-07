@@ -53,6 +53,11 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
+    public String getUsername(String token) throws DataAccessException {
+        return null;
+    }
+
+    @Override
     public void deleteAuth(String token) {
         authData.remove(token);
 
