@@ -5,6 +5,7 @@ import model.GameData;
 
 import java.io.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameSQL implements GameDAO {
@@ -96,9 +97,10 @@ public class GameSQL implements GameDAO {
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
-        List<GameData> temp = null;
+        List<GameData> temp  = new ArrayList<>() {
+        };
         try (Connection connection = DatabaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * from = gameData")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM gameData")) {
 
             try (ResultSet result = preparedStatement.executeQuery()) {
                 // Use result.next() to check if there is any result
