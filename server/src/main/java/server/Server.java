@@ -15,7 +15,7 @@ public class Server {
 
     public int run(int desiredPort) {
         try {
-            createDatabase();
+            //createDatabase();
             DatabaseManager.configureDatabase();
         } catch(DataAccessException e) {
             return -1;
