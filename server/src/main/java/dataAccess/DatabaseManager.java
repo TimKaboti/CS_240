@@ -102,8 +102,7 @@ public class DatabaseManager {
                 INDEX(gameID),
                 INDEX(whiteUsername),
                 INDEX(blackUsername),
-                INDEX(gameName),
-                INDEX(`game`)
+                INDEX(gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
             """
     };
