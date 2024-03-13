@@ -29,7 +29,7 @@ public class DrawBoard {
         drawHeader(out);
         drawDivider(out);
         drawReverseHeader(out);
-        drawGrid(out);
+        drawReverseGrid(out);
         drawReverseHeader(out);
 //        drawTicTacToeBoard(out);
 
@@ -66,13 +66,71 @@ public class DrawBoard {
         for(int i = 1; i < 9; i++){
             out.print(SET_BG_COLOR_LIGHT_GREY);
             out.print(" " + i + " ");
-
+            for(int j = 1; j < 9; j++){
+                if(i%2 != 0) {
+                    if (j % 2 != 0) {
+                        out.print(SET_BG_COLOR_WHITE);
+                        /**check the chessboard at this i,j-1 coordinate for a piece
+                         * if coord is null, print EMPTY. if not call a method that uses a switch statement
+                         * and returns the String above that corresponds with the appropriate piece type. **/
+                        out.print(EMPTY);
+                    } else if (j % 2 == 0) {
+                        out.print(SET_BG_COLOR_BLACK);
+                        out.print(EMPTY);
+                    }
+                }
+                if(i%2 == 0){
+                    if(j%2 == 0){
+                        out.print(SET_BG_COLOR_WHITE);
+                        /** do the same piece coordinate comparison here.**/
+                        out.print(EMPTY);
+                    } else if(j%2 != 0){
+                        out.print(SET_BG_COLOR_BLACK);
+                        out.print(EMPTY);
+                    }
+                }
+            }
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(" " + i + " ");
+            out.print(SET_BG_COLOR_WHITE);
             out.print("\n");
 
         }
-        out.print(EMPTY);
-        out.print(SET_BG_COLOR_WHITE);
-        out.print("\n");
+    }
 
+    private static void drawReverseGrid(PrintStream out) {
+        for (int i = 8; i > 0; i--) {
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(" " + i + " ");
+            for (int j = 9; j > 1; j--) {
+                if (i % 2 == 0) {
+                    if (j % 2 != 0) {
+                        out.print(SET_BG_COLOR_WHITE);
+                        /**check the chessboard at this i,j-1 coordinate for a piece
+                         * if coord is null, print EMPTY. if not call a method that uses a switch statement
+                         * and returns the String above that corresponds with the appropriate piece type. **/
+                        out.print(EMPTY);
+                    } else if (j % 2 == 0) {
+                        out.print(SET_BG_COLOR_BLACK);
+                        out.print(EMPTY);
+                    }
+                }
+                if (i % 2 != 0) {
+                    if (j % 2 == 0) {
+                        out.print(SET_BG_COLOR_WHITE);
+                        /** do the same piece coordinate comparison here.**/
+                        out.print(EMPTY);
+                    } else if (j % 2 != 0) {
+                        out.print(SET_BG_COLOR_BLACK);
+                        out.print(EMPTY);
+                    }
+                }
+            }
+            out.print(SET_BG_COLOR_LIGHT_GREY);
+            out.print(" " + i + " ");
+            out.print(SET_BG_COLOR_WHITE);
+            out.print("\n");
+
+        }
     }
 }
