@@ -33,11 +33,11 @@ public class DrawBoard {
         out.print(ERASE_SCREEN);
 
         drawHeader(out);
-        drawGrid(out);
+        drawReverseGrid(out);
         drawHeader(out);
         drawDivider(out);
         drawReverseHeader(out);
-        drawReverseGrid(out);
+        drawGrid(out);
         drawReverseHeader(out);
 //        drawTicTacToeBoard(out);
 
@@ -70,10 +70,15 @@ public class DrawBoard {
         out.print("\n");
     }
 
+    /**
+     * draws the Chessboard from the P.O.V. of the black player.
+     * @param out
+     */
     private static void drawGrid(PrintStream out){
         for(int i = 1; i < 9; i++){
             out.print(SET_BG_COLOR_LIGHT_GREY);
-            out.print(" " + i + " ");
+            int t = sideCounter(i);
+            out.print(" " + t + " ");
             for(int j = 1; j < 9; j++){
                 if(i%2 != 0) {
                     if (j % 2 != 0) {
@@ -158,11 +163,14 @@ public class DrawBoard {
 
         }
     }
-
+    /**
+     * draws the Chessboard from the P.O.V. of the white player.
+     * @param out
+     */
     private static void drawReverseGrid(PrintStream out) {
         for (int i = 8; i > 0; i--) {
             out.print(SET_BG_COLOR_LIGHT_GREY);
-            int t = i - 1;
+            int t = sideCounter(i);
             out.print(" " + t + " ");
             for (int j = 8; j > 0; j--) {
                 if (i % 2 == 0) {
@@ -271,5 +279,36 @@ public class DrawBoard {
                 return type;
         }
         return type;
+    }
+
+    private static int sideCounter(int num){
+        int row = 0;
+        switch (num){
+            case 1:
+                row = 8;
+                return row;
+            case 2:
+                row = 7;
+                return row;
+            case 3:
+                row = 6;
+                return row;
+            case 4:
+                row = 5;
+                return row;
+            case 5:
+                row = 4;
+                return row;
+            case 6:
+                row = 3;
+                return row;
+            case 7:
+                row = 2;
+                return row;
+            case 8:
+                row = 1;
+                return row;
+        }
+        return row;
     }
 }
