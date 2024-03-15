@@ -15,14 +15,14 @@ public class PostLoginUI {
     public void run() {
         Scanner scanner = new Scanner(System.in);
         var input = "";
-        System.out.println("Welcome to the Chess main menu!\n");
+        System.out.println("Welcome to the Chess game options menu!\n");
         System.out.println("\n1. Help\n");
         System.out.println("\n2. Logout\n");
         System.out.println("\n3. Create Game\n");
         System.out.println("\n4. List Games\n");
         System.out.println("\n5. Join Games\n");
         System.out.println("\n6. Join Observer\n");
-        System.out.println("\n\n Enter the number of your desired option.");
+        System.out.println("\n\n Enter the number of your desired action.");
 
 
         while (!input.equals("2")) {
