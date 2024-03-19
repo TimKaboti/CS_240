@@ -51,8 +51,8 @@ public class PreLoginUI {
                 System.out.println("\nEnter your password:");
                 // Here you can proceed with password input and further logic
                 LoginRecord login = new LoginRecord(username, password);
-                try{facade.facadeLogin(login);
-                    postMenu.run(facade);} catch(ResponseException e){
+                try{String token = facade.facadeLogin(login).authToken();
+                    postMenu.run(facade, token);} catch(ResponseException e){
                     System.out.println("\nTrouble logging in with this info. Please try again.");
                 }
 
@@ -96,8 +96,8 @@ public class PreLoginUI {
 
                 // Here you can proceed with password input and further logic
                 RegisterRecord register = new RegisterRecord(username, password, email);
-                try{facade.facadeRegister(register);
-                    postMenu.run(facade);} catch(ResponseException e){
+                try{String token = facade.facadeRegister(register).authToken();
+                    postMenu.run(facade, token);} catch(ResponseException e){
                     System.out.println("\nTrouble registering this account. Please try again.");}
 
             }

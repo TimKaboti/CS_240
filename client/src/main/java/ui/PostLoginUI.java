@@ -14,7 +14,7 @@ public class PostLoginUI {
     private Scanner newScanner;
     public String authToken;
 
-    public void run(ServerFacade server) {
+    public void run(ServerFacade server, String authToken) {
         Scanner scanner = new Scanner(System.in);
         var input = "";
         System.out.println("Welcome to the Chess game options menu!\n");
