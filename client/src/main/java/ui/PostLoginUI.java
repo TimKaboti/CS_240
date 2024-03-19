@@ -121,6 +121,12 @@ public class PostLoginUI {
                 System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
             }
         }
+        if (input.equals("2")){
+            LogoutRecord logout = new LogoutRecord(authToken);
+            try{server.facadeLogout(logout);} catch(ResponseException e){
+                System.out.println("\nFailed to logout. Please try again.");
+            }
+        }
         preMenu.run();
     }
 }
