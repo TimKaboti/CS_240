@@ -14,12 +14,13 @@ public class ClientCommunicator {
     public ClientCommunicator() {
     }
 
-    public <T> T getRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T getRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("GET");
+            http.setRequestProperty("Authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
@@ -31,12 +32,13 @@ public class ClientCommunicator {
         }
     }
 
-    public <T> T putRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T putRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("PUT");
+            http.setRequestProperty("Authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
@@ -48,12 +50,13 @@ public class ClientCommunicator {
         }
     }
 
-    public <T> T deleteRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T deleteRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("DELETE");
+            http.setRequestProperty("Authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
@@ -66,12 +69,13 @@ public class ClientCommunicator {
     }
 
 
-    public <T> T postRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T postRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
             String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("POST");
+            http.setRequestProperty("Authorization", authToken);
             http.setDoOutput(true);
 
             writeBody(request, http);
