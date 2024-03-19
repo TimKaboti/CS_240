@@ -7,7 +7,8 @@ import java.util.Scanner;
 
 public class PreLoginUI {
 
-
+    PostLoginUI postMenu = new PostLoginUI();
+    ServerFacade facade = new ServerFacade("http://localhost:8080");
     private Scanner newScanner;
 
     public void run() {
@@ -50,9 +51,14 @@ public class PreLoginUI {
                 System.out.println("\nEnter your password:");
                 // Here you can proceed with password input and further logic
                 LoginRecord login = new LoginRecord(username, password);
+                try{facade.facadeLogin(login);
+                    postMenu.run(facade);} catch(ResponseException e){
+                    System.out.println("\nTrouble logging in with this info. Please try again.");
+                }
+
             }
 
-            if (line.equals("3")) {
+            else if (line.equals("3")) {
                 System.out.println("\nEnter a username:");
                 Scanner newScanner = new Scanner(System.in);
                 String username;
@@ -90,13 +96,20 @@ public class PreLoginUI {
 
                 // Here you can proceed with password input and further logic
                 RegisterRecord register = new RegisterRecord(username, password, email);
+                try{facade.facadeRegister(register);
+                    postMenu.run(facade);} catch(ResponseException e){
+                    System.out.println("\nTrouble registering this account. Please try again.");}
+
             }
 
-            if(line.equals("1")){
+            else if(line.equals("1")){
                 System.out.println("\nYou are given the following options:");
                 System.out.println("\nIf you want to login to your account and be able to access Chess games, enter '2'.");
                 System.out.println("\nIf you would like to register an account, enter '3'.");
                 System.out.println("\nTo leave this menu, enter '4'.");
+            }
+            else{
+                System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
             }
         }
 

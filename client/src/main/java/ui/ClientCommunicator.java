@@ -11,12 +11,14 @@ import java.net.URI;
 import java.net.URL;
 
 public class ClientCommunicator {
-    public ClientCommunicator() {
+    private final String serverUrl;
+
+    public ClientCommunicator(String url) {
+        this.serverUrl = url;
     }
 
     public <T> T getRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
-            String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("GET");
@@ -34,7 +36,6 @@ public class ClientCommunicator {
 
     public <T> T putRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
-            String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("PUT");
@@ -52,7 +53,6 @@ public class ClientCommunicator {
 
     public <T> T deleteRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
-            String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("DELETE");
@@ -71,7 +71,6 @@ public class ClientCommunicator {
 
     public <T> T postRequest(String path, Object request, Class<T> responseClass, String authToken) throws ResponseException {
         try {
-            String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("POST");

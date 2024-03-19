@@ -4,7 +4,12 @@ import Result.*;
 import model.*;
 
 public class ServerFacade {
-    ClientCommunicator communicator = new ClientCommunicator();
+
+    public ServerFacade(String url) {
+        this.communicator = new ClientCommunicator(url);
+    }
+
+    ClientCommunicator communicator;
 
     String authToken = null;
 

@@ -9,10 +9,12 @@ import static java.lang.Integer.parseInt;
 
 public class PostLoginUI {
 
+    PreLoginUI preMenu = new PreLoginUI();
+
     private Scanner newScanner;
     public String authToken;
 
-    public void run() {
+    public void run(ServerFacade server) {
         Scanner scanner = new Scanner(System.in);
         var input = "";
         System.out.println("Welcome to the Chess game options menu!\n");
@@ -42,17 +44,23 @@ public class PostLoginUI {
                 } while (gameName.isEmpty());
 
                 CreateGameRecord create = new CreateGameRecord(gameName);
+                try{server.facadeCreate(create);} catch (ResponseException e) {
+                    System.out.println("\nTrouble creating game, please try again.");;
+                }
             }
 
-            if (line.equals("4")) {
+            else if (line.equals("4")) {
                 System.out.println("\nList Games.");
                 Scanner newScanner = new Scanner(System.in);
                 // Keep asking for username until it's not empty or just whitespace
 
                 // Here you can proceed with password input and further logic
-                ListGameRecord register = new ListGameRecord(authToken);
+                ListGameRecord list = new ListGameRecord(authToken);
+                try{server.facadeList(list);} catch (ResponseException e) {
+                    System.out.println("\nTrouble listing games, please try again.");;
+                }
             }
-            if (line.equals("5")) {
+            else if (line.equals("5")) {
                 System.out.println("\nEnter your color:");
                 Scanner newScanner = new Scanner(System.in);
                 String color;
@@ -77,9 +85,12 @@ public class PostLoginUI {
                 } while (gameID.isEmpty());
                 int id = parseInt(gameID);
                 JoinGameRecord join = new JoinGameRecord(color, id);
+                try{server.facadeJoin(join);} catch (ResponseException e) {
+                    System.out.println("\nTrouble joining game, please try again.");;
+                }
             }
 
-            if (line.equals("5")) {
+           else if (line.equals("6")) {
                 System.out.println("\nEnter the game ID:");
                 Scanner newScanner = new Scanner(System.in);
                 String gameID;
@@ -93,10 +104,12 @@ public class PostLoginUI {
                 } while (gameID.isEmpty());
                 int id = parseInt(gameID);
                 JoinGameRecord observe = new JoinGameRecord(null, id);
-
+                try{server.facadeJoin(observe);} catch (ResponseException e) {
+                    System.out.println("\nTrouble observing game, please try again.");;
+                }
             }
 
-            if(line.equals("1")){
+            else if(line.equals("1")){
                 System.out.println("\nYou are given the following options:");
                 System.out.println("\nIf you want to logout and return to the main menu, enter '2'.");
                 System.out.println("\nIf you would like to create a game, enter '3'.");
@@ -104,7 +117,10 @@ public class PostLoginUI {
                 System.out.println("\nIf you would like to join a game, enter '5'.");
                 System.out.println("\nIf you would like to watch a game, but not play, enter '6'.");
             }
+            else{
+                System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
+            }
         }
-
+        preMenu.run();
     }
 }
