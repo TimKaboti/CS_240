@@ -11,14 +11,67 @@ import java.net.URI;
 import java.net.URL;
 
 public class ClientCommunicator {
+    public ClientCommunicator() {
+    }
 
-
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    public <T> T getRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             String serverUrl = null;
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod(method);
+            http.setRequestMethod("GET");
+            http.setDoOutput(true);
+
+            writeBody(request, http);
+            http.connect();
+            throwIfNotSuccessful(http);
+            return readBody(http, responseClass);
+        } catch (Exception ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public <T> T putRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+        try {
+            String serverUrl = null;
+            URL url = (new URI(serverUrl + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("PUT");
+            http.setDoOutput(true);
+
+            writeBody(request, http);
+            http.connect();
+            throwIfNotSuccessful(http);
+            return readBody(http, responseClass);
+        } catch (Exception ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+    public <T> T deleteRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+        try {
+            String serverUrl = null;
+            URL url = (new URI(serverUrl + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("DELETE");
+            http.setDoOutput(true);
+
+            writeBody(request, http);
+            http.connect();
+            throwIfNotSuccessful(http);
+            return readBody(http, responseClass);
+        } catch (Exception ex) {
+            throw new ResponseException(500, ex.getMessage());
+        }
+    }
+
+
+    public <T> T postRequest(String path, Object request, Class<T> responseClass) throws ResponseException {
+        try {
+            String serverUrl = null;
+            URL url = (new URI(serverUrl + path)).toURL();
+            HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            http.setRequestMethod("POST");
             http.setDoOutput(true);
 
             writeBody(request, http);
