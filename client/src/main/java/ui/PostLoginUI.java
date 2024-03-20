@@ -44,13 +44,16 @@ public class PostLoginUI {
                 } while (gameName.isEmpty());
 
                 CreateGameRecord create = new CreateGameRecord(gameName);
-                try{server.facadeCreate(create);} catch (ResponseException e) {
+                try{int id = server.facadeCreate(create).gameID();
+                    String num = String.valueOf(id);
+                    System.out.println("Game created with ID: "+ num );}
+                catch (ResponseException e) {
                     System.out.println("\nTrouble creating game, please try again.");;
                 }
             }
 
             else if (line.equals("4")) {
-                System.out.println("\nList Games.");
+                System.out.println("\nGames:");
                 Scanner newScanner = new Scanner(System.in);
                 // Keep asking for username until it's not empty or just whitespace
 
