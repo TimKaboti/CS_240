@@ -15,32 +15,32 @@ public class JoinGameService {
         try {
             username = authData.getUsername(authToken);
         } catch (DataAccessException e) {
-            return new JoinGameResult("Error: join service: check authToken failed");
+            return new JoinGameResult(null,"Error: join service: check authToken failed");
         }
 
         try {
             if (gameMemory.isNull(record.gameID())) {
                 if (record.playerColor() == null) {
-                    joinResult = new JoinGameResult(null);
+                    joinResult = new JoinGameResult(gameMemory.getGame(record.gameID()).getBoard(),null);
                 } else if (gameMemory.taken(record.playerColor(), record.gameID())) {
-                    joinResult = new JoinGameResult("Error: already taken");
+                    joinResult = new JoinGameResult(null,"Error: already taken");
                 } else {
                     try {
                         gameMemory.joinGame(username, record.playerColor(), record.gameID());
-                        joinResult = new JoinGameResult(null);
+                        joinResult = new JoinGameResult(gameMemory.getGame(record.gameID()).getBoard(),null);
                     } catch (DataAccessException e) {
-                        joinResult = new JoinGameResult("Error: join game: join with specified color: failed");
+                        joinResult = new JoinGameResult(null,"Error: join game: join with specified color: failed");
                     }
                 }
             } else {
-                joinResult = new JoinGameResult("Error: bad request");
+                joinResult = new JoinGameResult(null,"Error: bad request");
             }
 
             if (record.gameID() == null) {
-                joinResult = new JoinGameResult("Error: bad request");
+                joinResult = new JoinGameResult(null, "Error: bad request");
             }
         } catch (DataAccessException e) {
-            joinResult = new JoinGameResult("Error: join service: join game: failed");
+            joinResult = new JoinGameResult(null,"Error: join service: join game: failed");
         }
 
         return joinResult;

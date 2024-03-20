@@ -1,6 +1,5 @@
 package ui;
 
-import Result.CreateGameResult;
 import com.google.gson.Gson;
 import model.*;
 
@@ -86,7 +85,10 @@ public class PostLoginUI {
                 } while (gameID.isEmpty());
                 int id = parseInt(gameID);
                 JoinGameRecord join = new JoinGameRecord(color, id);
-                try{server.facadeJoin(join);} catch (ResponseException e) {
+                try{
+                    DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
+                board.draw();}
+                catch (ResponseException e) {
                     System.out.println("\nTrouble joining game, please try again.");;
                 }
             }
@@ -104,7 +106,9 @@ public class PostLoginUI {
                 } while (gameID.isEmpty());
                 int id = parseInt(gameID);
                 JoinGameRecord observe = new JoinGameRecord(null, id);
-                try{server.facadeJoin(observe);} catch (ResponseException e) {
+                try{DrawBoard board = new DrawBoard(server.facadeJoin(observe).board());
+                board.draw();}
+                catch (ResponseException e) {
                     System.out.println("\nTrouble observing game, please try again.");;
                 }
             }

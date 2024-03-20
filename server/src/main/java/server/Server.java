@@ -135,7 +135,7 @@ public class Server {
         if (auth.getAuth(authToken)) {
             result = joinGameService.joinGame(joinGameRecord, gameMemory,  authToken, auth);
         }
-        else { result = new JoinGameResult("Error: unauthorized");}
+        else { result = new JoinGameResult(null,"Error: unauthorized");}
         String message = result.toString();
         if("Error: bad request".equals(message)) { res.status(400);} // check game id
         else if ("Error: unauthorized".equals(message)) { res.status(401);}

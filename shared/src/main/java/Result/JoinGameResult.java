@@ -1,8 +1,11 @@
 package Result;
 
-public record JoinGameResult(String message) {
-    public JoinGameResult(String message) {
+import chess.ChessBoard;
+
+public record JoinGameResult(ChessBoard board, String message) {
+    public JoinGameResult(ChessBoard board, String message) {
         this.message = message;
+        this.board = board;
     }
 
     public String toString(){

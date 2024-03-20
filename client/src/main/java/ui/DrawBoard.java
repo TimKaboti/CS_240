@@ -6,13 +6,18 @@ import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 import static ui.EscapeSequences.*;
 
 public class DrawBoard {
+
+    private static ChessBoard board = null;
+
+    public DrawBoard(ChessBoard board) {
+        this.board = board;
+    }
 
     private static final int BOARD_HEIGHT = 8;
     private static final int BOARD_WIDTH = 8;
@@ -25,9 +30,8 @@ public class DrawBoard {
     private static final String R = " R ";
     private static final String P = " P ";
 
-    public static ChessBoard board = new ChessBoard();
 
-    public static void main(String[] args) {
+    public static void draw() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board.resetBoard();
         out.print(ERASE_SCREEN);
@@ -35,11 +39,12 @@ public class DrawBoard {
         drawHeader(out);
         drawReverseGrid(out);
         drawHeader(out);
+
         drawDivider(out);
+
         drawReverseHeader(out);
         drawGrid(out);
         drawReverseHeader(out);
-//        drawTicTacToeBoard(out);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_BLACK);
