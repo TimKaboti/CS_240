@@ -17,7 +17,7 @@ public class LoginService {
             if (userMemory.getUser(username) && userMemory.getPassword(username).equals(password)) {
                 try{String token = auth.CreateAuth(username);
                 log = new LoginResult(username, token, null);}
-                catch (DataAccessException e) { log = new LoginResult(null,null, "Error: description");}
+                catch (DataAccessException e) { log = new LoginResult(null,null, "Error: login service failed");}
             }
         }
         return log;

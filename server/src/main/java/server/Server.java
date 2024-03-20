@@ -50,7 +50,7 @@ public class Server {
         ClearService clearService = new ClearService();
         clearService.clearServers(user, auth, game);
         String message = clearService.toString();
-        if("Error: description".equals(message)) { res.status(500);}
+        if("Error: clear andler failed".equals(message)) { res.status(500);}
         else { res.status(200);}
         return new Gson().toJson(clearService);
     }
@@ -79,7 +79,7 @@ public class Server {
         var result = loginService.login(loginRecord, userMemory, auth);
         String message = result.toString();
         if("Error: unauthorized".equals(message)) { res.status(401);}
-        else if ("Error: description".equals(message)) { res.status(500);}
+        else if ("Error: login handler failed".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -91,7 +91,7 @@ public class Server {
         var result = logoutService.logout(logoutRecord, auth);
         String message = result.toString();
         if("Error: unauthorized".equals(message)) { res.status(401);}
-        else if ("Error: description".equals(message)) { res.status(500);}
+        else if ("Error: logout handler failed".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -103,7 +103,7 @@ public class Server {
         var result = listGamesService.gameList(listGameRecord, gameMemory, auth);
         String message = result.toString();
         if("Error: unauthorized".equals(message)) { res.status(401);}
-        else if ("Error: description".equals(message)) { res.status(500);}
+        else if ("Error: list handler failed".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -121,7 +121,7 @@ public class Server {
         String message = result.toString();
         if("Error: bad request".equals(message)) { res.status(400);} // user does not provide gamename
         else if ("Error: unauthorized".equals(message)) { res.status(401);}
-        else if ("Error: desription".equals(message)) { res.status(500);}
+        else if ("Error: create handler failed".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }
@@ -140,7 +140,7 @@ public class Server {
         if("Error: bad request".equals(message)) { res.status(400);} // check game id
         else if ("Error: unauthorized".equals(message)) { res.status(401);}
         else if ("Error: already taken".equals(message)) { res.status(403);} //color already taken
-        else if ("Error: desription".equals(message)) { res.status(500);}
+        else if ("Error: join handler failed".equals(message)) { res.status(500);}
         else{ res.status(200);}
         return new Gson().toJson(result);
     }

@@ -1,8 +1,10 @@
 package ui;
 
 import Result.CreateGameResult;
+import com.google.gson.Gson;
 import model.*;
 
+import java.util.Map;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
@@ -17,20 +19,19 @@ public class PostLoginUI {
     public void run(ServerFacade server, String authToken) {
         Scanner scanner = new Scanner(System.in);
         var input = "";
-        System.out.println("Welcome to the Chess game options menu!\n");
-        System.out.println("\n1. Help\n");
-        System.out.println("\n2. Logout\n");
-        System.out.println("\n3. Create Game\n");
-        System.out.println("\n4. List Games\n");
-        System.out.println("\n5. Join Games\n");
-        System.out.println("\n6. Join Observer\n");
-        System.out.println("\n\n Enter the number of your desired action.");
+        System.out.println("Welcome to the Chess game options menu!");
+        System.out.println("1. Help");
+        System.out.println("2. Logout");
+        System.out.println("3. Create Game");
+        System.out.println("4. List Games");
+        System.out.println("5. Join Games");
+        System.out.println("6. Join Observer");
+        System.out.println("\n Enter the number of your desired action.");
 
 
         while (!input.equals("2")) {
             String line = scanner.nextLine();
             if (line.equals("3")) {
-                System.out.println("\nEnter Game name:");
                 Scanner newScanner = new Scanner(System.in);
                 String gameName;
                 String password;
@@ -56,12 +57,13 @@ public class PostLoginUI {
 
                 // Here you can proceed with password input and further logic
                 ListGameRecord list = new ListGameRecord(authToken);
-                try{server.facadeList(list);} catch (ResponseException e) {
+                try{
+                    System.out.println(server.facadeList(list).toString());}
+                catch (ResponseException e) {
                     System.out.println("\nTrouble listing games, please try again.");;
                 }
             }
             else if (line.equals("5")) {
-                System.out.println("\nEnter your color:");
                 Scanner newScanner = new Scanner(System.in);
                 String color;
                 String gameID;
@@ -74,7 +76,6 @@ public class PostLoginUI {
                     }
                 } while (color.isEmpty());
 
-                System.out.println("\nEnter the game ID:");
 
                 do {
                     System.out.println("\nEnter the game ID:");
@@ -91,7 +92,6 @@ public class PostLoginUI {
             }
 
            else if (line.equals("6")) {
-                System.out.println("\nEnter the game ID:");
                 Scanner newScanner = new Scanner(System.in);
                 String gameID;
                 // Keep asking for username until it's not empty or just whitespace
@@ -128,5 +128,10 @@ public class PostLoginUI {
             }
         }
         preMenu.run();
+    }
+    public String toString(String result){
+        Gson serializer = new Gson();
+        Map map = serializer.fromJson(result, Map.class);
+        return map.toString();
     }
 }

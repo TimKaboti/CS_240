@@ -19,7 +19,7 @@ public class RegistrationService {
                try{ userData.createUser(tempUser);
                 String token = authData.CreateAuth(user.username());
                 result = new RegisterResult(user.username(), token, null);}
-               catch (DataAccessException e) { result = new RegisterResult(null, null, "Error: description");}
+               catch (DataAccessException e) { result = new RegisterResult(null, null, "Error: register service failed");}
             }
         } else {
             result = new RegisterResult(null, null, "Error: already taken");

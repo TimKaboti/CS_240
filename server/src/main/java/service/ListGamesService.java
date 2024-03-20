@@ -18,7 +18,7 @@ public class ListGamesService {
         if (auth.getAuth(key)){
             gameList = games.listGames();
             listResult = new ListGamesResult( gameList, null);
-        } else { listResult = new ListGamesResult(gameList , "Error: unauthorized" );}
+        } else { listResult = new ListGamesResult(gameList , "Error: list service failed" );}
 
             return listResult;
     }

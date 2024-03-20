@@ -15,7 +15,7 @@ public class JoinGameService {
         try {
             username = authData.getUsername(authToken);
         } catch (DataAccessException e) {
-            return new JoinGameResult("Error: description");
+            return new JoinGameResult("Error: join service: check authToken failed");
         }
 
         try {
@@ -29,7 +29,7 @@ public class JoinGameService {
                         gameMemory.joinGame(username, record.playerColor(), record.gameID());
                         joinResult = new JoinGameResult(null);
                     } catch (DataAccessException e) {
-                        joinResult = new JoinGameResult("Error: description");
+                        joinResult = new JoinGameResult("Error: join game: join with specified color: failed");
                     }
                 }
             } else {
@@ -40,7 +40,7 @@ public class JoinGameService {
                 joinResult = new JoinGameResult("Error: bad request");
             }
         } catch (DataAccessException e) {
-            joinResult = new JoinGameResult("Error: description");
+            joinResult = new JoinGameResult("Error: join service: join game: failed");
         }
 
         return joinResult;

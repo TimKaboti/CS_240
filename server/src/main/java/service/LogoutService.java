@@ -14,7 +14,7 @@ public class LogoutService {
         if (auth.getAuth(key)){
             try{auth.deleteAuth(key);}
             catch (DataAccessException e) { out = new LogoutResult("Error: description");}
-        } else {out = new LogoutResult("Error: unauthorized");
+        } else {out = new LogoutResult("Error: logout service failed");
         }
         return out;
     }

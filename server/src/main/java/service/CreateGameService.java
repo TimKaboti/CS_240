@@ -19,7 +19,7 @@ public class CreateGameService {
         if(games.getGame(gameID) == null) {
             try{games.createGame(gameID, game);
                 newGameResult = new CreateGameResult(gameID, null);
-            } catch(DataAccessException e) {newGameResult = new CreateGameResult(null, "Error: description");}
+            } catch(DataAccessException e) {newGameResult = new CreateGameResult(null, "Error: create service failed");}
         } else { newGameResult = new CreateGameResult(null, "Error: bad request");}
         return newGameResult;
     }
