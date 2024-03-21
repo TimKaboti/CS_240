@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.*;
 
 import java.io.Reader;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -17,20 +18,14 @@ public class PostLoginUI {
 
     public String authToken;
 
-    public void run(ServerFacade server, String authToken) {
+    public void run(ServerFacade server, String authToken) throws ResponseException {
         Scanner scanner = new Scanner(System.in);
         var input = "";
         System.out.println("Welcome to the Chess game options menu!");
-        System.out.println("1. Help");
-        System.out.println("2. Logout");
-        System.out.println("3. Create Game");
-        System.out.println("4. List Games");
-        System.out.println("5. Join Games");
-        System.out.println("6. Join Observer");
-        System.out.println("\n Enter the number of your desired action.");
+        options();
 
 
-        while (!input.equals("2")) {
+        while (true) {
             String line = scanner.nextLine();
             if (line.equals("3")) {
                 Scanner newScanner = new Scanner(System.in);
@@ -48,7 +43,9 @@ public class PostLoginUI {
                 CreateGameRecord create = new CreateGameRecord(gameName);
                 try{int id = server.facadeCreate(create).gameID();
                     String num = String.valueOf(id);
-                    System.out.println("Game created with ID: "+ num );}
+                    System.out.println("Game successfully created");
+                    options();
+                }
                 catch (ResponseException e) {
                     System.out.println("\nTrouble creating game, please try again.");
                 }
@@ -59,11 +56,14 @@ public class PostLoginUI {
                 Scanner newScanner = new Scanner(System.in);
                 try{
                     ListGamesResult result = (server.facadeList());
-                    System.out.println(tosTring(result));}
+                    System.out.println(listToString(result.games()));
+                    options();
+                }
                 catch (ResponseException e) {
                     System.out.println("\nTrouble listing games, please try again.");;
                 }
             }
+
             else if (line.equals("5")) {
                 Scanner newScanner = new Scanner(System.in);
                 String color;
@@ -72,24 +72,36 @@ public class PostLoginUI {
                 do {
                     System.out.println("\nEnter your color:");
                     color = newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-                    if (color.isEmpty()) {
-                        System.out.println("\nPlayer color field cannot be blank. Please enter your color.");
+                    if (color.isEmpty() || color.matches("\\d+")) {
+                        System.out.println("\nPlayer color field cannot be blank or a number. Please enter your color.");
                     }
                 } while (color.isEmpty());
 
 
                 do {
-                    System.out.println("\nEnter the game ID:");
+                    System.out.println("\nEnter the game ID#:");
                     gameID = newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-                    if (gameID.isEmpty()) {
-                        System.out.println("\nGame ID field cannot be blank. Please enter a game ID.");
+                    if (gameID.isEmpty() || color.matches("[a-zA-Z]+")) {
+                        System.out.println("\nGame ID field cannot be blank or a string. Please enter a game ID#.");
                     }
                 } while (gameID.isEmpty());
-                int id = parseInt(gameID);
+                ListGamesResult result = (server.facadeList());
+                List<GameData> games = result.games();
+                int index = parseInt(gameID);
+                GameData game = games.get(index-1);
+                int id = game.getGameID();
                 JoinGameRecord join = new JoinGameRecord(color, id);
-                try{
+                try {
+
                     DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
-                board.draw();}
+                    if (color.equals("black")) {
+                        board.drawBlackPlayer();
+                        System.out.println("\n");
+                    } else {
+                        board.drawWhitePlayer();
+                        System.out.println("\n");
+                    }
+                }
                 catch (ResponseException e) {
                     System.out.println("\nTrouble joining game, please try again.");;
                 }
@@ -100,44 +112,68 @@ public class PostLoginUI {
                 String gameID;
                 // Keep asking for username until it's not empty or just whitespace
                 do {
-                    System.out.println("\nEnter the game ID:");
+                    System.out.println("\nEnter the game ID#:");
                     gameID = newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-                    if (gameID.isEmpty()) {
-                        System.out.println("\nGame ID field cannot be blank. Please enter a valid game ID.");
+                    if (gameID.isEmpty() || gameID.matches("[a-zA-Z]+")) {
+                        System.out.println("\nGame ID field cannot be blank or a string. Please enter a valid game ID#.");
                     }
                 } while (gameID.isEmpty());
-                int id = parseInt(gameID);
+                ListGamesResult result = (server.facadeList());
+                List<GameData> games = result.games();
+                int index = parseInt(gameID);
+                GameData game = games.get(index-1);
+                int id = game.getGameID();
                 JoinGameRecord observe = new JoinGameRecord(null, id);
                 try{DrawBoard board = new DrawBoard(server.facadeJoin(observe).board());
                 board.draw();}
                 catch (ResponseException e) {
                     System.out.println("\nTrouble observing game, please try again.");;
                 }
+                System.out.println("\n");
             }
 
             else if(line.equals("1")){
-                System.out.println("\nYou are given the following options:");
-                System.out.println("\nIf you want to logout and return to the main menu, enter '2'.");
-                System.out.println("\nIf you would like to create a game, enter '3'.");
-                System.out.println("\nIf you would like a list of all games, enter '4'.");
-                System.out.println("\nIf you would like to join a game, enter '5'.");
-                System.out.println("\nIf you would like to watch a game, but not play, enter '6'.");
+                System.out.println("You are given the following options:");
+                System.out.println("If you want to logout and return to the main menu, enter '2'.");
+                System.out.println("If you would like to create a game, enter '3'.");
+                System.out.println("If you would like a list of all games, enter '4'.");
+                System.out.println("If you would like to join a game, enter '5'. You will be asked for a game ID.");
+                System.out.println("To find the game ID, go to 'List Games'.");
+                System.out.println("If you would like to watch a game, but not play, enter '6'.");
+                System.out.println("\n");
+                options();
             }
-            else{
+            else if(line.equals("2")){
+                break;
+            }
+            else {
                 System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
             }
         }
-        if (input.equals("2")){
-            LogoutRecord logout = new LogoutRecord(authToken);
-            try{server.facadeLogout(logout);} catch(ResponseException e){
-                System.out.println("\nFailed to logout. Please try again.");
-            }
+
+        LogoutRecord logout = new LogoutRecord(authToken);
+        try{server.facadeLogout(logout);} catch(ResponseException e){
+            System.out.println("\nFailed to logout. Please try again.");
         }
         preMenu.run();
     }
-    public String tosTring(ListGamesResult result){
-        Gson serializer = new Gson();
-        Map map = serializer.fromJson((Reader) result.games(), Map.class);
-        return map.toString();
+    public String listToString(List<GameData> result){
+        String games = "";
+        for(int i = 0; i < result.size(); i++){
+            String num = Integer.toString(i+1);
+            games += (num + ". " + result.get(i).getGameName() + "\n");
+        }
+        return games;
     }
+
+    public void options(){
+        System.out.println("1. Help");
+        System.out.println("2. Logout");
+        System.out.println("3. Create Game");
+        System.out.println("4. List Games");
+        System.out.println("5. Join Games");
+        System.out.println("6. Join Observer");
+        System.out.println("\n Enter the number of your desired action.");
+    }
+
 }

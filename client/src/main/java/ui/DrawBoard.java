@@ -31,6 +31,8 @@ public class DrawBoard {
     private static final String P = " P ";
 
 
+
+
     public static void draw() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board.resetBoard();
@@ -46,8 +48,9 @@ public class DrawBoard {
         drawGrid(out);
         drawReverseHeader(out);
 
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(RESET_BG_COLOR);
+        out.print(SET_TEXT_COLOR_WHITE);
+
     }
 
     private static void drawHeader(PrintStream out) {
@@ -259,6 +262,31 @@ public class DrawBoard {
             out.print("\n");
 
         }
+    }
+
+    public static void drawWhitePlayer() {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        board.resetBoard();
+        out.print(ERASE_SCREEN);
+        drawHeader(out);
+        drawReverseGrid(out);
+        drawHeader(out);
+
+        out.print(RESET_BG_COLOR);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+
+    public static void drawBlackPlayer(){
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        board.resetBoard();
+        out.print(ERASE_SCREEN);
+        drawReverseHeader(out);
+        drawGrid(out);
+        drawReverseHeader(out);
+
+        out.print(RESET_BG_COLOR);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static String checkPiece(ChessPiece piece){
