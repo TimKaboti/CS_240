@@ -13,8 +13,8 @@ public class LogoutService {
         String key = token.authToken();
         if (auth.getAuth(key)){
             try{auth.deleteAuth(key);}
-            catch (DataAccessException e) { out = new LogoutResult("Error: description");}
-        } else {out = new LogoutResult("Error: logout service failed");
+            catch (DataAccessException e) { out = new LogoutResult("Error: logout service failed");}
+        } else {out = new LogoutResult("Error: unauthorized");
         }
         return out;
     }

@@ -50,12 +50,12 @@ public class Server {
         ClearService clearService = new ClearService();
         clearService.clearServers(user, auth, game);
         String message = clearService.toString();
-        if("Error: clear andler failed".equals(message)) { res.status(500);}
+        if("Error: clear service failed".equals(message)) { res.status(500);}
         else { res.status(200);}
         return new Gson().toJson(clearService);
     }
 
-//    res.setstatus(400)
+//    res.status(400)
 //    unauthorized == bad authToken
 //    bad request == bad input ie user already exists
 //

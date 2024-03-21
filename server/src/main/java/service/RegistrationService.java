@@ -1,6 +1,5 @@
 package service;
 
-import Result.ClearResult;
 import Result.RegisterResult;
 import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;

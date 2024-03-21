@@ -11,16 +11,23 @@ import model.ListGameRecord;
 import java.util.List;
 
 public class ListGamesService {
-    public Object gameList (ListGameRecord token, GameDAO games, AuthDAO auth) throws DataAccessException {
+    public Object gameList(ListGameRecord token, GameDAO games, AuthDAO auth) throws DataAccessException {
         List<GameData> gameList = null;
-        ListGamesResult listResult = new ListGamesResult(gameList , "Error: description" );
+        ListGamesResult listResult;
         String key = token.authToken();
-        if (auth.getAuth(key)){
-            gameList = games.listGames();
-            listResult = new ListGamesResult( gameList, null);
-        } else { listResult = new ListGamesResult(gameList , "Error: list service failed" );}
 
-            return listResult;
+        try {
+            if (!auth.getAuth(key)) { // Check if authentication fails
+                listResult = new ListGamesResult(null, "Error: unauthorized");
+            } else {
+                gameList = games.listGames();
+                listResult = new ListGamesResult(gameList, null);
+            }
+        } catch (DataAccessException e) {
+            listResult = new ListGamesResult(null, "Error: unauthorized");
+        }
+
+        return listResult;
     }
 }
 

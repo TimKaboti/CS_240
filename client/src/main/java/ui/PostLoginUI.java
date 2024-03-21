@@ -12,7 +12,7 @@ public class PostLoginUI {
 
     PreLoginUI preMenu = new PreLoginUI();
 
-    private Scanner newScanner;
+
     public String authToken;
 
     public void run(ServerFacade server, String authToken) {
@@ -48,7 +48,7 @@ public class PostLoginUI {
                     String num = String.valueOf(id);
                     System.out.println("Game created with ID: "+ num );}
                 catch (ResponseException e) {
-                    System.out.println("\nTrouble creating game, please try again.");;
+                    System.out.println("\nTrouble creating game, please try again.");
                 }
             }
 
