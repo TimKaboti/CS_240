@@ -13,4 +13,5 @@ public record ListGamesResult(List<GameData> games, String message) {
     public String toString(){
         return this.message;
     }
+
 }

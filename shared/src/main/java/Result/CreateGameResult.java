@@ -8,4 +8,5 @@ public record CreateGameResult(Integer gameID, String message) {
     public String toString(){
         return this.message;
     }
+
 }

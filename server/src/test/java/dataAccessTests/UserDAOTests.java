@@ -1,4 +1,5 @@
 package dataAccessTests;
+import Result.ClearResult;
 import dataAccess.*;
 import service.*;
 
@@ -20,8 +21,8 @@ public class UserDAOTests {
 
         // Positive test case: All clear operations succeed
         try {
-            Object result = clearService.clearServers(userServer, authServer, gameServer);
-            assertNull( result);
+            ClearResult result = clearService.clearServers(userServer, authServer, gameServer);
+            assertNull(result.message());
         } catch (Exception e) {
             fail("Unexpected exception: " + e.getMessage());
         }

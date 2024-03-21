@@ -39,7 +39,6 @@ public class ServerFacade {
         LoginResult loginResult = communicator.postRequest("/session", record, result, null);
         authToken = loginResult.authToken();
         return loginResult;
-
     } //post
 
     public LogoutResult facadeLogout(LogoutRecord record) throws ResponseException {

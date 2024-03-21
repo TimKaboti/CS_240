@@ -11,4 +11,5 @@ public record JoinGameResult(ChessBoard board, String message) {
     public String toString(){
         return this.message;
     }
+
 }
