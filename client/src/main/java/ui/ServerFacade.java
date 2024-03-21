@@ -14,7 +14,7 @@ public class ServerFacade {
     String authToken = null;
 
 
-    private ClearResult facadeClear(ClearRecord record) throws ResponseException {
+    public ClearResult facadeClear(ClearRecord record) throws ResponseException {
         Class<ClearResult> result = ClearResult.class; // Get the class type
         return communicator.deleteRequest("/db", record, result, null);
     }
@@ -29,9 +29,9 @@ public class ServerFacade {
         return communicator.putRequest("/game", record, result, authToken);
     } //put
 
-    public ListGamesResult facadeList(ListGameRecord record) throws ResponseException {
+    public ListGamesResult facadeList() throws ResponseException {
         Class<ListGamesResult> result = ListGamesResult.class; // Get the class type
-        return communicator.getRequest("/game", record, result, authToken);
+        return communicator.getRequest("/game",null, result, authToken);
     } //get
 
     public LoginResult facadeLogin(LoginRecord record) throws ResponseException {

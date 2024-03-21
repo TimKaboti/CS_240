@@ -1,8 +1,10 @@
 package ui;
 
+import Result.ListGamesResult;
 import com.google.gson.Gson;
 import model.*;
 
+import java.io.Reader;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -55,12 +57,9 @@ public class PostLoginUI {
             else if (line.equals("4")) {
                 System.out.println("\nGames:");
                 Scanner newScanner = new Scanner(System.in);
-                // Keep asking for username until it's not empty or just whitespace
-
-                // Here you can proceed with password input and further logic
-                ListGameRecord list = new ListGameRecord(authToken);
                 try{
-                    System.out.println(server.facadeList(list).toString());}
+                    ListGamesResult result = (server.facadeList());
+                    System.out.println(tosTring(result));}
                 catch (ResponseException e) {
                     System.out.println("\nTrouble listing games, please try again.");;
                 }
@@ -136,9 +135,9 @@ public class PostLoginUI {
         }
         preMenu.run();
     }
-    public String toString(String result){
+    public String tosTring(ListGamesResult result){
         Gson serializer = new Gson();
-        Map map = serializer.fromJson(result, Map.class);
+        Map map = serializer.fromJson((Reader) result.games(), Map.class);
         return map.toString();
     }
 }

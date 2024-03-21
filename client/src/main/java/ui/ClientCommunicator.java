@@ -23,7 +23,7 @@ public class ClientCommunicator {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod("GET");
             http.setRequestProperty("Authorization", authToken);
-            http.setDoOutput(true);
+            http.setDoOutput(false);
 
             writeBody(request, http);
             http.connect();

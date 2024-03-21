@@ -38,149 +38,148 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeClearSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         ClearRecord record = new ClearRecord();
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        ClearService clearService = new ClearService();
-        ClearResult result = clearService.clearServers(UserDAO,AuthDAO,GameDAO);
+        ClearResult result = facade.facadeClear(record);
 
         // Verify the result
         assertNotNull(result);
+        assertNotEquals(result.message(), "Error: clear service failed");
 
         // Negative test case: trying to clear with invalid authentication token
-        assertThrows(ResponseException.class, () -> clearService.clearServers(UserDAO,AuthDAO,GameDAO));
+        ClearService clearService = null;
+        assertThrows(ResponseException.class, () -> facade.facadeClear(record));
     }
 
     @Test
     public void testFacadeCreateSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         CreateGameRecord record = new CreateGameRecord("gameName");
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        CreateGameService createGameService = new CreateGameService();
-        CreateGameResult result = (CreateGameResult) createGameService.newGame(record,GameDAO);
+        CreateGameResult result = facade.facadeCreate(record);
 
         // Verify the result
         assertNotNull(result);
+        assertNotEquals(result.message(), "Error: unauthorized");
+        assertNotEquals(result.message(), "Error: create handler failed");
+        assertNotEquals(result.message(), "Error: bad request");
+        assertNotNull(facade.facadeList(), "authToken invalid after login");
+
 
         // Negative test case: trying to create a game with invalid authentication token
-        assertThrows(ResponseException.class, () -> createGameService.newGame(record,GameDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeCreate(record));
     }
 
     @Test
     public void testFacadeJoinSuccess() throws ResponseException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         JoinGameRecord record = new JoinGameRecord("white",1234);
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        JoinGameService joinGameService = new JoinGameService();
-        JoinGameResult result = joinGameService.joinGame(record,GameDAO, "AuthToken",AuthDAO);
+        JoinGameResult result = facade.facadeJoin(record);
 
         // Verify the result
         assertNotNull(result);
+        assertNotEquals(result.message(), "Error: unauthorized");
+        assertNotEquals(result.message(), "Error: join handler failed");
+        assertNotEquals(result.message(), "Error: bad request");
+        assertNotEquals(result.message(), "Error: already taken");
+        assertNotNull(facade.facadeList(), "authToken invalid after login");
+
 
         // Negative test case: trying to join a game with invalid authentication token
-        assertThrows(ResponseException.class, () -> joinGameService.joinGame(record,GameDAO,"AuthToken",AuthDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeJoin(record));
     }
 
     @Test
     public void testFacadeListSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        ListGameRecord record = new ListGameRecord("AuthToken");
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+        String token = "AuthToken";
+        JoinGameRecord joinRecord = new JoinGameRecord("white",1234);
+
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        ListGamesService listGamesService = new ListGamesService();
-        ListGamesResult result = (ListGamesResult) listGamesService.gameList(record,GameDAO,AuthDAO);
+        ListGamesResult result = facade.facadeList();
 
         // Verify the result
         assertNotNull(result);
+        assertNotEquals(result.message(), "Error: unauthorized");
+        assertNotEquals(result.message(), "Error: list handler failed");
+        assertNotNull(facade.facadeJoin(joinRecord), "authToken invalid after login");
+
 
 
         // Negative test case: trying to list games with invalid authentication token
-        assertThrows(ResponseException.class, () -> listGamesService.gameList(record,GameDAO,AuthDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeList());
     }
 
     @Test
     public void testFacadeLoginSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         LoginRecord record = new LoginRecord("username", "password");
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+        LoginRecord newRecord = new LoginRecord("usernme", "pasword");
+
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        LoginService loginService = new LoginService();
-        Object result = loginService.login(record,UserDAO, AuthDAO);
+        LoginResult result = facade.facadeLogin(record);
 
         // Verify the result
         assertNotNull(result);
-
+        assertEquals(record.username(), result.username());
+        assertNotNull(facade.facadeList(), "authToken invalid after login");
 
         // Negative test case: trying to login with invalid credentials
-        assertThrows(ResponseException.class, () -> loginService.login(record,UserDAO,AuthDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeLogin(newRecord));
     }
 
     @Test
     public void testFacadeLogoutSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         LogoutRecord record = new LogoutRecord("authToken");
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        LogoutService logoutService = new LogoutService();
-        Object result = logoutService.logout(record, AuthDAO);
+        LogoutResult result = facade.facadeLogout(record);
 
         // Verify the result
         assertNotNull(result);
+        assertNotNull(facade.facadeList(), "authToken valid after logout");
+
 
         // Negative test case: trying to logout with invalid authentication token
-        assertThrows(ResponseException.class, () -> logoutService.logout(record, AuthDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeLogout(record));
     }
 
     @Test
     public void testFacadeRegisterSuccess() throws ResponseException, DataAccessException {
         // Mock objects
-        UserDAO UserDAO = new UserSQL();
-        GameDAO GameDAO = new GameSQL();
-        AuthDAO AuthDAO = new AuthSQL();
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         RegisterRecord record = new RegisterRecord("username", "password", "email");
-        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
+//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
 
         // Call the method
-        RegistrationService registerService = new RegistrationService();
-        RegisterResult result = new RegisterResult("username", "password", "email");
+        RegisterResult result = facade.facadeRegister(record);
 
         // Verify the result
         assertNotNull(result);
+        assertEquals(record.username(), result.username());
+        assertNotNull(facade.facadeList(), "authToken invalid after registration");
 
         // Negative test case: trying to register with an existing username
-        assertThrows(ResponseException.class, () -> registerService.register(record,UserDAO,AuthDAO));
+        assertThrows(ResponseException.class, () -> facade.facadeRegister(record));
     }
+
 }
