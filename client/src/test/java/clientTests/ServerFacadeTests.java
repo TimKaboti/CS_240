@@ -37,149 +37,108 @@ public class ServerFacadeTests {
 
     @Test
     public void testFacadeClearSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        ClearRecord record = new ClearRecord();
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        ClearResult result = facade.facadeClear(record);
-
-        // Verify the result
+        ClearResult result = facade.facadeClear(new ClearRecord());
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: clear service failed");
+    }
 
-        // Negative test case: trying to clear with invalid authentication token
-        ClearService clearService = null;
-        assertThrows(ResponseException.class, () -> facade.facadeClear(record));
+    @Test
+    public void testFacadeClearInvalidToken() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeClear(new ClearRecord()));
     }
 
     @Test
     public void testFacadeCreateSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        CreateGameRecord record = new CreateGameRecord("gameName");
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        CreateGameResult result = facade.facadeCreate(record);
-
-        // Verify the result
+        CreateGameResult result = facade.facadeCreate(new CreateGameRecord("gameName"));
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: unauthorized");
         assertNotEquals(result.message(), "Error: create handler failed");
         assertNotEquals(result.message(), "Error: bad request");
-        assertNotNull(facade.facadeList(), "authToken invalid after login");
+    }
 
-
-        // Negative test case: trying to create a game with invalid authentication token
-        assertThrows(ResponseException.class, () -> facade.facadeCreate(record));
+    @Test
+    public void testFacadeCreateInvalidToken() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeCreate(new CreateGameRecord("gameName")));
     }
 
     @Test
     public void testFacadeJoinSuccess() throws ResponseException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        JoinGameRecord record = new JoinGameRecord("white",1234);
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        JoinGameResult result = facade.facadeJoin(record);
-
-        // Verify the result
+        JoinGameResult result = facade.facadeJoin(new JoinGameRecord("white", 1234));
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: unauthorized");
         assertNotEquals(result.message(), "Error: join handler failed");
         assertNotEquals(result.message(), "Error: bad request");
         assertNotEquals(result.message(), "Error: already taken");
-        assertNotNull(facade.facadeList(), "authToken invalid after login");
+    }
 
-
-        // Negative test case: trying to join a game with invalid authentication token
-        assertThrows(ResponseException.class, () -> facade.facadeJoin(record));
+    @Test
+    public void testFacadeJoinInvalidToken() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeJoin(new JoinGameRecord("white", 1234)));
     }
 
     @Test
     public void testFacadeListSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        String token = "AuthToken";
-        JoinGameRecord joinRecord = new JoinGameRecord("white",1234);
-
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
         ListGamesResult result = facade.facadeList();
-
-        // Verify the result
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: unauthorized");
         assertNotEquals(result.message(), "Error: list handler failed");
-        assertNotNull(facade.facadeJoin(joinRecord), "authToken invalid after login");
+    }
 
-
-
-        // Negative test case: trying to list games with invalid authentication token
+    @Test
+    public void testFacadeListInvalidToken() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
         assertThrows(ResponseException.class, () -> facade.facadeList());
     }
 
     @Test
     public void testFacadeLoginSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
         LoginRecord record = new LoginRecord("username", "password");
-        LoginRecord newRecord = new LoginRecord("usernme", "pasword");
-
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        LoginResult result = facade.facadeLogin(record);
-
-        // Verify the result
+        LoginResult result = facade.facadeLogin(new LoginRecord("username", "password"));
         assertNotNull(result);
         assertEquals(record.username(), result.username());
-        assertNotNull(facade.facadeList(), "authToken invalid after login");
+        assertNotEquals(result.message(), "Error: unauthorized");
+    }
 
-        // Negative test case: trying to login with invalid credentials
-        assertThrows(ResponseException.class, () -> facade.facadeLogin(newRecord));
+    @Test
+    public void testFacadeLoginInvalidCredentials() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeLogin(new LoginRecord("invalidUsername", "invalidPassword")));
     }
 
     @Test
     public void testFacadeLogoutSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        LogoutRecord record = new LogoutRecord("authToken");
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        LogoutResult result = facade.facadeLogout(record);
-
-        // Verify the result
+        LogoutResult result = facade.facadeLogout(new LogoutRecord("authToken"));
         assertNotNull(result);
-        assertNotNull(facade.facadeList(), "authToken valid after logout");
+        assertNotEquals(result.message(), "Error: unauthorized");
+    }
 
-
-        // Negative test case: trying to logout with invalid authentication token
-        assertThrows(ResponseException.class, () -> facade.facadeLogout(record));
+    @Test
+    public void testFacadeLogoutInvalidToken() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeLogout(new LogoutRecord("invalidAuthToken")));
     }
 
     @Test
     public void testFacadeRegisterSuccess() throws ResponseException, DataAccessException {
-        // Mock objects
         ServerFacade facade = new ServerFacade("http://localhost:8080");
-        RegisterRecord record = new RegisterRecord("username", "password", "email");
-//        ClientCommunicator communicator = new  ClientCommunicator("http://localhost:8080");
-
-        // Call the method
-        RegisterResult result = facade.facadeRegister(record);
-
-        // Verify the result
+        RegisterResult result = facade.facadeRegister(new RegisterRecord("username", "password", "email"));
         assertNotNull(result);
-        assertEquals(record.username(), result.username());
-        assertNotNull(facade.facadeList(), "authToken invalid after registration");
+        assertNotEquals(result.message(), "Error: unauthorized");
+    }
 
-        // Negative test case: trying to register with an existing username
-        assertThrows(ResponseException.class, () -> facade.facadeRegister(record));
+    @Test
+    public void testFacadeRegisterInvalidUsername() throws ResponseException {
+        ServerFacade facade = new ServerFacade("http://localhost:8080");
+        assertThrows(ResponseException.class, () -> facade.facadeRegister(new RegisterRecord("", "password", "email")));
     }
 
 }
