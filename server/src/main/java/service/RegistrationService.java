@@ -14,6 +14,8 @@ public class RegistrationService {
         if(!userData.getUser(user.username())) {
             if(user.username() == null || user.password() == null || user.email() == null) {
                 result = new RegisterResult(null, null, "Error: bad request");
+            }else if(user.username().isEmpty() || user.password().isEmpty() || user.email().isEmpty()){
+                result = new RegisterResult(null, null, "Error: bad request");
             } else {
                try{ userData.createUser(tempUser);
                 String token = authData.CreateAuth(user.username());

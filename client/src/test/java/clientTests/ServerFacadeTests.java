@@ -11,6 +11,8 @@ import service.*;
 import ui.ClientCommunicator;
 import ui.ResponseException;
 import ui.ServerFacade;
+import java.util.Random;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,12 +49,15 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeClearInvalidToken() throws ResponseException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
-        assertThrows(ResponseException.class, () -> facade.facadeClear(new ClearRecord()));
+        RegisterResult result = facade.facadeRegister(new RegisterRecord("user", "password", "email"));
+        facade.facadeClear(new ClearRecord());
+        assertThrows(ResponseException.class, facade::facadeList);
     }
 
     @Test
     public void testFacadeCreateSuccess() throws ResponseException, DataAccessException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
+        facade.facadeClear(new ClearRecord());
         facade.facadeRegister(new RegisterRecord("username", "password", "email"));
         CreateGameResult result = facade.facadeCreate(new CreateGameRecord("gameName"));
         assertNotNull(result);
@@ -70,12 +75,19 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeJoinSuccess() throws ResponseException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
-        JoinGameResult result = facade.facadeJoin(new JoinGameRecord("white", 1234));
+        facade.facadeClear(new ClearRecord());
+        facade.facadeRegister(new RegisterRecord("username", "password", "email"));
+        facade.facadeCreate(new CreateGameRecord("gameName"));
+        ListGamesResult listResult = facade.facadeList();
+        int randomIndex = getRandomIndex(listResult.games().size());
+        int id = listResult.games().get(randomIndex).getGameID();
+        JoinGameResult result = facade.facadeJoin(new JoinGameRecord("white", id));
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: unauthorized");
         assertNotEquals(result.message(), "Error: join handler failed");
         assertNotEquals(result.message(), "Error: bad request");
         assertNotEquals(result.message(), "Error: already taken");
+
     }
 
     @Test
@@ -87,6 +99,9 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeListSuccess() throws ResponseException, DataAccessException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
+        facade.facadeClear(new ClearRecord());
+        facade.facadeRegister(new RegisterRecord("username", "password", "email"));
+        facade.facadeCreate(new CreateGameRecord("gameName"));
         ListGamesResult result = facade.facadeList();
         assertNotNull(result);
         assertNotEquals(result.message(), "Error: unauthorized");
@@ -118,9 +133,11 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeLogoutSuccess() throws ResponseException, DataAccessException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
-        LogoutResult result = facade.facadeLogout(new LogoutRecord("authToken"));
-        assertNotNull(result);
+        facade.facadeClear(new ClearRecord());
+        RegisterResult registerResult = facade.facadeRegister(new RegisterRecord("username", "password", "email"));
+        LogoutResult result = facade.facadeLogout(new LogoutRecord(registerResult.authToken()));
         assertNotEquals(result.message(), "Error: unauthorized");
+        assertThrows(ResponseException.class, () -> facade.facadeList());
     }
 
     @Test
@@ -132,15 +149,22 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeRegisterSuccess() throws ResponseException, DataAccessException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
+        facade.facadeClear(new ClearRecord());
         RegisterResult result = facade.facadeRegister(new RegisterRecord("username", "password", "email"));
-        assertNotNull(result);
+        assertNotNull(result.authToken());
         assertNotEquals(result.message(), "Error: unauthorized");
     }
 
     @Test
     public void testFacadeRegisterInvalidUsername() throws ResponseException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
+
         assertThrows(ResponseException.class, () -> facade.facadeRegister(new RegisterRecord("", "password", "email")));
+    }
+
+    public static int getRandomIndex(int size) {
+        Random random = new Random();
+        return random.nextInt(size);
     }
 
 }

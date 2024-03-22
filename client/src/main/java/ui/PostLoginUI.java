@@ -81,7 +81,7 @@ public class PostLoginUI {
                 do {
                     System.out.println("\nEnter the game ID#:");
                     gameID = newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-                    if (gameID.isEmpty() || color.matches("[a-zA-Z]+")) {
+                    if (gameID.isEmpty() || gameID.matches("[a-zA-Z]+")) {
                         System.out.println("\nGame ID field cannot be blank or a string. Please enter a game ID#.");
                     }
                 } while (gameID.isEmpty());
