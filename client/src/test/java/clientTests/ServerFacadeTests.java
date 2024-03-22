@@ -117,6 +117,8 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeLoginSuccess() throws ResponseException, DataAccessException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
+        facade.facadeClear(new ClearRecord());
+        facade.facadeRegister(new RegisterRecord("username", "password", "email"));
         LoginRecord record = new LoginRecord("username", "password");
         LoginResult result = facade.facadeLogin(new LoginRecord("username", "password"));
         assertNotNull(result);
