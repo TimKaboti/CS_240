@@ -141,7 +141,10 @@ public class Server {
         else if ("Error: unauthorized".equals(message)) { res.status(401);} // check authToken
         else if ("Error: already taken".equals(message)) { res.status(403);} //color already taken
         else if ("Error: join handler failed".equals(message)) { res.status(500);}
-        else{ res.status(200);}
+        else if(message == null){res.status(200);}
+        else{
+            System.out.println("oh no!");
+        }
         return new Gson().toJson(result);
     }
 

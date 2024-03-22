@@ -3,7 +3,6 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
-import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +124,7 @@ public class GameSQL implements GameDAO {
     public void joinGame(String username, String color, Integer gameID) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
-
+            color = color.toUpperCase();
             preparedStatement.setInt(1, gameID);
             try (ResultSet result = preparedStatement.executeQuery()) {
                 // Use result.next() to check if there is any result
@@ -150,13 +149,18 @@ public class GameSQL implements GameDAO {
         }
     }
 
+    @Override
+    public boolean isNull(Integer gameID) throws DataAccessException {
+        return false;
+    }
+
 
     @Override
     /**
      * returns true if a game with the provided gameID exists.
      * false otherwise.
      */
-    public boolean isNull(Integer gameID) throws DataAccessException {
+    public boolean isNotNull(Integer gameID) throws DataAccessException {
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
 
@@ -179,7 +183,7 @@ public class GameSQL implements GameDAO {
      */
     public boolean taken(String color, Integer gameID) throws DataAccessException {
         boolean bool = false;
-
+        color = color.toUpperCase();
         try (Connection connection = DatabaseManager.getConnection()) {
             if (color.equals("BLACK")) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?")) {

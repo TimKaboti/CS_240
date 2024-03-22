@@ -22,7 +22,7 @@ public class PreLoginUI {
         System.out.println("4. Quit");
         System.out.println("\n Enter the number of your desired option.");
 
-        while (!input.equals("4")) {
+        while (true) {
             String line = scanner.nextLine();
             if (line.equals("2")) {
                 Scanner newScanner = new Scanner(System.in);
@@ -100,6 +100,10 @@ public class PreLoginUI {
                 System.out.println("If you want to login to your account and be able to access Chess games, enter '2'.");
                 System.out.println("If you would like to register an account, enter '3'.");
                 System.out.println("To leave this menu, enter '4'.");
+            }
+            else if(line.equals("4")){
+                System.out.println("Thanks for playing!");
+                break;
             }
             else{
                 System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");

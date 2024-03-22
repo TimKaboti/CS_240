@@ -56,6 +56,11 @@ public class MemoryGameDAO implements GameDAO{
         return game != null;
     }
 
+    @Override
+    public boolean isNotNull(Integer gameID) throws DataAccessException {
+        return false;
+    }
+
     public boolean taken(String color, Integer gameID) {
         boolean bool = false;
         GameData game = gameData.get(gameID);

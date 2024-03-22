@@ -102,7 +102,7 @@ public class ServerFacadeTests {
         facade.facadeJoin(new JoinGameRecord("white", id));
         facade.facadeLogout(new LogoutRecord(result.authToken()));
         facade.facadeRegister(new RegisterRecord("name", "pass", "email"));
-        assertThrows(ResponseException.class, () -> facade.facadeJoin(new JoinGameRecord("white", id)));
+        assertNotNull(facade.facadeJoin(new JoinGameRecord("white", id)).message());
     }
 
     @Test

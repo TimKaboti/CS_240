@@ -15,5 +15,12 @@ public interface GameDAO {
     public void updateGame() throws DataAccessException;
     public void joinGame(String username, String color, Integer gameID) throws DataAccessException;
     public boolean isNull (Integer gameID) throws DataAccessException;
+
+    /**
+     * returns true if a game with the provided gameID exists.
+     * false otherwise.
+     */
+    boolean isNotNull(Integer gameID) throws DataAccessException;
+
     public boolean taken (String color, Integer gameID) throws DataAccessException;
 }

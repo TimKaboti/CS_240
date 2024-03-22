@@ -1,5 +1,6 @@
 package ui;
 
+import Result.JoinGameResult;
 import Result.ListGamesResult;
 import com.google.gson.Gson;
 import model.*;
@@ -90,15 +91,18 @@ public class PostLoginUI {
                 int index = parseInt(gameID);
                 GameData game = games.get(index-1);
                 int id = game.getGameID();
-                if(color.equals("black")){
+                if(color.equalsIgnoreCase("black")){
                     if(game.getBlackUsername() != null){
-                        System.out.println("The color Black is already taken. Please choose another color.");
-                    } else{
+                    }
                         JoinGameRecord join = new JoinGameRecord(color, id);
                         try {
-
-                            DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
-                            board.draw();
+                            String message = server.facadeJoin(join).message();
+                            if(message == null){
+                                DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
+                                board.draw();
+                            } else {
+                                System.out.println("The color Black is already taken. Please choose another color.");
+                            }
 //                    if (color.equals("black")) {
 //                        board.drawBlackPlayer();
 //                        System.out.println("\n");
@@ -109,18 +113,20 @@ public class PostLoginUI {
                         }
                         catch (ResponseException e) {
                             System.out.println("\nTrouble joining game, please try again.");;
+                        }
+                }
+                if(color.equalsIgnoreCase("white")) {
+                    JoinGameRecord join = new JoinGameRecord(color, id);
+                    try {
+                        String message = server.facadeJoin(join).message();
+                        if (message == null) {
+                            DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
+                            board.draw();
+                        } else {
+                            System.out.println("The color White is already taken. Please choose another color.");
                         }
                     }
-                }
-                if(color.equals("white")){
-                    if(game.getWhiteUsername() != null){
-                        System.out.println("The color White is already taken. Please choose another color.");
-                    } else{
-                        JoinGameRecord join = new JoinGameRecord(color, id);
-                        try {
 
-                            DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
-                            board.draw();
 //                    if (color.equals("black")) {
 //                        board.drawBlackPlayer();
 //                        System.out.println("\n");
@@ -128,10 +134,9 @@ public class PostLoginUI {
 //                        board.drawWhitePlayer();
 //                        System.out.println("\n");
 //                    }
-                        }
-                        catch (ResponseException e) {
-                            System.out.println("\nTrouble joining game, please try again.");;
-                        }
+                    catch (ResponseException e) {
+                        System.out.println("\nTrouble joining game, please try again.");
+                        ;
                     }
                 }
             }

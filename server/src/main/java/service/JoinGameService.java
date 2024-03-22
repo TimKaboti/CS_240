@@ -19,7 +19,7 @@ public class JoinGameService {
         }
 
         try {
-            if (gameMemory.isNull(record.gameID())) {
+            if (gameMemory.isNotNull(record.gameID())) {
                 if (record.playerColor() == null) {
                     joinResult = new JoinGameResult(gameMemory.getGame(record.gameID()).getBoard(),null);
                 } else if (gameMemory.taken(record.playerColor(), record.gameID())) {
