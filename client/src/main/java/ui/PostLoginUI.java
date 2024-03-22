@@ -31,6 +31,7 @@ public class PostLoginUI {
             if (line.equals("3")) {
                 Scanner newScanner = new Scanner(System.in);
                 String gameName;
+                String password;
                 // Keep asking for username until it's not empty or just whitespace
                 do {
                     System.out.println("\nEnter Game name:");
@@ -90,18 +91,11 @@ public class PostLoginUI {
                 int index = parseInt(gameID);
                 GameData game = games.get(index-1);
                 int id = game.getGameID();
-                if(color.equalsIgnoreCase("black")){
-                    if(game.getBlackUsername() != null){
-                    }
-                        JoinGameRecord join = new JoinGameRecord(color, id);
-                        try {
-                            String message = server.facadeJoin(join).message();
-                            if(message == null){
-                                DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
-                                board.draw();
-                            } else {
-                                System.out.println("The color Black is already taken. Please choose another color.");
-                            }
+                JoinGameRecord join = new JoinGameRecord(color, id);
+                try {
+                    JoinGameResult temp = server.facadeJoin(join);
+                    DrawBoard board = new DrawBoard(temp.board());
+                    board.draw();
 //                    if (color.equals("black")) {
 //                        board.drawBlackPlayer();
 //                        System.out.println("\n");
@@ -109,34 +103,9 @@ public class PostLoginUI {
 //                        board.drawWhitePlayer();
 //                        System.out.println("\n");
 //                    }
-                        }
-                        catch (ResponseException e) {
-                            System.out.println("\nTrouble joining game, please try again.");;
-                        }
                 }
-                if(color.equalsIgnoreCase("white")) {
-                    JoinGameRecord join = new JoinGameRecord(color, id);
-                    try {
-                        String message = server.facadeJoin(join).message();
-                        if (message == null) {
-                            DrawBoard board = new DrawBoard(server.facadeJoin(join).board());
-                            board.draw();
-                        } else {
-                            System.out.println("The color White is already taken. Please choose another color.");
-                        }
-                    }
-
-//                    if (color.equals("black")) {
-//                        board.drawBlackPlayer();
-//                        System.out.println("\n");
-//                    } else {
-//                        board.drawWhitePlayer();
-//                        System.out.println("\n");
-//                    }
-                    catch (ResponseException e) {
-                        System.out.println("\nTrouble joining game, please try again.");
-                        ;
-                    }
+                catch (ResponseException e) {
+                    System.out.println("\nColor already taken.");
                 }
             }
 
@@ -185,9 +154,7 @@ public class PostLoginUI {
         }
 
         LogoutRecord logout = new LogoutRecord(authToken);
-        try{server.facadeLogout(logout);
-//        authToken = null;
-        } catch(ResponseException e){
+        try{server.facadeLogout(logout);} catch(ResponseException e){
             System.out.println("\nFailed to logout. Please try again.");
         }
         preMenu.run();
