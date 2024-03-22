@@ -291,25 +291,50 @@ public class DrawBoard {
 
     private static String checkPiece(ChessPiece piece){
         String type = "   ";
-        switch (piece.getPieceType()){
+        if(piece.getTeamColor() == BLACK){
+        switch (piece.getPieceType()) {
             case KING:
                 type = K;
-                return type;
+                return BLACK_KING;
             case QUEEN:
                 type = Q;
-                return type;
+                return BLACK_QUEEN;
             case BISHOP:
                 type = B;
-                return type;
+                return BLACK_BISHOP;
             case KNIGHT:
                 type = N;
-                return type;
+                return BLACK_KNIGHT;
             case ROOK:
                 type = R;
-                return type;
+                return BLACK_ROOK;
             case PAWN:
                 type = P;
-                return type;
+                return BLACK_PAWN;
+            }
+        }
+
+        if(piece.getTeamColor() == WHITE){
+            switch (piece.getPieceType()) {
+                case KING:
+                    type = K;
+                    return WHITE_KING;
+                case QUEEN:
+                    type = Q;
+                    return WHITE_QUEEN;
+                case BISHOP:
+                    type = B;
+                    return WHITE_BISHOP;
+                case KNIGHT:
+                    type = N;
+                    return WHITE_KNIGHT;
+                case ROOK:
+                    type = R;
+                    return WHITE_ROOK;
+                case PAWN:
+                    type = P;
+                    return WHITE_PAWN;
+            }
         }
         return type;
     }
