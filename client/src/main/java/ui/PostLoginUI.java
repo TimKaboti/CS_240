@@ -31,7 +31,6 @@ public class PostLoginUI {
             if (line.equals("3")) {
                 Scanner newScanner = new Scanner(System.in);
                 String gameName;
-                String password;
                 // Keep asking for username until it's not empty or just whitespace
                 do {
                     System.out.println("\nEnter Game name:");
@@ -186,7 +185,9 @@ public class PostLoginUI {
         }
 
         LogoutRecord logout = new LogoutRecord(authToken);
-        try{server.facadeLogout(logout);} catch(ResponseException e){
+        try{server.facadeLogout(logout);
+//        authToken = null;
+        } catch(ResponseException e){
             System.out.println("\nFailed to logout. Please try again.");
         }
         preMenu.run();

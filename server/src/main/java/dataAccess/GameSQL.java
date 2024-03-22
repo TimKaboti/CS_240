@@ -190,8 +190,9 @@ public class GameSQL implements GameDAO {
                     preparedStatement.setInt(1, gameID);
                     try (ResultSet result = preparedStatement.executeQuery()) {
                         if (result.next()) {
-                            if(result.getString("blackUsername") != null){
+                            if (result.getString("blackUsername") != null) {
                                 bool = true;
+                            }
                         }
                     }
                 }
@@ -207,33 +208,15 @@ public class GameSQL implements GameDAO {
                             }
                         }
                     }
-                }catch (SQLException e) {
-                    throw new RuntimeException(e);}
+                }
             }
-            }
+
 
         return bool;
     } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-//    private byte[] serializeObject(Serializable object) throws IOException {
-//        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-//            oos.writeObject(object);
-//            return bos.toByteArray();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    // Helper method to deserialize a byte array to an object
-//    private <T> T deserializeObject(byte[] data) throws IOException, ClassNotFoundException {
-//        try (ByteArrayInputStream bis = new ByteArrayInputStream(data);
-//             ObjectInputStream ois = new ObjectInputStream(bis)) {
-//            return (T) ois.readObject();
-//        }
-//    }
 
 }
 }

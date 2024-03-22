@@ -43,12 +43,14 @@ public class ServerFacade {
 
     public LogoutResult facadeLogout(LogoutRecord record) throws ResponseException {
         Class<LogoutResult> result = LogoutResult.class; // Get the class type
-        return communicator.deleteRequest("/session", record, result, authToken);
+        LogoutResult logoutResult = communicator.deleteRequest("/session", record, result, authToken);
+        authToken = null;
+        return logoutResult;
     } //delete
 
     public RegisterResult facadeRegister(RegisterRecord record) throws ResponseException {
         Class<RegisterResult> result = RegisterResult.class; // Get the class type
-        RegisterResult registerResult = communicator.postRequest("/user", record, result, authToken);
+        RegisterResult registerResult = communicator.postRequest("/user", record, RegisterResult.class, authToken);
         authToken = registerResult.authToken();
         return registerResult;
     } //post

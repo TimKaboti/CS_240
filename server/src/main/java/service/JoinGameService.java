@@ -15,7 +15,7 @@ public class JoinGameService {
         try {
             username = authData.getUsername(authToken);
         } catch (DataAccessException e) {
-            return new JoinGameResult(null,"Error: join service: check authToken failed");
+            return new JoinGameResult(null,"Error: join service: authToken failed");
         }
 
         try {

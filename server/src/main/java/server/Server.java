@@ -145,6 +145,7 @@ public class Server {
         else{
             System.out.println("oh no!");
         }
+        System.out.println(new Gson().toJson(result));
         return new Gson().toJson(result);
     }
 

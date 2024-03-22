@@ -112,7 +112,12 @@ public class ClientCommunicator {
             try (InputStream respBody = http.getInputStream()) {
                 InputStreamReader reader = new InputStreamReader(respBody);
                 if (responseClass != null) {
-                    response = new Gson().fromJson(reader, responseClass);
+                    BufferedReader br = new BufferedReader(reader);
+                    String line = br.readLine();
+                    System.out.println(line);
+                    response = new Gson().fromJson(line, responseClass);
+                    System.out.println(line);
+                    System.out.println(response);
                 }
             }
         }
