@@ -104,10 +104,6 @@ public class DrawBoard {
                                 out.print(checkPiece(piece));
                             }
                         }
-                        /**check the chessboard at this i,j-1 coordinate for a piece
-                         * if coord is null, print EMPTY. if not call a method that uses a switch statement
-                         * and returns the String above that corresponds with the appropriate piece type. **/
-//                        out.print(EMPTY);
                     } else if (j % 2 == 0) {
                         out.print(SET_BG_COLOR_BLACK);
                         ChessPiece piece = board.getPiece(new ChessPosition(i, j));
@@ -123,7 +119,6 @@ public class DrawBoard {
                                 out.print(checkPiece(piece));
                             }
                         }
-//                        out.print(EMPTY);
                     }
                 }
                 if(i%2 == 0){
@@ -142,8 +137,7 @@ public class DrawBoard {
                                 out.print(checkPiece(piece));
                             }
                         }
-                        /** do the same piece coordinate comparison here.**/
-//                        out.print(EMPTY);
+
                     } else if(j%2 != 0){
                         out.print(SET_BG_COLOR_BLACK);
                         ChessPiece piece = board.getPiece(new ChessPosition(i, j));
@@ -276,7 +270,6 @@ public class DrawBoard {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-
     public static void drawBlackPlayer(){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         board.resetBoard();
@@ -290,27 +283,52 @@ public class DrawBoard {
     }
 
     private static String checkPiece(ChessPiece piece){
-        String type = "   ";
-        if(piece.getTeamColor() == BLACK){
-        switch (piece.getPieceType()) {
+        String type = EMPTY;
+        switch (piece.getPieceType()){
             case KING:
                 type = K;
-                return BLACK_KING;
+                return type;
             case QUEEN:
                 type = Q;
-                return BLACK_QUEEN;
+                return type;
             case BISHOP:
                 type = B;
-                return BLACK_BISHOP;
+                return type;
             case KNIGHT:
                 type = N;
-                return BLACK_KNIGHT;
+                return type;
             case ROOK:
                 type = R;
-                return BLACK_ROOK;
+                return type;
             case PAWN:
                 type = P;
-                return BLACK_PAWN;
+                return type;
+        }
+        return type;
+    }
+
+    private static String checkPieceWithColor(ChessPiece piece){
+        String type = EMPTY;
+        if(piece.getTeamColor() == BLACK){
+            switch (piece.getPieceType()) {
+                case KING:
+                    type = K;
+                    return BLACK_KING;
+                case QUEEN:
+                    type = Q;
+                    return BLACK_QUEEN;
+                case BISHOP:
+                    type = B;
+                    return BLACK_BISHOP;
+                case KNIGHT:
+                    type = N;
+                    return BLACK_KNIGHT;
+                case ROOK:
+                    type = R;
+                    return BLACK_ROOK;
+                case PAWN:
+                    type = P;
+                    return BLACK_PAWN;
             }
         }
 
