@@ -93,7 +93,16 @@ public class ServerFacadeTests {
     @Test
     public void testFacadeJoinInvalidToken() throws ResponseException {
         ServerFacade facade = new ServerFacade("http://localhost:" + port);
-        assertThrows(ResponseException.class, () -> facade.facadeJoin(new JoinGameRecord("white", 1234)));
+        facade.facadeClear(new ClearRecord());
+        RegisterResult result = facade.facadeRegister(new RegisterRecord("username", "password", "email"));
+        facade.facadeCreate(new CreateGameRecord("gameName"));
+        ListGamesResult listResult = facade.facadeList();
+        int randomIndex = getRandomIndex(listResult.games().size());
+        int id = listResult.games().get(randomIndex).getGameID();
+        facade.facadeJoin(new JoinGameRecord("white", id));
+        facade.facadeLogout(new LogoutRecord(result.authToken()));
+        facade.facadeRegister(new RegisterRecord("name", "pass", "email"));
+        assertThrows(ResponseException.class, () -> facade.facadeJoin(new JoinGameRecord("white", id)));
     }
 
     @Test
