@@ -1,23 +1,23 @@
-import java.util.Objects;
-
 public class Chesspiece {
-    String type;
-    String color;
-    public Chesspiece(String PieceType, String TeamColor) {
-        this.type = PieceType;
-        this.color = TeamColor;
-    }
-    public String getPieceType(){
-        return type;
-    }
+  String type;
+  String color;
 
-    public String getTeamColor(){
-        return color;
-    }
+  public Chesspiece(String PieceType, String TeamColor) {
+    this.type=PieceType;
+    this.color=TeamColor;
+  }
 
-    public String pieceMoves(){
-        return null;
-    }
+  public String getPieceType() {
+    return type;
+  }
+
+  public String getTeamColor() {
+    return color;
+  }
+
+  public String pieceMoves() {
+    return null;
+  }
 
 
 }
