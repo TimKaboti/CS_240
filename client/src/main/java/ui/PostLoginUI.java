@@ -31,7 +31,6 @@ public class PostLoginUI {
       if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);
         String gameName;
-        String password;
         // Keep asking for username until it's not empty or just whitespace
         do {
           System.out.println("\nEnter Game name:");
@@ -91,14 +90,17 @@ public class PostLoginUI {
         try {
           JoinGameResult temp=server.facadeJoin(join);
           DrawBoard board=new DrawBoard(temp.board());
-          board.draw();
-//                    if (color.equals("black")) {
-//                        board.drawBlackPlayer();
-//                        System.out.println("\n");
-//                    } else {
-//                        board.drawWhitePlayer();
-//                        System.out.println("\n");
-//                    }
+          if(color.equalsIgnoreCase("white")){
+            board.drawWhitePlayer();
+            System.out.println("\n");
+            //            run the gameplay UI
+          }
+          if(color.equalsIgnoreCase("black")){
+            board.drawBlackPlayer();
+            System.out.println("\n");
+            //            run the gameplay UI
+          }
+
         } catch (ResponseException e) {
           System.out.println("\nColor already taken.");
         }

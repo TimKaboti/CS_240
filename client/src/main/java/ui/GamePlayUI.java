@@ -176,68 +176,13 @@ public class GamePlayUI {
     System.out.println("\n Enter the number of your desired action.");
   }
 
-  public ChessPosition coordConvert(String location) {
+  public static ChessPosition coordConvert(String location) {
     int col=0;
     int row=0;
-    String letter=location.substring(0, -1);
-    String num=location.substring(-1);
-    if (letter != null) {
-      switch (letter) {
-        case "a":
-          col=1;
-          break;
-        case "b":
-          col=2;
-          break;
-        case "c":
-          col=3;
-          break;
-        case "d":
-          col=4;
-          break;
-        case "e":
-          col=5;
-          break;
-        case "f":
-          col=6;
-          break;
-        case "g":
-          col=7;
-          break;
-        case "h":
-          col=8;
-          break;
-      }
-
-      if (num != null) {
-        switch (num) {
-          case "1":
-            row=1;
-            break;
-          case "2":
-            row=2;
-            break;
-          case "3":
-            row=3;
-            break;
-          case "4":
-            row=4;
-            break;
-          case "5":
-            row=5;
-            break;
-          case "6":
-            row=6;
-            break;
-          case "7":
-            row=7;
-            break;
-          case "8":
-            row=8;
-            break;
-        }
-      }
-    }
+    char letter = location.charAt(0);
+    col = letter - 'a' + 1;
+    char num = location.charAt(1);
+    row = num - '1' + 1;
     return new ChessPosition(row, col);
   }
 }
