@@ -88,12 +88,11 @@ public class DrawBoard {
   private static void drawBlackGrid(PrintStream out) {
     for (int i=1; i < 9; i++) {
       out.print(SET_BG_COLOR_LIGHT_GREY);
-      int t=sideCounter(i);
       out.print(" " + i + " ");
       for (int j=8; j > 0; j--) {
         if (i % 2 != 0) {
           if (j % 2 != 0) {
-            out.print(SET_BG_COLOR_WHITE);
+            out.print(SET_BG_COLOR_BLACK);
             ChessPiece piece=board.getPiece(new ChessPosition(i, j));
             if (piece == null) {
               out.print(EMPTY);
@@ -107,7 +106,7 @@ public class DrawBoard {
               }
             }
           } else if (j % 2 == 0) {
-            out.print(SET_BG_COLOR_BLACK);
+            out.print(SET_BG_COLOR_WHITE);
             ChessPiece piece=board.getPiece(new ChessPosition(i, j));
             if (piece == null) {
               out.print(EMPTY);
@@ -124,7 +123,7 @@ public class DrawBoard {
         }
         if (i % 2 == 0) {
           if (j % 2 == 0) {
-            out.print(SET_BG_COLOR_WHITE);
+            out.print(SET_BG_COLOR_BLACK);
             ChessPiece piece=board.getPiece(new ChessPosition(i, j));
             if (piece == null) {
               out.print(EMPTY);
@@ -139,7 +138,7 @@ public class DrawBoard {
             }
 
           } else if (j % 2 != 0) {
-            out.print(SET_BG_COLOR_BLACK);
+            out.print(SET_BG_COLOR_WHITE);
             ChessPiece piece=board.getPiece(new ChessPosition(i, j));
             if (piece == null) {
               out.print(EMPTY);
@@ -175,7 +174,6 @@ public class DrawBoard {
     for (int i=1; i < 9; i++) {
       out.print(SET_BG_COLOR_LIGHT_GREY);
       out.print(SET_TEXT_COLOR_BLACK);
-      int t=sideCounter(i);
       out.print(" " + i + " ");
       for (int j=8; j > 0 ; j--) {
         if (i % 2 != 0) {
@@ -387,7 +385,6 @@ public class DrawBoard {
   private static void drawWhiteGrid(PrintStream out) {
     for (int i=8; i > 0; i--) {
       out.print(SET_BG_COLOR_LIGHT_GREY);
-      int t=sideCounter(i);
       out.print(" " + i + " ");
       for (int j=1; j < 9; j++) {
         if (i % 2 == 0) {
@@ -476,7 +473,6 @@ public class DrawBoard {
     for (int i=8; i > 0; i--) {
       out.print(SET_BG_COLOR_LIGHT_GREY);
       out.print(SET_TEXT_COLOR_BLACK);
-      int t=sideCounter(i);
       out.print(" " + i + " ");
       for (int j=1; j < 9; j++) {
         if (i % 2 == 0) {
@@ -799,34 +795,4 @@ public class DrawBoard {
     return type;
   }
 
-  private static int sideCounter(int num) {
-    int row=0;
-    switch (num) {
-      case 1:
-        row=8;
-        return row;
-      case 2:
-        row=7;
-        return row;
-      case 3:
-        row=6;
-        return row;
-      case 4:
-        row=5;
-        return row;
-      case 5:
-        row=4;
-        return row;
-      case 6:
-        row=3;
-        return row;
-      case 7:
-        row=2;
-        return row;
-      case 8:
-        row=1;
-        return row;
-    }
-    return row;
-  }
 }
