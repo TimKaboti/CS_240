@@ -47,18 +47,18 @@ public class GamePlayUI {
         String endPos;
         // Keep asking for username until it's not empty or just whitespace
         do {
-          System.out.println("\nEnter Chosen Piece's starting position:");
+          System.out.println("Enter Chosen Piece's starting position:");
           startPos=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
           if (startPos.isEmpty()) {
-            System.out.println("\nGame name field cannot be blank. Please enter a start position.");
+            System.out.println("field cannot be blank. Please enter a start position.");
           }
         } while (startPos.isEmpty());
 
         do {
-          System.out.println("\nEnter the desired end position:");
+          System.out.println("Enter the desired end position:");
           endPos=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
           if (endPos.isEmpty()) {
-            System.out.println("\nGame ID field cannot be blank. Please enter an end position.");
+            System.out.println("field cannot be blank. Please enter an end position.");
           }
         } while (endPos.isEmpty());
 
@@ -66,6 +66,7 @@ public class GamePlayUI {
         ChessPosition end=coordConvert(endPos);
 //                i will likely need to look into how to properly do this.
         ChessMove move=new ChessMove(start, end, null);
+
         CreateGameRecord create=new CreateGameRecord(startPos);
         try {
           int id=server.facadeCreate(create).gameID();
@@ -116,13 +117,7 @@ public class GamePlayUI {
           JoinGameResult temp=server.facadeJoin(join);
 //          DrawBoard board=new DrawBoard(temp.board());
           board.draw();
-//                    if (color.equals("black")) {
-//                        board.drawBlackPlayer();
-//                        System.out.println("\n");
-//                    } else {
-//                        board.drawWhitePlayer();
-//                        System.out.println("\n");
-//                    }
+//
         } catch (ResponseException e) {
           System.out.println("\nColor already taken.");
         }
@@ -146,6 +141,7 @@ public class GamePlayUI {
         //          DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
         board.draw();
         System.out.println("\n");
+
       } else if (line.equals("1")) {
         System.out.println("You are given the following options:");
         System.out.println("If you would like to leave the game, enter '2'.");

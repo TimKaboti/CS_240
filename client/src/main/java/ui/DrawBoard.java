@@ -678,7 +678,6 @@ public class DrawBoard {
 
   public static void drawWhitePlayer() {
     var out=new PrintStream(System.out, true, StandardCharsets.UTF_8);
-    board.resetBoard();
     out.print(ERASE_SCREEN);
     drawHeader(out);
     drawWhiteGrid(out);
@@ -690,7 +689,6 @@ public class DrawBoard {
 
   public static void drawBlackPlayer() {
     var out=new PrintStream(System.out, true, StandardCharsets.UTF_8);
-    board.resetBoard();
     out.print(ERASE_SCREEN);
     drawReverseHeader(out);
     drawBlackGrid(out);
