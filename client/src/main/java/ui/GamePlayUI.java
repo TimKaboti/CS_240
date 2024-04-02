@@ -8,6 +8,7 @@ import chess.ChessPosition;
 import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
+import webSocketMessages.userCommands.MakeMove;
 
 import java.util.List;
 import java.util.Scanner;
@@ -22,13 +23,15 @@ public class GamePlayUI {
 
   public String authToken;
   public String playerColor;
+  public int gameID;
 
 
-  public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game) {
+  public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game, int gameID) {
     this.postMenu=postMenu;
     this.authToken=authToken;
     this.playerColor=playerColor;
     this.game=game;
+    this.gameID=gameID;
   }
 
 
@@ -69,7 +72,7 @@ public class GamePlayUI {
         ChessMove move=new ChessMove(start, end, null);
 //        not sure, but I may need to call the serverFacade with the make move, or 'update game' method
 //        also might need to have a websocket message.
-
+        server.makeMove(new MakeMove(authToken, gameID, move));
 
       } else if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);

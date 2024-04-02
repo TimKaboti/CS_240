@@ -94,7 +94,7 @@ public class PostLoginUI {
         GameData game=games.get(index - 1);
         int id=game.getGameID();
         JoinGameRecord join=new JoinGameRecord(color, id);
-        GamePlayUI play = new GamePlayUI(this,authToken,color,game.getGame());
+        GamePlayUI play = new GamePlayUI(this,authToken,color,game.getGame(), id);
         try {
           JoinGameResult temp=server.facadeJoin(join);
           DrawBoard board=new DrawBoard(temp.board());
@@ -136,7 +136,7 @@ public class PostLoginUI {
         GameData game=games.get(index - 1);
         int id=game.getGameID();
         JoinGameRecord observe=new JoinGameRecord(null, id);
-        GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame());
+        GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame(), id);
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
