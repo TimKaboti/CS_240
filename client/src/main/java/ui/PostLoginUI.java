@@ -6,11 +6,17 @@ import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
 import model.LogoutRecord;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
+import webSocketMessages.userCommands.JoinObserver;
+import webSocketMessages.userCommands.JoinPlayer;
 
 import java.util.List;
 import java.util.Scanner;
 
+import static java.awt.Color.*;
 import static java.lang.Integer.parseInt;
+import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class PostLoginUI {
 
@@ -97,6 +103,7 @@ public class PostLoginUI {
             System.out.println("\n");
             play.run(server, authToken, game.getGame());
             //            run the gameplay UI and send a websocket message maybe?
+            server.joinPlayer(new JoinPlayer(authToken, id, color));
           }
           if(color.equalsIgnoreCase("black")){
             board.drawBlackPlayer();
@@ -107,6 +114,8 @@ public class PostLoginUI {
 
         } catch (ResponseException e) {
           System.out.println("\nColor already taken.");
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
 //        websocket message here.
 
@@ -131,6 +140,8 @@ public class PostLoginUI {
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
+//          send websocket message
+          server.joinObserver(new JoinObserver(authToken, id));
         } catch (ResponseException e) {
           System.out.println("\nTrouble observing game, please try again.");
           ;
@@ -181,14 +192,14 @@ public class PostLoginUI {
     System.out.println("\n Enter the number of your desired action.");
   }
 
-//  public void notify(Notification notification) {
-//    System.out.println(RED + notification.message());
-//    printPrompt();
-//  }
-//
-//  private void printPrompt() {
-//    System.out.print("\n" + RESET + ">>> " + GREEN);
-//  }
+  public void notify(Notification notification) {
+    System.out.println(RED + notification.message());
+    printPrompt();
+  }
+
+  private void printPrompt() {
+    System.out.print("\n" + RESET + ">>> " + GREEN);
+  }
 
 
 }

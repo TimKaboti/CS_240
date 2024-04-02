@@ -41,4 +41,7 @@ public class JoinPlayer extends UserGameCommand {
             ", playerColor='" + playerColor + '\'' +
             '}';
   }
+  public String message(){
+    return playerColor;
+  }
 }

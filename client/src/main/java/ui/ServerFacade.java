@@ -3,6 +3,9 @@ package ui;
 import Result.*;
 import model.*;
 import server.WebsocketCommunicator;
+import webSocketMessages.userCommands.JoinObserver;
+import webSocketMessages.userCommands.JoinPlayer;
+import webSocketMessages.userCommands.MakeMove;
 
 public class ServerFacade {
 
@@ -57,5 +60,17 @@ public class ServerFacade {
     authToken=registerResult.authToken();
     return registerResult;
   } //post
+
+  public void joinPlayer(JoinPlayer join) throws Exception {
+  socket.send(join.message());
+  }
+
+  public void joinObserver(JoinObserver observer){}
+
+  public void makeMove(MakeMove move){}
+
+  public void leave(){}
+
+  public void resign(){}
 
 }

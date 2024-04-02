@@ -117,7 +117,7 @@ public class GameSQL implements GameDAO {
 
     @Override
     public void updateGame() throws DataAccessException {
-
+//update board and change team turn.
     }
 
     @Override
