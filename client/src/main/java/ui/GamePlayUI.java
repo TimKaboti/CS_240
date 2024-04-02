@@ -18,10 +18,11 @@ public class GamePlayUI {
 
 
   public ChessGame game=null;
-  PostLoginUI postMenu=new PostLoginUI();
+  PostLoginUI postMenu;
 
   public String authToken;
   public String playerColor;
+
 
   public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game) {
     this.postMenu=postMenu;
@@ -35,7 +36,7 @@ public class GamePlayUI {
     DrawBoard board=new DrawBoard(chessGame.getBoard());
     Scanner scanner=new Scanner(System.in);
     var input="";
-    System.out.println("Welcome to the Chess game options menu!");
+    System.out.println("Welcome to the Gameplay menu.");
     options();
 
 
@@ -66,16 +67,10 @@ public class GamePlayUI {
         ChessPosition end=coordConvert(endPos);
 //                i will likely need to look into how to properly do this.
         ChessMove move=new ChessMove(start, end, null);
+//        not sure, but I may need to call the serverFacade with the make move, or 'update game' method
+//        also might need to have a websocket message.
 
-        CreateGameRecord create=new CreateGameRecord(startPos);
-        try {
-          int id=server.facadeCreate(create).gameID();
-          String num=String.valueOf(id);
-          System.out.println("Game successfully created");
-          options();
-        } catch (ResponseException e) {
-          System.out.println("\nTrouble creating game, please try again.");
-        }
+
       } else if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);
         if (playerColor.equalsIgnoreCase("black")) {
@@ -86,60 +81,33 @@ public class GamePlayUI {
           board.drawBlackPlayer();
           options();
         }
+
       } else if (line.equals("5")) {
         Scanner newScanner=new Scanner(System.in);
-        String color;
+        String position;
         String gameID;
         // Keep asking for username until it's not empty or just whitespace
         do {
-          System.out.println("\nEnter your color:");
-          color=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-          if (color.isEmpty() || color.matches("\\d+")) {
-            System.out.println("\nPlayer color field cannot be blank or a number. Please enter your color.");
+          System.out.println("\nEnter the start positon of the piece:");
+          position=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
+          if (position.isEmpty() || position.matches("\\d+")) {
+            System.out.println("\nthis field cannot be blank. Please enter your color.");
           }
-        } while (color.isEmpty());
+        } while (position.isEmpty());
 
-
-        do {
-          System.out.println("\nEnter the game ID#:");
-          gameID=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-          if (gameID.isEmpty() || gameID.matches("[a-zA-Z]+")) {
-            System.out.println("\nGame ID field cannot be blank or a string. Please enter a game ID#.");
-          }
-        } while (gameID.isEmpty());
-        ListGamesResult result=(server.facadeList());
-        List<GameData> games=result.games();
-        int index=parseInt(gameID);
-        GameData game=games.get(index - 1);
-        int id=game.getGameID();
-        JoinGameRecord join=new JoinGameRecord(color, id);
-        try {
-          JoinGameResult temp=server.facadeJoin(join);
-//          DrawBoard board=new DrawBoard(temp.board());
-          board.draw();
-//
-        } catch (ResponseException e) {
-          System.out.println("\nColor already taken.");
+        ChessPosition start = coordConvert(position);
+        if(playerColor.equalsIgnoreCase("white")){
+          board.drawReversedHighlightGrid(start);
         }
+        if(playerColor.equalsIgnoreCase("black")){
+          board.drawHighlightGrid(start);
+        }
+//        websocket messages for these
+
       } else if (line.equals("6")) {
         Scanner newScanner=new Scanner(System.in);
-        String gameID;
-        // Keep asking for username until it's not empty or just whitespace
-        do {
-          System.out.println("\nEnter the game ID#:");
-          gameID=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
-          if (gameID.isEmpty() || gameID.matches("[a-zA-Z]+")) {
-            System.out.println("\nGame ID field cannot be blank or a string. Please enter a valid game ID#.");
-          }
-        } while (gameID.isEmpty());
-        ListGamesResult result=(server.facadeList());
-        List<GameData> games=result.games();
-        int index=parseInt(gameID);
-        GameData game=games.get(index - 1);
-        int id=game.getGameID();
-        JoinGameRecord observe=new JoinGameRecord(null, id);
-        //          DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
-        board.draw();
+//        this is for resigning. need to implement websocket.
+
         System.out.println("\n");
 
       } else if (line.equals("1")) {
@@ -153,6 +121,7 @@ public class GamePlayUI {
         options();
       } else if (line.equals("2")) {
         System.out.println("Leaving Game.");
+//        websocket message needed.
         break;
       } else {
         System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
@@ -181,4 +150,14 @@ public class GamePlayUI {
     row = num - '1' + 1;
     return new ChessPosition(row, col);
   }
+
+//  public void notify(Notification notification) {
+//    System.out.println(RED + notification.message());
+//    printPrompt();
+//  }
+//
+//  private void printPrompt() {
+//    System.out.print("\n" + RESET + ">>> " + GREEN);
+//  }
+
 }

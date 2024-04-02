@@ -2,6 +2,7 @@ package ui;
 
 import Result.*;
 import model.*;
+import server.WebsocketCommunicator;
 
 public class ServerFacade {
 
@@ -10,6 +11,8 @@ public class ServerFacade {
   }
 
   ClientCommunicator communicator;
+
+  WebsocketCommunicator socket;
 
   String authToken=null;
 

@@ -17,6 +17,7 @@ public class PostLoginUI {
   PreLoginUI preMenu=new PreLoginUI();
 
 
+
   public String authToken;
 
   public void run(ServerFacade server, String authToken) throws ResponseException {
@@ -72,7 +73,7 @@ public class PostLoginUI {
             System.out.println("\nPlayer color field cannot be blank or a number. Please enter your color.");
           }
         } while (color.isEmpty());
-
+          color = color.toLowerCase();
 
         do {
           System.out.println("\nEnter the game ID#:");
@@ -87,23 +88,28 @@ public class PostLoginUI {
         GameData game=games.get(index - 1);
         int id=game.getGameID();
         JoinGameRecord join=new JoinGameRecord(color, id);
+        GamePlayUI play = new GamePlayUI(this,authToken,color,game.getGame());
         try {
           JoinGameResult temp=server.facadeJoin(join);
           DrawBoard board=new DrawBoard(temp.board());
           if(color.equalsIgnoreCase("white")){
             board.drawWhitePlayer();
             System.out.println("\n");
-            //            run the gameplay UI
+            play.run(server, authToken, game.getGame());
+            //            run the gameplay UI and send a websocket message maybe?
           }
           if(color.equalsIgnoreCase("black")){
             board.drawBlackPlayer();
             System.out.println("\n");
-            //            run the gameplay UI
+            play.run(server, authToken, game.getGame());
+            //            run the gameplay UI and send a websocket message maybe?
           }
 
         } catch (ResponseException e) {
           System.out.println("\nColor already taken.");
         }
+//        websocket message here.
+
       } else if (line.equals("6")) {
         Scanner newScanner=new Scanner(System.in);
         String gameID;
@@ -121,6 +127,7 @@ public class PostLoginUI {
         GameData game=games.get(index - 1);
         int id=game.getGameID();
         JoinGameRecord observe=new JoinGameRecord(null, id);
+        GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame());
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
@@ -173,5 +180,15 @@ public class PostLoginUI {
     System.out.println("6. Join Observer");
     System.out.println("\n Enter the number of your desired action.");
   }
+
+//  public void notify(Notification notification) {
+//    System.out.println(RED + notification.message());
+//    printPrompt();
+//  }
+//
+//  private void printPrompt() {
+//    System.out.print("\n" + RESET + ">>> " + GREEN);
+//  }
+
 
 }
