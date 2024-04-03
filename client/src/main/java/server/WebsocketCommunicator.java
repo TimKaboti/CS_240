@@ -8,14 +8,14 @@ public class WebsocketCommunicator {
 
 
   public void WebsocketCommunicator() throws Exception {
-
     URI uri = new URI("ws://localhost:8080/connect");
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();
     this.session = container.connectToServer(this, uri);
-
     this.session.addMessageHandler(new MessageHandler.Whole<String>() {
       public void onMessage(String message) {
         System.out.println(message);
+//        here ive got a message. what I need to do is figure out what methods need to be called as a result of this
+//        message. for example LOAD_GAME; if this were the message, I'd need to redraw the board for the player.
       }
     });
   }

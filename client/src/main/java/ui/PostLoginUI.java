@@ -195,7 +195,7 @@ public class PostLoginUI {
   }
 
   public void notify(Notification notification) {
-    System.out.println(RED + notification.message());
+    System.out.println(RED + notification.getMessage());
     printPrompt();
   }
 

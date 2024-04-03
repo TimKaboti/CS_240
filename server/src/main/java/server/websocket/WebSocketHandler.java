@@ -22,12 +22,10 @@ public class WebSocketHandler {
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
-//    Action action = new Gson().fromJson(message, Action.class);
-//    switch (action.type()) {
-//      case ENTER -> enter(action.visitorName(), session);
-//      case EXIT -> exit(action.visitorName());
-//    }
-  }
+//   the message parameter, once parsed using toGson/toJson, should have information like a makeMove command ect.
+//    what needs to happen is I need to get this method to somehow have access to the database so it can update.
+    }
+
 
 //  private void enter(String visitorName, Session session) throws IOException {
 //    connections.add(visitorName, session);
