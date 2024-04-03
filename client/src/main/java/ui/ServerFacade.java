@@ -3,9 +3,7 @@ package ui;
 import Result.*;
 import model.*;
 import server.WebsocketCommunicator;
-import webSocketMessages.userCommands.JoinObserver;
-import webSocketMessages.userCommands.JoinPlayer;
-import webSocketMessages.userCommands.MakeMove;
+import webSocketMessages.userCommands.*;
 
 public class ServerFacade {
 
@@ -69,8 +67,8 @@ public class ServerFacade {
 
   public void makeMove(MakeMove move){}
 
-  public void leave(){}
+  public void leave(Leave leave){}
 
-  public void resign(){}
+  public void resign(Resign resign){}
 
 }

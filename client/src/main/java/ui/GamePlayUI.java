@@ -8,7 +8,9 @@ import chess.ChessPosition;
 import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
+import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.MakeMove;
+import webSocketMessages.userCommands.Resign;
 
 import java.util.List;
 import java.util.Scanner;
@@ -110,6 +112,7 @@ public class GamePlayUI {
       } else if (line.equals("6")) {
         Scanner newScanner=new Scanner(System.in);
 //        this is for resigning. need to implement websocket.
+        server.resign(new Resign(authToken, gameID));
 
         System.out.println("\n");
 
@@ -125,6 +128,7 @@ public class GamePlayUI {
       } else if (line.equals("2")) {
         System.out.println("Leaving Game.");
 //        websocket message needed.
+        server.leave(new Leave(authToken, gameID));
         break;
       } else {
         System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
