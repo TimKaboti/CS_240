@@ -37,7 +37,7 @@ public class GamePlayUI {
   }
 
 
-  public void run(ServerFacade server, String authToken, ChessGame chessGame) throws ResponseException {
+  public void run(ServerFacade server, String authToken, ChessGame chessGame) throws ResponseException, Exception {
     DrawBoard board=new DrawBoard(chessGame.getBoard());
     Scanner scanner=new Scanner(System.in);
     var input="";

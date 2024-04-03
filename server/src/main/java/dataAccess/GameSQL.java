@@ -1,7 +1,10 @@
 package dataAccess;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import model.GameData;
+import org.springframework.util.SerializationUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -116,8 +119,21 @@ public class GameSQL implements GameDAO {
     }
 
     @Override
-    public void updateGame() throws DataAccessException {
-//update board and change team turn.
+    public void updateGame(ChessGame game, ChessMove move, Integer gameID) throws DataAccessException, InvalidMoveException {
+        // Update board and change team turn
+        ChessGame.TeamColor team = game.getTeamTurn();
+        game.makeMove(move);
+        game.setTeamTurn(team);
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE gameData SET game = ? WHERE gameID = ?")) {
+            // Convert game object to byte array to store in the database
+            byte[] gameBytes = SerializationUtils.serialize(game);
+            statement.setBytes(1, gameBytes);
+            statement.setInt(2, gameID);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to update this game in the database.");
+        }
     }
 
     @Override

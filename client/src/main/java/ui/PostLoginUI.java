@@ -144,7 +144,9 @@ public class PostLoginUI {
           server.joinObserver(new JoinObserver(authToken, id));
         } catch (ResponseException e) {
           System.out.println("\nTrouble observing game, please try again.");
-          ;
+
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
         System.out.println("\n");
       } else if (line.equals("1")) {

@@ -1,6 +1,8 @@
 package dataAccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import model.GameData;
 
 import java.util.*;
@@ -12,7 +14,7 @@ public interface GameDAO {
 
     public ChessGame getGame(Integer ID) throws DataAccessException;
     public List<GameData> listGames() throws DataAccessException;
-    public void updateGame() throws DataAccessException;
+    public void updateGame(ChessGame game, ChessMove move, Integer gameID) throws DataAccessException, InvalidMoveException;
     public void joinGame(String username, String color, Integer gameID) throws DataAccessException;
     public boolean isNull (Integer gameID) throws DataAccessException;
 

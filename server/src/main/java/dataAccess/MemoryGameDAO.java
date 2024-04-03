@@ -1,6 +1,7 @@
 package dataAccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import model.GameData;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame() {
+    public void updateGame(ChessGame game, ChessMove move, Integer gameID) {
 
     }
 

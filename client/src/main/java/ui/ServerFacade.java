@@ -63,12 +63,20 @@ public class ServerFacade {
   socket.send(join.message());
   }
 
-  public void joinObserver(JoinObserver observer){}
+  public void joinObserver(JoinObserver observer) throws Exception {
+    socket.send(observer.toString());
+  }
 
-  public void makeMove(MakeMove move){}
+  public void makeMove(MakeMove move) throws Exception {
+    socket.send(move.toString());
+  }
 
-  public void leave(Leave leave){}
+  public void leave(Leave leave) throws Exception {
+    socket.send(leave.toString());
+  }
 
-  public void resign(Resign resign){}
+  public void resign(Resign resign) throws Exception {
+    socket.send(resign.toString());
+  }
 
 }
