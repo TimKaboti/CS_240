@@ -58,7 +58,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
@@ -98,6 +98,7 @@ public class DatabaseManager {
                 `blackUsername` varchar(255) DEFAULT NULL,
                 `gameName` varchar(255) NOT NULL,
                 `game` TEXT NOT NULL,
+                'gameOver' BOOLEAN,
                 PRIMARY KEY (`gameID`),
                 INDEX(gameID),
                 INDEX(whiteUsername),
