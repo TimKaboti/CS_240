@@ -18,12 +18,24 @@ public class ChessGame {
     public ChessGame() {
         board = new ChessBoard();
         turn = WHITE;
+        gameOver = false;
     }
     ChessBoard board;
     TeamColor turn;
+    Boolean gameOver = false;
 
-    Boolean gameOver =  false;
+    public void setGameState(Boolean bool){
+        if(bool == false){
+            gameOver = false;
+        }
+        if(bool == true){
+            gameOver = true;
+        }
+    }
 
+    public boolean getGameState(){
+        return this.gameOver;
+    }
 
     /**
      * @return Which team's turn it is
@@ -35,7 +47,7 @@ public class ChessGame {
     /**
      * Set's which teams turn it is
      *
-     * @param team the team whose turn it is
+     * @param team the team whose turn it just was
      */
     public void setTeamTurn(TeamColor team) {
         if (team == BLACK){
@@ -88,7 +100,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if(!gameOver){
         HashSet<ChessMove> valid_moves = new HashSet<>();
         ChessPosition start_position = move.getStartPosition();
         valid_moves.addAll(validMoves(start_position));
@@ -116,7 +127,7 @@ public class ChessGame {
         } else {
             throw new InvalidMoveException("Move does not Exist");
         }
-        }
+
     }
 
     /**

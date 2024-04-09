@@ -98,7 +98,6 @@ public class DatabaseManager {
                 `blackUsername` varchar(255) DEFAULT NULL,
                 `gameName` varchar(255) NOT NULL,
                 `game` TEXT NOT NULL,
-                'gameOver' BOOLEAN,
                 PRIMARY KEY (`gameID`),
                 INDEX(gameID),
                 INDEX(whiteUsername),
