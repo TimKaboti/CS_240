@@ -5,9 +5,14 @@ import Result.ListGamesResult;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
+import server.NotificationHandler;
+import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.Leave;
 import webSocketMessages.userCommands.MakeMove;
 import webSocketMessages.userCommands.Resign;
@@ -17,7 +22,7 @@ import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
 
-public class GamePlayUI {
+public class GamePlayUI implements NotificationHandler {
 
 
   public ChessGame game=null;
@@ -158,11 +163,25 @@ public class GamePlayUI {
     return new ChessPosition(row, col);
   }
 
-//  public void notify(Notification notification) {
-//    System.out.println(RED + notification.message());
-//    printPrompt();
-//  }
-//
+  @Override
+  public void notify(ServerMessage message) {
+    switch(message.getServerMessageType()){
+      case LOAD_GAME:
+        LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
+//        probably need to call draw board, to do that need to get playerColor.
+        break;
+      case NOTIFICATION:
+        Notification notification = new Gson().fromJson(message.toString(), Notification.class);
+        notification.getMessage();
+        break;
+      case ERROR:
+        Error error = new Gson().fromJson(message.toString(), Error.class);
+        error.getMessage();
+        break;
+    }
+
+  }
+
 //  private void printPrompt() {
 //    System.out.print("\n" + RESET + ">>> " + GREEN);
 //  }

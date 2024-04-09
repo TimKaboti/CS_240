@@ -69,20 +69,28 @@ public class WebSocketHandler {
         } catch (SQLException | DataAccessException e) {
           throw new RuntimeException(e);
         }
+        // need to add the appropriate message around here. maybe before the catch block.
         break;
       case RESIGN:
         Resign resign = new Gson().fromJson(message, Resign.class);
         authToken = resign.getAuthString();
         gameID =resign.getGameID();
         try(Connection connection = DatabaseManager.getConnection();
-          PreparedStatement statement = connection.prepareStatement("")
-        ) {
+          PreparedStatement statement = connection.prepareStatement("SELECT game from gameData WHERE gameID = ?")){
+          statement.setInt(1, gameID);
+          ChessGame thisGame =(ChessGame) statement.executeQuery();
+          thisGame.setGameState(true);
+          byte[] gameBytes=SerializationUtils.serialize(thisGame);
+          PreparedStatement updateGame=connection.prepareStatement("UPDATE gameData SET game = ? WHERE gameID = ?");
+          updateGame.setInt(2, gameID);
+          updateGame.setBytes(1, gameBytes);
+          updateGame.executeUpdate();
         } catch (SQLException e) {
           throw new RuntimeException(e);
         } catch (DataAccessException e) {
           throw new RuntimeException(e);
         }
-
+// need to add the appropriate message around here. maybe before the catch block.
         break;
       case MAKE_MOVE:
         MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
@@ -119,7 +127,7 @@ public class WebSocketHandler {
         } catch (InvalidMoveException e) {
           throw new RuntimeException(e);
         }
-
+// need to add the appropriate message around here. maybe before the catch block.
         break;
       case JOIN_PLAYER:
         String name;
@@ -159,16 +167,19 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
           }
         }
-
+// need to add the appropriate message around here. maybe before the catch block.
         break;
       case JOIN_OBSERVER:
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
         authToken = joinObserver.getAuthString();
         gameID =joinObserver.getGameID();
+//        need to create the connections map so that a person observing the game can be added to it.
+//        also need to add players to that map just like the observers, so I need to add them in the 'join_Game' case
+        // need to add the appropriate message around here.
+
         break;
     }
-        notificationHandler.notify();
-//I may not need this notification handler.
+//        notificationHandler.notify();
     }
 
   }

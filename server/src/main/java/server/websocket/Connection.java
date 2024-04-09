@@ -8,7 +8,7 @@ public class Connection {
   public Session session;
 
 
-  public Connection( Session session) {
+  public Connection(Session session) {
     this.session = session;
   }
 
