@@ -36,8 +36,7 @@ public class WebsocketCommunicator {
             break;
         }
 
-        notificationHandler.notify(newMessage);
-//        here ive got a message. what I need to do is figure out what methods need to be called as a result of this
+//        what I need to do is figure out what methods need to be called as a result of each
 //        message. for example LOAD_GAME; if this were the message, I'd need to redraw the board for the players & observers.
       }
     });

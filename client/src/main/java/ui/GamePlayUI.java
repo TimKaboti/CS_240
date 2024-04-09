@@ -169,21 +169,29 @@ public class GamePlayUI implements NotificationHandler {
       case LOAD_GAME:
         LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
 //        probably need to call draw board, to do that need to get playerColor.
+        DrawBoard board=new DrawBoard(load.getGame().getBoard());
+        if (playerColor.equalsIgnoreCase("black")) {
+          board.drawBlackPlayer();
+          options();
+        }
+        if (playerColor.equalsIgnoreCase("white")) {
+          board.drawBlackPlayer();
+          options();
+        }
+//        still need to display the message
         break;
       case NOTIFICATION:
         Notification notification = new Gson().fromJson(message.toString(), Notification.class);
         notification.getMessage();
+//        not sure if this is the message or not.
         break;
       case ERROR:
         Error error = new Gson().fromJson(message.toString(), Error.class);
         error.getMessage();
+//        same as for notification.
         break;
     }
 
   }
-
-//  private void printPrompt() {
-//    System.out.print("\n" + RESET + ">>> " + GREEN);
-//  }
 
 }
