@@ -4,23 +4,38 @@ import webSocketMessages.serverMessages.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
   public Session session;
 
-  public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+  public final ConcurrentHashMap<Integer, HashSet<Connection>> connections = new ConcurrentHashMap<>();
 
-  public void add(String userName, Session session) {
+  public void add(Integer gameID, String userName, Session session) {
+    HashSet<Connection> connectionSet = connections.get(gameID);
     var connection=new Connection(userName, session);
-    connections.put(userName, connection);
+    if(connectionSet == null){
+      connectionSet = new HashSet<>();
+      connections.put(gameID, connectionSet);
+      connectionSet.add(connection);
+    } else {
+      connectionSet.add(connection);
+    }
   }
 
-  public void remove(String visitorName) {
-    connections.remove(visitorName);
+  public void remove(Integer gameID, String userName, Session session) {
+    HashSet<Connection> connectionSet = connections.get(gameID);
+    var connection= new Connection(userName, session);
+    if(connectionSet != null){
+      if(connectionSet.contains(connection)){
+        connectionSet.remove(connection);
+      }
+    }
   }
-
-  public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
+//ask who broadcast is supposed to be sending notifications to. is it all but the client or just the client?
+  public void broadcast(Integer gameID, String excludeVisitorName, Notification notification) throws IOException {
     var removeList=new ArrayList<Connection>();
     for (var c : connections.values()) {
       if (c.session.isOpen()) {

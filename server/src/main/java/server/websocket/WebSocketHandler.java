@@ -11,7 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 //import webSocketMessages.Action;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
-import org.eclipse.jetty.websocket.client.io.ConnectionManager;
+import server.websocket.ConnectionManager;
 import org.springframework.util.SerializationUtils;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.*;
@@ -28,8 +28,9 @@ import java.util.Timer;
 @WebSocket
 public class WebSocketHandler {
 
-  private final ConnectionManager connections = new ConnectionManager(new WebSocketClient());
+  private final ConnectionManager connections = new ConnectionManager();
   NotificationHandler notificationHandler;
+
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
@@ -167,6 +168,8 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
           }
         }
+//        create new Notification
+//        create new loadGame
 // need to add the appropriate message around here. maybe before the catch block.
         break;
       case JOIN_OBSERVER:

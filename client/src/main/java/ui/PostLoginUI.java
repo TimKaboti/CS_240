@@ -7,21 +7,20 @@ import model.GameData;
 import model.JoinGameRecord;
 import model.LogoutRecord;
 import webSocketMessages.serverMessages.Notification;
-import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 
 import java.util.List;
 import java.util.Scanner;
 
-import static java.awt.Color.*;
+import static java.awt.Color.GREEN;
+import static java.awt.Color.RED;
 import static java.lang.Integer.parseInt;
 import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class PostLoginUI {
 
   PreLoginUI preMenu=new PreLoginUI();
-
 
 
   public String authToken;
