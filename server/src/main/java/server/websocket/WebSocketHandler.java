@@ -74,7 +74,10 @@ public class WebSocketHandler {
 
           String webMessage = name + " has left the game." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-//          probably need a Leave Notification too.
+//          broadcast
+          connections.remove(gameID, name, session);
+          connections.broadcast(gameID,name,session,notification);
+
         } catch (SQLException | DataAccessException e) {
           throw new RuntimeException(e);
         }
@@ -106,7 +109,9 @@ public class WebSocketHandler {
           updateGame.executeUpdate();
           String webMessage = playerName + " has chosen to resign. This game is over." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-//          probably still need a Resign notification here as well.
+//          send to all.
+          connections.broadcast(gameID,playerName,session,notification);
+
         } catch (SQLException e) {
           throw new RuntimeException(e);
         } catch (DataAccessException e) {
@@ -151,7 +156,10 @@ public class WebSocketHandler {
           statement.setInt(1, gameID);
           ChessGame thisGame = (ChessGame) statement.executeQuery();
           if(thisGame.getGameState()){
-//            need to write the return message here. also probably need to break too.
+            Error error = new Error("Error: cannot make a move after game is over or a player has resigned.");
+            connections.broadcast(gameID, thisName, session, error);
+            String thisError = new Gson().toJson(error);
+            send(session, thisError);
             break;
           } else {
 //            here im checking for if the game is in checkmate, but I likely need to check for just check as well.
@@ -162,11 +170,13 @@ public class WebSocketHandler {
 //              new Notification
               String webMessage = blackPlayer + " is in Checkmate." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+              connections.broadcast(gameID,blackPlayer,session,notification);
 
             } else if (thisGame.isInCheck(ChessGame.TeamColor.BLACK)) {
 //              new Notification
               String webMessage = blackPlayer + " is in Check." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+              connections.broadcast(gameID,blackPlayer,session,notification);
 
             }
             if (thisGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
@@ -174,11 +184,13 @@ public class WebSocketHandler {
 //              new Notification
               String webMessage = whitePlayer + " is in Checkmate." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+              connections.broadcast(gameID,whitePlayer,session,notification);
 
             }else if (thisGame.isInCheck(ChessGame.TeamColor.WHITE)) {
 //              new Notification
               String webMessage = whitePlayer + " is in Check." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+              connections.broadcast(gameID,whitePlayer,session,notification);
 
             }
             byte[] gameBytes=SerializationUtils.serialize(thisGame);
@@ -187,9 +199,16 @@ public class WebSocketHandler {
             updateGame.setBytes(1, gameBytes);
             updateGame.executeUpdate();
 
-            String webMessage = thisName + " has moved "+ piece.getPieceType().toString() + " from " + start + " to " + end + "." ;
+            String webMessage = thisName + " has moved "+ piece.getPieceType().toString() + " from " + start.toString() + " to " + end.toString() + "." ;
 //            may need to mess with the toStrings to get this to print properly. also may need to do something like coordConvert for start and end.
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+            connections.broadcast(gameID,thisName,session,notification);
+//broadcast(also may need to be moved.)
+            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,thisGame);
+            connections.broadcast(gameID, thisName, session, loadGame);
+            String newLoad = new Gson().toJson(loadGame);
+            send(session, newLoad);
+// send to all.
           }
 
         } catch (SQLException e) {
@@ -210,7 +229,6 @@ public class WebSocketHandler {
         ChessGame game;
         try(Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT name FROM userData WHERE authToken = ?")){
-//          I may also need to select the ChessGame itself so that the LoadGame instance can use it.
           statement.setString(1, authToken);
           name = String.valueOf(statement.executeQuery());} catch (SQLException e) {
           throw new RuntimeException(e);
@@ -231,9 +249,15 @@ public class WebSocketHandler {
         } catch (DataAccessException e) {
           throw new RuntimeException(e);
           }
+          connections.add(gameID, name, session);
           String webMessage = name + " has joined the game as White Player." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+          connections.broadcast(gameID,name,session,notification);
+//          broadcast
           LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
+          String newLoad = new Gson().toJson(loadGame);
+          send(session, newLoad);
+//          to root
 //        create new Notification
 //        create new loadGame
 // need to add the appropriate message around here. maybe before the catch block.
@@ -252,35 +276,58 @@ public class WebSocketHandler {
           } catch (DataAccessException e) {
             throw new RuntimeException(e);
           }
+//          add this player to the hashmap
+          connections.add(gameID, name, session);
           String webMessage=name + " has joined the game as Black Player.";
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+          connections.broadcast(gameID,name,session,notification);
+
+//          broadcast
           LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
-//        create new Notification
-//        create new loadGame
+          String newLoad = new Gson().toJson(loadGame);
+          send(session, newLoad);
+//          send to root
+
         }
         break;
       case JOIN_OBSERVER:
         JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
         authToken = joinObserver.getAuthString();
         gameID =joinObserver.getGameID();
+        ChessGame tempGame;
         try(Connection connection = DatabaseManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT name FROM userData WHERE authToken = ?")){
+            PreparedStatement statement = connection.prepareStatement("SELECT name FROM userData WHERE authToken = ?");
+            PreparedStatement secondStatement = connection.prepareStatement("SELECT game FROM gameData where gameID = ?")){
           statement.setString(1, authToken);
           String observerName = String.valueOf(statement.executeQuery());
+          secondStatement.setInt(1, gameID);
+          tempGame = (ChessGame) secondStatement.executeQuery();
+          connections.add(gameID, observerName, session);
+//          add this observer to the hashmap
         String webMessage = observerName + " has joined the game as an Observer." ;
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+          connections.broadcast(gameID,observerName,session,notification);
+//        broadcast
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, tempGame);
+          String newLoad = new Gson().toJson(loadGame);
+          send(session, newLoad);
+//        to root
 //        need to create the connections map so that a person observing the game can be added to it.
 //        also need to add players to that map just like the observers, so I need to add them in the 'join_Game' case
-        // need to add the appropriate message around here.
 
-        break;
     } catch (SQLException e) {
           throw new RuntimeException(e);
         } catch (DataAccessException e) {
           throw new RuntimeException(e);
         }
+        break;
 //        notificationHandler.notify();
     }
 
   }
+
+  public void send(Session session,String msg) throws IOException {
+    session.getRemote().sendString(msg);
+  }
 }
+

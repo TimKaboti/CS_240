@@ -36,7 +36,7 @@ public class ConnectionManager {
     }
   }
 //all but the client.
-  public void broadcast(Integer gameID, String excludeVisitorName, Session session, Notification notification) throws IOException {
+  public void broadcast(Integer gameID, String excludeVisitorName, Session session, Object notification) throws IOException {
     HashSet<Connection> connectionSet = connections.get(gameID);
     List<Connection> sendList = new ArrayList<>();
     for (var c : connectionSet) {

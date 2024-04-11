@@ -168,7 +168,6 @@ public class GamePlayUI implements NotificationHandler {
     switch(message.getServerMessageType()){
       case LOAD_GAME:
         LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
-//        probably need to call draw board, to do that need to get playerColor.
         DrawBoard board=new DrawBoard(load.getGame().getBoard());
         if (playerColor.equalsIgnoreCase("black")) {
           board.drawBlackPlayer();
@@ -178,7 +177,7 @@ public class GamePlayUI implements NotificationHandler {
           board.drawBlackPlayer();
           options();
         }
-//        still need to display the message
+        load.notify();
         break;
       case NOTIFICATION:
         Notification notification = new Gson().fromJson(message.toString(), Notification.class);
