@@ -5,6 +5,7 @@ import webSocketMessages.serverMessages.Notification;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,17 +35,19 @@ public class ConnectionManager {
       }
     }
   }
-//ask who broadcast is supposed to be sending notifications to. is it all but the client or just the client?
-  public void broadcast(Integer gameID, String excludeVisitorName, Notification notification) throws IOException {
-    var removeList=new ArrayList<Connection>();
-    for (var c : connections.values()) {
+//all but the client.
+  public void broadcast(Integer gameID, String excludeVisitorName, Session session, Notification notification) throws IOException {
+    HashSet<Connection> connectionSet = connections.get(gameID);
+    List<Connection> sendList = new ArrayList<>();
+    for (var c : connectionSet) {
       if (c.session.isOpen()) {
-        if (!c.userName.equals(excludeVisitorName)) {
-          c.send(notification.toString());
+        if (c.session != session) {
+          sendList.add(c);
         }
-      } else {
-        removeList.add(c);
       }
+    }
+    for (var c : sendList){
+      c.send(notification.toString());
     }
   }
 

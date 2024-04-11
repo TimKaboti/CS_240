@@ -57,13 +57,13 @@ public class WebSocketHandler {
             String whiteUser = String.valueOf(firstStatement.executeQuery());
             String blackUser = String.valueOf(secondStatement.executeQuery());
               if(Objects.equals(name, whiteUser)){
-                try(PreparedStatement whiteRemoval = connection.prepareStatement("UPDATE  gamedata set whiteUsername = ? WHERE gameID = ?")){
+                try(PreparedStatement whiteRemoval = connection.prepareStatement("UPDATE  gameData set whiteUsername = ? WHERE gameID = ?")){
                 whiteRemoval.setString(1, null);
                 whiteRemoval.setInt(2, gameID);
                 whiteRemoval.executeUpdate();}
               }
               if(Objects.equals(name, blackUser)){
-                try(PreparedStatement blackRemoval = connection.prepareStatement("UPDATE  gamedata set blackUsername = ? WHERE gameID = ?")){
+                try(PreparedStatement blackRemoval = connection.prepareStatement("UPDATE  gameData set blackUsername = ? WHERE gameID = ?")){
                   blackRemoval.setString(1, null);
                   blackRemoval.setInt(2, gameID);
                   blackRemoval.executeUpdate();}
@@ -119,12 +119,26 @@ public class WebSocketHandler {
         authToken = makeMove.getAuthString();
         gameID = makeMove.getGameID();
         String thisName;
+        String whitePlayer;
+        String blackPlayer;
         ChessPosition start = makeMove.getMove().getStartPosition();
         ChessPosition end = makeMove.getMove().getEndPosition();
         try(Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT name FROM userData WHERE authToken = ?")){
           statement.setString(1, authToken);
           thisName = String.valueOf(statement.executeQuery());
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+          throw new RuntimeException(e);
+        }
+        try(Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?");
+            PreparedStatement secondStatement = connection.prepareStatement("SELECT whiteUsername FROM gameData WHERE gameID = ?")){
+          statement.setInt(1, gameID);
+          secondStatement.setInt(1,gameID);
+          blackPlayer = String.valueOf(statement.executeQuery());
+          whitePlayer = String.valueOf(secondStatement.executeQuery());
         } catch (SQLException e) {
           throw new RuntimeException(e);
         } catch (DataAccessException e) {
@@ -146,14 +160,26 @@ public class WebSocketHandler {
             if (thisGame.isInCheckmate(ChessGame.TeamColor.BLACK)) {
               thisGame.setGameState(true);
 //              new Notification
+              String webMessage = blackPlayer + " is in Checkmate." ;
+              Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+
             } else if (thisGame.isInCheck(ChessGame.TeamColor.BLACK)) {
 //              new Notification
+              String webMessage = blackPlayer + " is in Check." ;
+              Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+
             }
             if (thisGame.isInCheckmate(ChessGame.TeamColor.WHITE)) {
             thisGame.setGameState(true);
 //              new Notification
+              String webMessage = whitePlayer + " is in Checkmate." ;
+              Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+
             }else if (thisGame.isInCheck(ChessGame.TeamColor.WHITE)) {
 //              new Notification
+              String webMessage = whitePlayer + " is in Check." ;
+              Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+
             }
             byte[] gameBytes=SerializationUtils.serialize(thisGame);
             PreparedStatement updateGame=connection.prepareStatement("UPDATE gameData SET game = ? WHERE gameID = ?");
@@ -181,6 +207,7 @@ public class WebSocketHandler {
         authToken = joinPlayer.getAuthString();
         gameID =joinPlayer.getGameID();
         String color =joinPlayer.getPlayerColor();
+        ChessGame game;
         try(Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement("SELECT name FROM userData WHERE authToken = ?")){
 //          I may also need to select the ChessGame itself so that the LoadGame instance can use it.
@@ -192,10 +219,13 @@ public class WebSocketHandler {
         }
         if(color.equalsIgnoreCase("WHITE")){
         try(Connection connection = DatabaseManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement("UPDATE gamedata set whiteUsername = ? where gameID = ?")){
+            PreparedStatement statement = connection.prepareStatement("UPDATE gameData set whiteUsername = ? where gameID = ?");
+            PreparedStatement secondStatement = connection.prepareStatement("SELECT game FROM gameData where gameID = ?")){
           statement.setString(1, name);
           statement.setInt(2, gameID);
           statement.executeUpdate();
+          secondStatement.setInt(1, gameID);
+          game = (ChessGame) secondStatement.executeQuery();
         } catch (SQLException e) {
           throw new RuntimeException(e);
         } catch (DataAccessException e) {
@@ -203,17 +233,20 @@ public class WebSocketHandler {
           }
           String webMessage = name + " has joined the game as White Player." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-          LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,);
+          LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
 //        create new Notification
 //        create new loadGame
 // need to add the appropriate message around here. maybe before the catch block.
         }
         if(color.equalsIgnoreCase("BLACK")) {
           try (Connection connection=DatabaseManager.getConnection();
-               PreparedStatement statement=connection.prepareStatement("UPDATE gamedata set blackUsername = ? where gameID = ?")) {
+               PreparedStatement statement=connection.prepareStatement("UPDATE gameData set blackUsername = ? where gameID = ?");
+               PreparedStatement secondStatement = connection.prepareStatement("SELECT game FROM gameData where gameID = ?")) {
             statement.setString(1, name);
             statement.setInt(2, gameID);
             statement.executeUpdate();
+            secondStatement.setInt(1, gameID);
+            game = (ChessGame) secondStatement.executeQuery();
           } catch (SQLException e) {
             throw new RuntimeException(e);
           } catch (DataAccessException e) {
@@ -221,7 +254,7 @@ public class WebSocketHandler {
           }
           String webMessage=name + " has joined the game as Black Player.";
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-          LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,);
+          LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
 //        create new Notification
 //        create new loadGame
         }
