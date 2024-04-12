@@ -85,8 +85,6 @@ public class WebSocketHandler {
           }
         }
 
-
-
         // need to add the appropriate message around here. maybe before the catch block.
         break;
       case RESIGN:
