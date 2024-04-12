@@ -12,13 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
   public Session session;
 
-  public final ConcurrentHashMap<Integer, HashSet<Connection>> connections = new ConcurrentHashMap<>();
+  public final ConcurrentHashMap<Integer, HashSet<Connection>> connections=new ConcurrentHashMap<>();
 
   public void add(Integer gameID, String userName, Session session) {
-    HashSet<Connection> connectionSet = connections.get(gameID);
+    HashSet<Connection> connectionSet=connections.get(gameID);
     var connection=new Connection(userName, session);
-    if(connectionSet == null){
-      connectionSet = new HashSet<>();
+    if (connectionSet == null) {
+      connectionSet=new HashSet<>();
       connections.put(gameID, connectionSet);
       connectionSet.add(connection);
     } else {
@@ -27,31 +27,34 @@ public class ConnectionManager {
   }
 
   public void remove(Integer gameID, String userName, Session session) {
-    HashSet<Connection> connectionSet = connections.get(gameID);
-    var connection= new Connection(userName, session);
-    if(connectionSet != null){
-      if(connectionSet.contains(connection)){
+    HashSet<Connection> connectionSet=connections.get(gameID);
+    var connection=new Connection(userName, session);
+    if (connectionSet != null) {
+      if (connectionSet.contains(connection)) {
         connectionSet.remove(connection);
       }
     }
   }
-//all but the client.
+
+  //all but the client.
   public void broadcast(Integer gameID, String excludeVisitorName, Session session, Object notification) throws IOException {
-    HashSet<Connection> connectionSet = connections.get(gameID);
-    List<Connection> sendList = new ArrayList<>();
-    for (var c : connectionSet) {
-      if (c.session.isOpen()) {
-        if (c.session != session) {
-          sendList.add(c);
+    HashSet<Connection> connectionSet=connections.get(gameID);
+    List<Connection> sendList=new ArrayList<>();
+    if (connectionSet != null) {
+      for (var c : connectionSet) {
+        if (c.session.isOpen()) {
+          if (c.session != session) {
+            sendList.add(c);
+          }
         }
       }
-    }
-    for (var c : sendList){
-      c.send(notification.toString());
+      for (var c : sendList) {
+        c.send(notification.toString());
+      }
     }
   }
 
-  public void connection(Session session) {
+    public void connection (Session session){
       this.session=session;
     }
-}
+  }

@@ -25,4 +25,13 @@ public interface GameDAO {
     boolean isNotNull(Integer gameID) throws DataAccessException;
 
     public boolean taken (String color, Integer gameID) throws DataAccessException;
+
+    public String whitePlayerName (Integer gameID) throws DataAccessException;
+
+    public String blackPlayerName (Integer gameID) throws DataAccessException;
+
+    public void setBlackPlayerNull (Integer gameID) throws DataAccessException;
+
+    public void setWhitePlayerNull (Integer gameID) throws DataAccessException;
+
 }

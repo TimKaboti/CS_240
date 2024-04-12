@@ -232,9 +232,65 @@ public class GameSQL implements GameDAO {
     } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String whitePlayerName (Integer gameID){
+        String playerName=null;
+        try (Connection connection = DatabaseManager.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT whiteUsername FROM gameData WHERE gameID = ?")){
+            preparedStatement.setInt(1, gameID);
+            playerName =String.valueOf(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+          throw new RuntimeException(e);
+        }
+      return playerName;
+    }
+
+    public String blackPlayerName (Integer gameID){
+        String playerName=null;
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?")){
+            preparedStatement.setInt(1, gameID);
+            playerName =String.valueOf(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return playerName;
+    }
+
+    public void setWhitePlayerNull (Integer gameID){
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE  gameData set whiteUsername = ? WHERE gameID = ?")){
+            preparedStatement.setInt(2, gameID);
+            preparedStatement.setString(1, null);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setBlackPlayerNull (Integer gameID){
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE  gameData set whiteUsername = ? WHERE gameID = ?")){
+            preparedStatement.setInt(2, gameID);
+            preparedStatement.setString(1, null);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
-}
+
+
 }
 
 

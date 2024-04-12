@@ -1,6 +1,7 @@
 package ui;
 
 import Result.*;
+import com.google.gson.Gson;
 import model.*;
 import server.WebsocketCommunicator;
 import webSocketMessages.userCommands.*;
@@ -60,23 +61,28 @@ public class ServerFacade {
   } //post
 
   public void joinPlayer(JoinPlayer join) throws Exception {
-  socket.send(join.message());
+    String command = new Gson().toJson(join, UserGameCommand.class);
+    socket.send(command);
   }
 
   public void joinObserver(JoinObserver observer) throws Exception {
-    socket.send(observer.toString());
+    String command = new Gson().toJson(observer, UserGameCommand.class);
+    socket.send(command);
   }
 
   public void makeMove(MakeMove move) throws Exception {
-    socket.send(move.toString());
+    String command = new Gson().toJson(move, UserGameCommand.class);
+    socket.send(command);
   }
 
   public void leave(Leave leave) throws Exception {
-    socket.send(leave.toString());
+    String command = new Gson().toJson(leave, UserGameCommand.class);
+    socket.send(command);
   }
 
   public void resign(Resign resign) throws Exception {
-    socket.send(resign.toString());
+    String command = new Gson().toJson(resign, UserGameCommand.class);
+    socket.send(command);
   }
 
 }

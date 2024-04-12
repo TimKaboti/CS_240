@@ -3,6 +3,7 @@ import Result.CreateGameResult;
 import Result.JoinGameResult;
 import dataAccess.*;
 import model.*;
+import server.websocket.WebSocketHandler;
 import service.*;
 import com.google.gson.Gson;
 import spark.Request;
@@ -26,8 +27,10 @@ public class Server {
         GameDAO GameDAO = new GameSQL();
         AuthDAO AuthDAO = new AuthSQL();
         Spark.port(desiredPort);
+        WebSocketHandler webSocket = new WebSocketHandler(AuthDAO, GameDAO);
 
         Spark.staticFiles.location("web");
+        Spark.webSocket("/connect",webSocket);
         Spark.delete( "/db",((request, response) -> ClearHandler(request, response, UserDAO, GameDAO, AuthDAO)));
         Spark.post( "/user",(((request, response) -> RegisterHandler(request, response, UserDAO, AuthDAO))));
         Spark.post( "/session",(((request, response) -> LoginHandler(request, response, UserDAO, AuthDAO))));

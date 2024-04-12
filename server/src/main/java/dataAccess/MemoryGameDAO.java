@@ -78,5 +78,25 @@ public class MemoryGameDAO implements GameDAO{
         return bool;
     }
 
+    @Override
+    public String whitePlayerName(Integer gameID) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public String blackPlayerName(Integer gameID) throws DataAccessException {
+        return null;
+    }
+
+    @Override
+    public void setBlackPlayerNull(Integer gameID) throws DataAccessException {
+
+    }
+
+    @Override
+    public void setWhitePlayerNull(Integer gameID) throws DataAccessException {
+
+    }
+
 }
 
