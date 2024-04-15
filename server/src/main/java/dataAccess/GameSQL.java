@@ -22,7 +22,7 @@ public class GameSQL implements GameDAO {
       Statement statement=connection.createStatement();
 
       // Executing a SELECT query
-      ResultSet resultSet=statement.executeQuery("SELECT * FROM gameData");
+      ResultSet resultSet=statement.executeQuery("SELECT * FROM gamedata");
 
       // Processing the result set
       while (resultSet.next()) {
@@ -77,7 +77,7 @@ public class GameSQL implements GameDAO {
   public ChessGame getGame(Integer ID) throws DataAccessException {
     ChessGame chessGame=null;
 
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gamedata WHERE gameID = ?")) {
       preparedStatement.setInt(1, ID);
 
       try (ResultSet result=preparedStatement.executeQuery()) {
@@ -98,7 +98,7 @@ public class GameSQL implements GameDAO {
   public List<GameData> listGames() throws DataAccessException {
     List<GameData> temp=new ArrayList<>() {
     };
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT * FROM gameData")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT * FROM gamedata")) {
 
       try (ResultSet result=preparedStatement.executeQuery()) {
         // Use result.next() to check if there is any result
@@ -120,7 +120,7 @@ public class GameSQL implements GameDAO {
     ChessGame.TeamColor team=game.getTeamTurn();
     game.makeMove(move);
     game.setTeamTurn(team);
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement statement=connection.prepareStatement("UPDATE gameData SET game = ? WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement statement=connection.prepareStatement("UPDATE gamedata SET game = ? WHERE gameID = ?")) {
       // Convert game object to byte array to store in the database
       byte[] gameBytes=SerializationUtils.serialize(game);
       statement.setBytes(1, gameBytes);
@@ -133,20 +133,20 @@ public class GameSQL implements GameDAO {
 
   @Override
   public void joinGame(String username, String color, Integer gameID) throws DataAccessException {
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gamedata WHERE gameID = ?")) {
       color=color.toUpperCase();
       preparedStatement.setInt(1, gameID);
       try (ResultSet result=preparedStatement.executeQuery()) {
         // Use result.next() to check if there is any result
         if (result.next()) {
           if (color.equals("BLACK")) {
-            try (PreparedStatement subStatement=connection.prepareStatement("UPDATE gameData SET blackUsername = ? WHERE gameID = ?")) {
+            try (PreparedStatement subStatement=connection.prepareStatement("UPDATE gamedata SET blackUsername = ? WHERE gameID = ?")) {
               subStatement.setString(1, username);
               subStatement.setInt(2, gameID);
               subStatement.executeUpdate();
             }
           } else if (color.equals("WHITE")) {
-            try (PreparedStatement subStatement=connection.prepareStatement("UPDATE gameData SET whiteUsername = ? WHERE gameID = ?")) {
+            try (PreparedStatement subStatement=connection.prepareStatement("UPDATE gamedata SET whiteUsername = ? WHERE gameID = ?")) {
               subStatement.setString(1, username);
               subStatement.setInt(2, gameID);
               subStatement.executeUpdate();
@@ -170,7 +170,7 @@ public class GameSQL implements GameDAO {
    * returns true if a game with the provided gameID exists.
    * false otherwise.
    */ public boolean isNotNull(Integer gameID) throws DataAccessException {
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gamedata WHERE gameID = ?")) {
 
       preparedStatement.setInt(1, gameID);
       try (ResultSet result=preparedStatement.executeQuery()) {
@@ -193,7 +193,7 @@ public class GameSQL implements GameDAO {
     color=color.toUpperCase();
     try (Connection connection=DatabaseManager.getConnection()) {
       if (color.equals("BLACK")) {
-        try (PreparedStatement preparedStatement=connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?")) {
+        try (PreparedStatement preparedStatement=connection.prepareStatement("SELECT blackUsername FROM gamedata WHERE gameID = ?")) {
           preparedStatement.setInt(1, gameID);
           try (ResultSet result=preparedStatement.executeQuery()) {
             if (result.next()) {
@@ -206,7 +206,7 @@ public class GameSQL implements GameDAO {
       }
 
       if (color.equals("WHITE")) {
-        try (PreparedStatement preparedStatement=connection.prepareStatement("SELECT whiteUsername FROM gameData WHERE gameID = ?")) {
+        try (PreparedStatement preparedStatement=connection.prepareStatement("SELECT whiteUsername FROM gamedata WHERE gameID = ?")) {
           preparedStatement.setInt(1, gameID);
           try (ResultSet result=preparedStatement.executeQuery()) {
             if (result.next()) {
@@ -227,10 +227,10 @@ public class GameSQL implements GameDAO {
 
   public String whitePlayerName(Integer gameID) {
     String playerName=null;
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT whiteUsername FROM gamedata WHERE gameID = ?")) {
       preparedStatement.setInt(1, gameID);
-      try (ResultSet set=(preparedStatement.executeQuery())) {
-        if (!set.next()) {
+      try (ResultSet set=preparedStatement.executeQuery()) {
+        if (set.next()) {
           playerName=set.getString("whiteUsername");
         }
       }
@@ -245,10 +245,11 @@ public class GameSQL implements GameDAO {
 
   public String blackPlayerName(Integer gameID) {
     String playerName=null;
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT blackUsername FROM gameData WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection();
+         PreparedStatement preparedStatement = connection.prepareStatement("SELECT blackUsername FROM gamedata WHERE gameID = ?")) {
       preparedStatement.setInt(1, gameID);
-      try (ResultSet set=(preparedStatement.executeQuery())) {
-        if (!set.next()) {
+      try (ResultSet set=preparedStatement.executeQuery()) {
+        if (set.next()) {
           playerName = set.getString("blackUsername");
         }
       }
@@ -262,7 +263,7 @@ public class GameSQL implements GameDAO {
   }
 
   public void setWhitePlayerNull(Integer gameID) {
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("UPDATE  gameData set whiteUsername = ? WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("UPDATE gamedata set whiteUsername = ? WHERE gameID = ?")) {
       preparedStatement.setInt(2, gameID);
       preparedStatement.setString(1, null);
       preparedStatement.executeUpdate();
@@ -274,7 +275,7 @@ public class GameSQL implements GameDAO {
   }
 
   public void setBlackPlayerNull(Integer gameID) {
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("UPDATE  gameData set whiteUsername = ? WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("UPDATE  gamedata set whiteUsername = ? WHERE gameID = ?")) {
       preparedStatement.setInt(2, gameID);
       preparedStatement.setString(1, null);
       preparedStatement.executeUpdate();

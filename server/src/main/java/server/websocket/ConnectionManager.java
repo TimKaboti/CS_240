@@ -15,6 +15,11 @@ public class ConnectionManager {
 
   public final ConcurrentHashMap<Integer, HashSet<Connection>> connections=new ConcurrentHashMap<>();
 
+
+//  public HashSet<Connection> getHashSet(Integer gameID){
+//
+//  }
+
   public void add(Integer gameID, String userName, Session session) {
     HashSet<Connection> connectionSet=connections.get(gameID);
     var connection=new Connection(userName, session);
@@ -59,4 +64,9 @@ public class ConnectionManager {
     public void connection (Session session){
       this.session=session;
     }
+
+  public HashSet<Connection> get(Integer gameID) {
+    HashSet<Connection> connectionSet=connections.get(gameID);
+    return connectionSet;
   }
+}

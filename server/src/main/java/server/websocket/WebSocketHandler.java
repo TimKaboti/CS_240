@@ -20,9 +20,9 @@ import webSocketMessages.userCommands.*;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Timer;
 
@@ -53,14 +53,25 @@ public class WebSocketHandler {
         String whiteUser = null;
         String blackUser = null;
         try{name = authDao.getUsername(authToken);} catch (DataAccessException e) {
-          throw new RuntimeException(e);
+          Error error = new Error("Error: failed to retrieve player's name.");
+          connections.broadcast(gameID, name, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
         }
         try{whiteUser = gameDao.whitePlayerName(gameID);} catch (DataAccessException e) {
-          throw new RuntimeException(e);
+          Error error = new Error("Error: failed to retrieve white player's name.");
+          connections.broadcast(gameID, name, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
         }
         try{blackUser = gameDao.blackPlayerName(gameID);} catch (DataAccessException e) {
-          throw new RuntimeException(e);
+          Error error = new Error("Error: failed to retrieve black player's name.");
+          connections.broadcast(gameID, name, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
         }
+        HashSet<Connection> connectionSet=connections.get(gameID);
+        var connection=new Connection(name, session);
         if(name == whiteUser){
           try{gameDao.setWhitePlayerNull(gameID);
           String tempMessage = name + " has left the game." ;
@@ -73,7 +84,7 @@ public class WebSocketHandler {
             throw new RuntimeException(e);
           }
         }
-        if(name == blackUser){
+        else if(name == blackUser){
           try{gameDao.setWhitePlayerNull(gameID);
           String tempMessage = name + " has left the game." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, tempMessage);
@@ -84,6 +95,15 @@ public class WebSocketHandler {
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
+        }
+        else if(connectionSet.contains(connection)){
+          connections.remove(gameID, name, session);
+        }
+        else {
+          Error error = new Error("Error: the name given is not a participant.");
+          connections.broadcast(gameID, name, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
         }
 
         // need to add the appropriate message around here. maybe before the catch block.
@@ -99,7 +119,6 @@ public class WebSocketHandler {
           String thisError = new Gson().toJson(error);
           send(session, thisError);
         }
-
         try{ChessGame thisGame = gameDao.getGame(gameID);
           thisGame.setGameState(true);
           String webMessage = playerName + " has chosen to resign. This game is over." ;
@@ -108,7 +127,7 @@ public class WebSocketHandler {
           connections.broadcast(gameID,playerName,session,notification);
 
         } catch (DataAccessException e) {
-          Error error = new Error("Error: failed to return approppriate resign message.");
+          Error error = new Error("Error: failed to return appropriate resign message.");
           connections.broadcast(gameID, playerName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
@@ -200,6 +219,8 @@ public class WebSocketHandler {
         blkPlayer = gameDao.blackPlayerName(gameID);
         whtPlayer = gameDao.whitePlayerName(gameID);
 
+//         && !Objects.equals(tempName, blkPlayer)
+
           try{tempName = authDao.getUsername(authToken);} catch(DataAccessException e){
           Error error = new Error("Error: Failed to obtain users name.");
           connections.broadcast(gameID, tempName, session, error);
@@ -215,32 +236,39 @@ public class WebSocketHandler {
             break;}
 
         if(color.equalsIgnoreCase("WHITE")){
-          if(Objects.equals(whtPlayer, tempName) && !Objects.equals(tempName, blkPlayer)) {
-            try {
-              gameDao.joinGame(tempName, color, gameID);
-            } catch (DataAccessException e) {
-              Error error=new Error("Error: failed to set user as white player.");
-              connections.broadcast(gameID, tempName, session, error);
-              String thisError=new Gson().toJson(error);
-              send(session, thisError);
-              break;
-            }
-            try {
-              thisGame=gameDao.getGame(gameID);
-            } catch (DataAccessException e) {
-              Error error=new Error("Error: failed to retrieve game in joinPlayer.");
-              connections.broadcast(gameID, tempName, session, error);
-              String thisError=new Gson().toJson(error);
-              send(session, thisError);
-              break;
-            } finally {
-              connections.add(gameID, tempName, session);
-              String webMessage=tempName + " has joined the game as White Player.";
-              Notification notification=new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-              connections.broadcast(gameID, tempName, session, notification);
-              LoadGame loadGame=new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, thisGame);
-              String newLoad=new Gson().toJson(loadGame);
-              send(session, newLoad);
+          if (Objects.equals(whtPlayer, null)){
+            Error error=new Error("Error: player was never set as the white player. this spot s null.");
+            connections.broadcast(gameID, tempName, session, error);
+            String thisError=new Gson().toJson(error);
+            send(session, thisError);
+            break;
+          }
+          if(Objects.equals(whtPlayer, tempName) && !Objects.equals(blkPlayer,tempName)) {
+              try {
+                gameDao.joinGame(tempName, color, gameID);
+              } catch (DataAccessException e) {
+                Error error=new Error("Error: failed to set user as white player.");
+                connections.broadcast(gameID, tempName, session, error);
+                String thisError=new Gson().toJson(error);
+                send(session, thisError);
+                break;
+              }
+              try {
+                thisGame=gameDao.getGame(gameID);
+              } catch (DataAccessException e) {
+                Error error=new Error("Error: failed to retrieve game in joinPlayer.");
+                connections.broadcast(gameID, tempName, session, error);
+                String thisError=new Gson().toJson(error);
+                send(session, thisError);
+                break;
+              } finally {
+                connections.add(gameID, tempName, session);
+                String webMessage=tempName + " has joined the game as White Player.";
+                Notification notification=new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+                connections.broadcast(gameID, tempName, session, notification);
+                LoadGame loadGame=new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, thisGame);
+                String newLoad=new Gson().toJson(loadGame);
+                send(session, newLoad);
             }
           } else {
             Error error = new Error("Error: Attempted to join as the wrong color.");
@@ -252,32 +280,39 @@ public class WebSocketHandler {
         }
 
         if(color.equalsIgnoreCase("BLACK")) {
-          if(Objects.equals(blkPlayer, tempName) && !Objects.equals(tempName, whtPlayer)) {
-            try {
-              gameDao.joinGame(tempName, color, gameID);
-            } catch (DataAccessException e) {
-              Error error=new Error("Error: failed to set user as black player.");
-              connections.broadcast(gameID, tempName, session, error);
-              String thisError=new Gson().toJson(error);
-              send(session, thisError);
-              break;
-            }
-            try {
-              thisGame=gameDao.getGame(gameID);
-            } catch (DataAccessException e) {
-              Error error=new Error("Error: failed to retrieve game in joinPlayer.");
-              connections.broadcast(gameID, tempName, session, error);
-              String thisError=new Gson().toJson(error);
-              send(session, thisError);
-              break;
-            } finally {
-              connections.add(gameID, tempName, session);
-              String webMessage=tempName + " has joined the game as Black Player.";
-              Notification notification=new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-              connections.broadcast(gameID, tempName, session, notification);
-              LoadGame loadGame=new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, thisGame);
-              String newLoad=new Gson().toJson(loadGame);
-              send(session, newLoad);
+          if(Objects.equals(blkPlayer, null)){
+            Error error=new Error("Error: player never set as black player. black is set to null.");
+            connections.broadcast(gameID, tempName, session, error);
+            String thisError=new Gson().toJson(error);
+            send(session, thisError);
+            break;
+          }
+          if(Objects.equals(blkPlayer, tempName) && !Objects.equals(whtPlayer,tempName)) {
+              try {
+                gameDao.joinGame(tempName, color, gameID);
+              } catch (DataAccessException e) {
+                Error error=new Error("Error: failed to set user as black player.");
+                connections.broadcast(gameID, tempName, session, error);
+                String thisError=new Gson().toJson(error);
+                send(session, thisError);
+                break;
+              }
+              try {
+                thisGame=gameDao.getGame(gameID);
+              } catch (DataAccessException e) {
+                Error error=new Error("Error: failed to retrieve game in joinPlayer.");
+                connections.broadcast(gameID, tempName, session, error);
+                String thisError=new Gson().toJson(error);
+                send(session, thisError);
+                break;
+              } finally {
+                connections.add(gameID, tempName, session);
+                String webMessage=tempName + " has joined the game as Black Player.";
+                Notification notification=new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
+                connections.broadcast(gameID, tempName, session, notification);
+                LoadGame loadGame=new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, thisGame);
+                String newLoad=new Gson().toJson(loadGame);
+                send(session, newLoad);
             }
           } else {
             Error error = new Error("Error: Attempted to join as the wrong color.");
@@ -308,6 +343,13 @@ public class WebSocketHandler {
           connections.broadcast(gameID, observerName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+        }
+        if(observerName == null){
+          Error error = new Error("Error: failed to retrieve observer's name from database.");
+          connections.broadcast(gameID, observerName, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
+          break;
         }
         try{tempGame = gameDao.getGame(gameID);} catch (DataAccessException e){
           Error error = new Error("Error: failed to retrieve game in join Observer.");

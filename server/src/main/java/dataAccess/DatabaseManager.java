@@ -92,7 +92,7 @@ public class DatabaseManager {
             """,
 
             """
-            CREATE TABLE IF NOT EXISTS gameData (
+            CREATE TABLE IF NOT EXISTS gamedata (
                 `gameID` int NOT NULL,
                 `whiteUsername` varchar(255) DEFAULT NULL,
                 `blackUsername` varchar(255) DEFAULT NULL,
