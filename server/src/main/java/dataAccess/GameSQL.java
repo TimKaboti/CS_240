@@ -80,7 +80,6 @@ public class GameSQL implements GameDAO {
 
         try (Connection connection = DatabaseManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
-
             preparedStatement.setInt(1, ID);
 
             try (ResultSet result = preparedStatement.executeQuery()) {

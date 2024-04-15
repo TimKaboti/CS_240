@@ -1,4 +1,5 @@
 package server.websocket;
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.Notification;
 
@@ -49,7 +50,8 @@ public class ConnectionManager {
         }
       }
       for (var c : sendList) {
-        c.send(notification.toString());
+        String newNotify=new Gson().toJson(notification);
+        c.send(newNotify);
       }
     }
   }
