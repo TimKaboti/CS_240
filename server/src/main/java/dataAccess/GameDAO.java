@@ -34,4 +34,5 @@ public interface GameDAO {
 
     public void setWhitePlayerNull (Integer gameID) throws DataAccessException;
 
+    public void updateGameState(ChessGame thisGame, Integer gameID) throws DataAccessException;
 }

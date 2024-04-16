@@ -5,11 +5,11 @@ import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import dataAccess.*;
 
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+//import org.eclipse.jetty.websocket.api.Session;
+//import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+//import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 //import webSocketMessages.Action;
-import org.eclipse.jetty.websocket.client.WebSocketClient;
+//import org.eclipse.jetty.websocket.client.WebSocketClient;
 import server.websocket.ConnectionManager;
 import org.springframework.util.SerializationUtils;
 import webSocketMessages.serverMessages.LoadGame;
@@ -17,6 +17,8 @@ import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.userCommands.*;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
@@ -57,80 +59,112 @@ public class WebSocketHandler {
           connections.broadcast(gameID, name, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
         }
         try{whiteUser = gameDao.whitePlayerName(gameID);} catch (DataAccessException e) {
           Error error = new Error("Error: failed to retrieve white player's name.");
           connections.broadcast(gameID, name, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
         }
         try{blackUser = gameDao.blackPlayerName(gameID);} catch (DataAccessException e) {
           Error error = new Error("Error: failed to retrieve black player's name.");
           connections.broadcast(gameID, name, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
         }
-        HashSet<Connection> connectionSet=connections.get(gameID);
+        HashSet<Connection> connectionSet = connections.get(gameID);
         var connection=new Connection(name, session);
-        if(name == whiteUser){
+        if(Objects.equals(name, whiteUser)){
           try{gameDao.setWhitePlayerNull(gameID);
           String tempMessage = name + " has left the game." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, tempMessage);
 //          broadcast
           connections.remove(gameID, name, session);
-          connections.broadcast(gameID,name,session,notification);} catch (DataAccessException e) {
-            throw new RuntimeException(e);
-          } catch (IOException e) {
+          connections.broadcast(gameID,name,session,notification);
+//          String note=new Gson().toJson(notification);
+//          send(session, note);
+          break;
+          } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
           }
         }
-        else if(name == blackUser){
-          try{gameDao.setWhitePlayerNull(gameID);
+        else if(Objects.equals(name, blackUser)){
+          try{gameDao.setBlackPlayerNull(gameID);
           String tempMessage = name + " has left the game." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, tempMessage);
 //          broadcast
           connections.remove(gameID, name, session);
-          connections.broadcast(gameID,name,session,notification);} catch (DataAccessException e) {
-            throw new RuntimeException(e);
-          } catch (IOException e) {
+          connections.broadcast(gameID,name,session,notification);
+//            String note=new Gson().toJson(notification);
+//            send(session, note);
+          break;
+          } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
           }
         }
         else if(connectionSet.contains(connection)){
           connections.remove(gameID, name, session);
+          String tempMessage = name + " has stopped observing the game." ;
+          Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, tempMessage);
+          connections.broadcast(gameID,name,session,notification);
         }
         else {
-          Error error = new Error("Error: the name given is not a participant.");
+          Error error = new Error("Error: the name given is not a participant nor a player.");
           connections.broadcast(gameID, name, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
         }
-
         // need to add the appropriate message around here. maybe before the catch block.
         break;
       case RESIGN:
         Resign resign = new Gson().fromJson(message, Resign.class);
         authToken = resign.getAuthString();
-        gameID =resign.getGameID();
+        gameID = resign.getGameID();
         String playerName=null;
+        String blkPlyr = gameDao.blackPlayerName(gameID);
+        String whtPlyr = gameDao.whitePlayerName(gameID);
         try{playerName = authDao.getUsername(authToken);} catch (DataAccessException e) {
           Error error = new Error("Error: failed to retrieve player's name to resign.");
           connections.broadcast(gameID, playerName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
+        }
+
+        ChessGame tmpGame = gameDao.getGame(gameID);
+        if(tmpGame.getGameState()){
+          Error error = new Error("Error: one player has aleady resigned.");
+//          connections.broadcast(gameID, playerName, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
+          break;
+        }
+
+        if(!Objects.equals(playerName, blkPlyr) && !Objects.equals(playerName, whtPlyr)){
+          Error error = new Error("Error: an observer attempted to resign.");
+//          connections.broadcast(gameID, playerName, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
+          break;
         }
         try{ChessGame thisGame = gameDao.getGame(gameID);
           thisGame.setGameState(true);
+          gameDao.updateGameState(thisGame, gameID);
           String webMessage = playerName + " has chosen to resign. This game is over." ;
           Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
-//          send to all.
           connections.broadcast(gameID,playerName,session,notification);
-
+          String thisNote = new Gson().toJson(notification);
+          send(session, thisNote);
         } catch (DataAccessException e) {
           Error error = new Error("Error: failed to return appropriate resign message.");
           connections.broadcast(gameID, playerName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
+          break;
         }
 // need to add the appropriate message around here. maybe before the catch block.
         break;
@@ -148,6 +182,12 @@ public class WebSocketHandler {
         ChessMove move = makeMove.getMove();
         whitePlayer = gameDao.whitePlayerName(gameID);
         blackPlayer = gameDao.blackPlayerName(gameID);
+        if(game.getGameState() == true){
+          Error error = new Error("Error: cannot make a move after game is over or a player has resigned.");
+//          connections.broadcast(gameID, thisName, session, error);
+          String thisError = new Gson().toJson(error);
+          send(session, thisError);
+          break;}
         try{thisName = authDao.getUsername(authToken);} catch (DataAccessException e){
           Error error = new Error("Error: failed to retrieve game in joinPlayer.");
           connections.broadcast(gameID, thisName, session, error);

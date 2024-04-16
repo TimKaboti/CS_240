@@ -1,7 +1,10 @@
 package server.websocket;
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.Session;
+//import org.eclipse.jetty.websocket.api.Session;
 import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +46,7 @@ public class ConnectionManager {
   }
 
   //all but the client.
-  public void broadcast(Integer gameID, String excludeVisitorName, Session session, Object notification) throws IOException {
+  public void broadcast(Integer gameID, String excludeVisitorName, Session session, ServerMessage notification) throws IOException {
     HashSet<Connection> connectionSet=connections.get(gameID);
     List<Connection> sendList=new ArrayList<>();
     if (connectionSet != null) {

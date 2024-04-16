@@ -286,6 +286,21 @@ public class GameSQL implements GameDAO {
     }
   }
 
+  public void updateGameState(ChessGame game, Integer gameID) throws DataAccessException {
+    // Update board and change team turn
+    ChessGame.TeamColor team=game.getTeamTurn();
+    game.setTeamTurn(team);
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement statement=connection.prepareStatement("UPDATE gamedata SET game = ? WHERE gameID = ?")) {
+      // Convert game object to byte array to store in the database
+      String serialisedGame = new Gson().toJson(game);
+      statement.setString(1, serialisedGame);
+      statement.setInt(2, gameID);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      throw new DataAccessException("Failed to update this game in the database.");
+    }
+  }
+
 
 }
 

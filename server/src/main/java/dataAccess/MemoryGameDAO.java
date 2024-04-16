@@ -98,5 +98,10 @@ public class MemoryGameDAO implements GameDAO{
 
     }
 
+    @Override
+    public void updateGameState(ChessGame thisGame, Integer gameID) throws DataAccessException {
+
+    }
+
 }
 
