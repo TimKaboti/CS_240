@@ -4,14 +4,6 @@ import chess.*;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import dataAccess.*;
-
-//import org.eclipse.jetty.websocket.api.Session;
-//import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-//import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-//import webSocketMessages.Action;
-//import org.eclipse.jetty.websocket.client.WebSocketClient;
-import server.websocket.ConnectionManager;
-import org.springframework.util.SerializationUtils;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -19,14 +11,9 @@ import webSocketMessages.serverMessages.Error;
 import webSocketMessages.userCommands.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
-
-import javax.websocket.MessageHandler;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Timer;
 
 
 @WebSocket
