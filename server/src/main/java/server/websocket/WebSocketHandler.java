@@ -141,25 +141,47 @@ public class WebSocketHandler {
         String thisName = null;
         String whitePlayer = null;
         String blackPlayer = null;
+        String teamColor = null;
         ChessPosition start = makeMove.getMove().getStartPosition();
         ChessPosition end = makeMove.getMove().getEndPosition();
         ChessGame game = gameDao.getGame(gameID);
         ChessMove move = makeMove.getMove();
+        whitePlayer = gameDao.whitePlayerName(gameID);
+        blackPlayer = gameDao.blackPlayerName(gameID);
         try{thisName = authDao.getUsername(authToken);} catch (DataAccessException e){
           Error error = new Error("Error: failed to retrieve game in joinPlayer.");
           connections.broadcast(gameID, thisName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
         }
-        try{gameDao.updateGame(game, move, gameID);} catch (
-                InvalidMoveException e) {
-          throw new RuntimeException(e);
-        } catch (DataAccessException e) {
+        if(Objects.equals(whitePlayer, thisName)){
+          teamColor = "white";
+        }
+        if(Objects.equals(blackPlayer, thisName)){
+          teamColor = "black";
+        }
+        if(!Objects.equals(thisName, blackPlayer) && !Objects.equals(thisName, whitePlayer)){
+          Error error=new Error("Error: attempted to make move as an observer.");
+//          connections.broadcast(gameID, thisName, session, error);
+          String thisError=new Gson().toJson(error);
+          send(session, thisError);
+          break;
+        }
+        if (teamColor != null && !teamColor.equalsIgnoreCase(game.getBoard().getPiece(move.getStartPosition()).getTeamColor().toString())) {
+          Error error=new Error("Error: attempted to make move for other team.");
+//          connections.broadcast(gameID, thisName, session, error);
+          String thisError=new Gson().toJson(error);
+          send(session, thisError);
+          break;
+        }
+        try{gameDao.updateGame(game, move, gameID);}
+        catch (InvalidMoveException e) {
           Error error = new Error("Error: failed to make the requested move.");
-          connections.broadcast(gameID, thisName, session, error);
+//          connections.broadcast(gameID, thisName, session, error);
           String thisError = new Gson().toJson(error);
           send(session, thisError);
-        }
+          break;
+        } catch (Exception e) {e.printStackTrace();}
         try{whitePlayer = gameDao.whitePlayerName(gameID);} catch (DataAccessException e){}
         try{blackPlayer = gameDao.blackPlayerName(gameID);} catch (DataAccessException e){}
           if(game.getGameState()){

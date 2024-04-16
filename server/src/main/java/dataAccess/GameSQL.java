@@ -122,8 +122,8 @@ public class GameSQL implements GameDAO {
     game.setTeamTurn(team);
     try (Connection connection=DatabaseManager.getConnection(); PreparedStatement statement=connection.prepareStatement("UPDATE gamedata SET game = ? WHERE gameID = ?")) {
       // Convert game object to byte array to store in the database
-      byte[] gameBytes=SerializationUtils.serialize(game);
-      statement.setBytes(1, gameBytes);
+      String serialisedGame = new Gson().toJson(game);
+      statement.setString(1, serialisedGame);
       statement.setInt(2, gameID);
       statement.executeUpdate();
     } catch (SQLException e) {
