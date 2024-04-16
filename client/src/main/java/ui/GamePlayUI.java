@@ -10,6 +10,7 @@ import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
 import server.NotificationHandler;
+import server.WebsocketCommunicator;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.serverMessages.ServerMessage;
@@ -21,33 +22,36 @@ import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.Integer.parseInt;
+import static ui.EscapeSequences.SET_TEXT_COLOR_WHITE;
 
 public class GamePlayUI implements NotificationHandler {
 
 
   public ChessGame game=null;
   PostLoginUI postMenu;
-
+  WebsocketCommunicator communicator;
   public String authToken;
   public String playerColor;
   public int gameID;
 
 
-  public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game, int gameID) {
+  public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game, int gameID, WebsocketCommunicator communicator) {
     this.postMenu=postMenu;
     this.authToken=authToken;
     this.playerColor=playerColor;
     this.game=game;
     this.gameID=gameID;
+    this.communicator = communicator;
   }
 
 
   public void run(ServerFacade server, String authToken, ChessGame chessGame) throws ResponseException, Exception {
     DrawBoard board=new DrawBoard(chessGame.getBoard());
     Scanner scanner=new Scanner(System.in);
-    var input="";
+    System.out.println(SET_TEXT_COLOR_WHITE);
     System.out.println("Welcome to the Gameplay menu.");
     options();
+    var input="";
 
 
     while (true) {
@@ -79,7 +83,8 @@ public class GamePlayUI implements NotificationHandler {
         ChessMove move=new ChessMove(start, end, null);
 //        not sure, but I may need to call the serverFacade with the make move, or 'update game' method
 //        also might need to have a websocket message.
-        server.makeMove(new MakeMove(authToken, gameID, move));
+        String tmpMove = new Gson().toJson(new MakeMove(authToken, gameID, move));
+        communicator.send(tmpMove);
 
       } else if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);
@@ -112,12 +117,11 @@ public class GamePlayUI implements NotificationHandler {
         if(playerColor.equalsIgnoreCase("black")){
           board.drawHighlightGrid(start);
         }
-//        websocket messages for these
 
       } else if (line.equals("6")) {
         Scanner newScanner=new Scanner(System.in);
-//        this is for resigning. need to implement websocket.
-        server.resign(new Resign(authToken, gameID));
+        String resign = new Gson().toJson(new Resign(authToken, gameID));
+        communicator.send(resign);
 
         System.out.println("\n");
 
@@ -132,8 +136,8 @@ public class GamePlayUI implements NotificationHandler {
         options();
       } else if (line.equals("2")) {
         System.out.println("Leaving Game.");
-//        websocket message needed.
-        server.leave(new Leave(authToken, gameID));
+        String leave = new Gson().toJson(new Leave(authToken, gameID));
+        communicator.send(leave);
         break;
       } else {
         System.out.println("\nPlease enter a valid menu option by typing the number of the option you want.");
@@ -181,13 +185,11 @@ public class GamePlayUI implements NotificationHandler {
         break;
       case NOTIFICATION:
         Notification notification = new Gson().fromJson(message.toString(), Notification.class);
-        notification.getMessage();
-//        not sure if this is the message or not.
+        System.out.println(notification.getMessage());
         break;
       case ERROR:
         Error error = new Gson().fromJson(message.toString(), Error.class);
-        error.getMessage();
-//        same as for notification.
+        System.out.println(error.getMessage());
         break;
     }
 

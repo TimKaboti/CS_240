@@ -1,18 +1,17 @@
 package ui;
-
+import com.google.gson.Gson;
 import Result.JoinGameResult;
 import Result.ListGamesResult;
 import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
 import model.LogoutRecord;
+import server.WebsocketCommunicator;
 import webSocketMessages.serverMessages.Notification;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
-
 import java.util.List;
 import java.util.Scanner;
-
 import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
 import static java.lang.Integer.parseInt;
@@ -21,7 +20,6 @@ import static org.glassfish.grizzly.Interceptor.RESET;
 public class PostLoginUI {
 
   PreLoginUI preMenu=new PreLoginUI();
-
 
   public String authToken;
 
@@ -37,7 +35,6 @@ public class PostLoginUI {
       if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);
         String gameName;
-        // Keep asking for username until it's not empty or just whitespace
         do {
           System.out.println("\nEnter Game name:");
           gameName=newScanner.nextLine().trim(); // trim to remove leading and trailing whitespace
@@ -67,6 +64,7 @@ public class PostLoginUI {
           ;
         }
       } else if (line.equals("5")) {
+        WebsocketCommunicator communicator = new WebsocketCommunicator();
         Scanner newScanner=new Scanner(System.in);
         String color;
         String gameID;
@@ -87,28 +85,37 @@ public class PostLoginUI {
             System.out.println("\nGame ID field cannot be blank or a string. Please enter a game ID#.");
           }
         } while (gameID.isEmpty());
-        ListGamesResult result=(server.facadeList());
-        List<GameData> games=result.games();
+        ListGamesResult result = (server.facadeList());
+        List<GameData> games = result.games();
         int index=parseInt(gameID);
-        GameData game=games.get(index - 1);
+        GameData game = games.get(index - 1);
         int id=game.getGameID();
-        JoinGameRecord join=new JoinGameRecord(color, id);
-        GamePlayUI play = new GamePlayUI(this,authToken,color,game.getGame(), id);
+        JoinGameRecord join = new JoinGameRecord(color, id);
+        GamePlayUI play = new GamePlayUI(this,authToken,color,game.getGame(), id, communicator);
         try {
-          JoinGameResult temp=server.facadeJoin(join);
+          JoinGameResult temp = server.facadeJoin(join);
           DrawBoard board=new DrawBoard(temp.board());
           if(color.equalsIgnoreCase("white")){
+            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, "white"));
+            communicator.send(playerJoin);
             board.drawWhitePlayer();
             System.out.println("\n");
+            if(game.getGame() != null){
             play.run(server, authToken, game.getGame());
             //            run the gameplay UI and send a websocket message maybe?
-            server.joinPlayer(new JoinPlayer(authToken, id, color));
+            String joinPlayer =  new Gson().toJson(new JoinPlayer(authToken, id, color));
+            communicator.send(joinPlayer);}
           }
           if(color.equalsIgnoreCase("black")){
+            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, "black"));
+            communicator.send(playerJoin);
             board.drawBlackPlayer();
             System.out.println("\n");
+            if(game.getGame() != null){
             play.run(server, authToken, game.getGame());
             //            run the gameplay UI and send a websocket message maybe?
+              String joinPlayer = new Gson().toJson(new JoinPlayer(authToken, id, color));
+              communicator.send(joinPlayer);}
           }
 
         } catch (ResponseException e) {
@@ -119,6 +126,7 @@ public class PostLoginUI {
 //        websocket message here.
 
       } else if (line.equals("6")) {
+        WebsocketCommunicator communicator = new WebsocketCommunicator();
         Scanner newScanner=new Scanner(System.in);
         String gameID;
         // Keep asking for username until it's not empty or just whitespace
@@ -135,12 +143,13 @@ public class PostLoginUI {
         GameData game=games.get(index - 1);
         int id=game.getGameID();
         JoinGameRecord observe=new JoinGameRecord(null, id);
-        GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame(), id);
+        GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame(), id, communicator);
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
 //          send websocket message
-          server.joinObserver(new JoinObserver(authToken, id));
+          String obbyJoin = new Gson().toJson(new JoinObserver(authToken, id));
+          communicator.send(obbyJoin);
         } catch (ResponseException e) {
           System.out.println("\nTrouble observing game, please try again.");
 
