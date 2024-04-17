@@ -166,6 +166,7 @@ public class DrawBoard {
 
 
   public static void drawHighlightGrid(ChessPosition myPosition) {
+    drawReverseHeader(out);
     Collection<ChessMove> moves = new ChessPiece(BLACK,board.getPiece(myPosition).getPieceType()).pieceMoves(board, myPosition);
     HashSet<ChessPosition> validMoves = new HashSet<ChessPosition>();
       for (ChessMove move : moves) {
@@ -375,6 +376,9 @@ public class DrawBoard {
       out.print("\n");
 
     }
+    drawReverseHeader(out);
+    out.print(SET_BG_COLOR_BLACK);
+    out.print(SET_TEXT_COLOR_WHITE);
   }
 
   /**
@@ -467,6 +471,7 @@ public class DrawBoard {
   public static void drawReversedHighlightGrid(ChessPosition myPosition) {
     Collection<ChessMove> moves = new ChessPiece(WHITE,board.getPiece(myPosition).getPieceType()).pieceMoves(board, myPosition);
     HashSet<ChessPosition> validMoves = new HashSet<ChessPosition>();
+    drawHeader(out);
     for (ChessMove move : moves) {
       validMoves.add(move.getEndPosition());
     }
@@ -672,8 +677,10 @@ public class DrawBoard {
       out.print(" " + i + " ");
       out.print(SET_BG_COLOR_WHITE);
       out.print("\n");
-
     }
+    drawHeader(out);
+    out.print(SET_BG_COLOR_BLACK);
+    out.print(SET_TEXT_COLOR_WHITE);
   }
 
   public static void drawWhitePlayer() {

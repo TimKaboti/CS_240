@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import Result.JoinGameResult;
 import Result.ListGamesResult;
@@ -6,8 +7,12 @@ import model.CreateGameRecord;
 import model.GameData;
 import model.JoinGameRecord;
 import model.LogoutRecord;
+import server.NotificationHandler;
 import server.WebsocketCommunicator;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.JoinObserver;
 import webSocketMessages.userCommands.JoinPlayer;
 import java.util.List;
@@ -17,13 +22,22 @@ import static java.awt.Color.RED;
 import static java.lang.Integer.parseInt;
 import static org.glassfish.grizzly.Interceptor.RESET;
 
-public class PostLoginUI {
+public class PostLoginUI implements NotificationHandler {
 
   PreLoginUI preMenu=new PreLoginUI();
+  WebsocketCommunicator communicator;
+  {
+    try {
+      communicator=new WebsocketCommunicator(this);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   public String authToken;
+  String color;
 
-  public void run(ServerFacade server, String authToken) throws ResponseException {
+  public void run(ServerFacade server, String authToken) throws ResponseException, Exception {
     Scanner scanner=new Scanner(System.in);
     var input="";
     System.out.println("Welcome to the Chess game options menu!");
@@ -54,7 +68,6 @@ public class PostLoginUI {
         }
       } else if (line.equals("4")) {
         System.out.println("\nGames:");
-        Scanner newScanner=new Scanner(System.in);
         try {
           ListGamesResult result=(server.facadeList());
           System.out.println(listToString(result.games()));
@@ -64,9 +77,7 @@ public class PostLoginUI {
           ;
         }
       } else if (line.equals("5")) {
-        WebsocketCommunicator communicator = new WebsocketCommunicator();
         Scanner newScanner=new Scanner(System.in);
-        String color;
         String gameID;
         // Keep asking for username until it's not empty or just whitespace
         do {
@@ -100,22 +111,20 @@ public class PostLoginUI {
             communicator.send(playerJoin);
             board.drawWhitePlayer();
             System.out.println("\n");
-            if(game.getGame() != null){
-            play.run(server, authToken, game.getGame());
+            play.run(server, authToken);
             //            run the gameplay UI and send a websocket message maybe?
             String joinPlayer =  new Gson().toJson(new JoinPlayer(authToken, id, color));
-            communicator.send(joinPlayer);}
+            communicator.send(joinPlayer);
           }
           if(color.equalsIgnoreCase("black")){
             String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, "black"));
             communicator.send(playerJoin);
             board.drawBlackPlayer();
             System.out.println("\n");
-            if(game.getGame() != null){
-            play.run(server, authToken, game.getGame());
+            play.run(server, authToken);
             //            run the gameplay UI and send a websocket message maybe?
               String joinPlayer = new Gson().toJson(new JoinPlayer(authToken, id, color));
-              communicator.send(joinPlayer);}
+              communicator.send(joinPlayer);
           }
 
         } catch (ResponseException e) {
@@ -126,7 +135,6 @@ public class PostLoginUI {
 //        websocket message here.
 
       } else if (line.equals("6")) {
-        WebsocketCommunicator communicator = new WebsocketCommunicator();
         Scanner newScanner=new Scanner(System.in);
         String gameID;
         // Keep asking for username until it's not empty or just whitespace
@@ -147,6 +155,8 @@ public class PostLoginUI {
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
+//          JoinObserver join = new JoinObserver(authToken, id);
+//          join.
 //          send websocket message
           String obbyJoin = new Gson().toJson(new JoinObserver(authToken, id));
           communicator.send(obbyJoin);
@@ -212,4 +222,33 @@ public class PostLoginUI {
   }
 
 
+  @Override
+  public void notify(ServerMessage message) {
+    switch(message.getServerMessageType()){
+      case LOAD_GAME:
+        LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
+        ChessGame temp = load.getGame();
+        if(color.equalsIgnoreCase("black")){
+          DrawBoard board=new DrawBoard(temp.getBoard());
+          board.drawBlackPlayer();
+        }
+        else if(color.equalsIgnoreCase("white")){
+          DrawBoard board=new DrawBoard(temp.getBoard());
+          board.drawWhitePlayer();
+        }
+        else{
+          DrawBoard board=new DrawBoard(temp.getBoard());
+          board.draw();
+        }
+        break;
+      case NOTIFICATION:
+        Notification notification = new Gson().fromJson(message.toString(), Notification.class);
+        System.out.println(notification.getMessage());
+        break;
+      case ERROR:
+        Error error = new Gson().fromJson(message.toString(), Error.class);
+        System.out.println(error.getErrorMessge());
+        break;
+    }
+  }
 }

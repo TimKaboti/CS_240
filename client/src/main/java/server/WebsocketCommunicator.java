@@ -8,11 +8,11 @@ import javax.websocket.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebsocketCommunicator {
+public class WebsocketCommunicator extends Endpoint{
   public Session session;
   NotificationHandler notificationHandler;
 
-  public void WebsocketCommunicator(NotificationHandler handler) throws Exception {
+  public  WebsocketCommunicator(NotificationHandler handler) throws Exception {
     this.notificationHandler = handler;
     URI uri = new URI("ws://localhost:8080/connect");
     WebSocketContainer container = ContainerProvider.getWebSocketContainer();

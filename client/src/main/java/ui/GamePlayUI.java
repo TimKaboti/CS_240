@@ -33,6 +33,7 @@ public class GamePlayUI implements NotificationHandler {
   public String authToken;
   public String playerColor;
   public int gameID;
+  DrawBoard board;
 
 
   public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game, int gameID, WebsocketCommunicator communicator) {
@@ -45,8 +46,8 @@ public class GamePlayUI implements NotificationHandler {
   }
 
 
-  public void run(ServerFacade server, String authToken, ChessGame chessGame) throws ResponseException, Exception {
-    DrawBoard board=new DrawBoard(chessGame.getBoard());
+  public void run(ServerFacade server, String authToken) throws ResponseException, Exception {
+//    DrawBoard board=new DrawBoard(game.getBoard());
     Scanner scanner=new Scanner(System.in);
     System.out.println(SET_TEXT_COLOR_WHITE);
     System.out.println("Welcome to the Gameplay menu.");
@@ -85,6 +86,7 @@ public class GamePlayUI implements NotificationHandler {
 //        also might need to have a websocket message.
         String tmpMove = new Gson().toJson(new MakeMove(authToken, gameID, move));
         communicator.send(tmpMove);
+        options();
 
       } else if (line.equals("3")) {
         Scanner newScanner=new Scanner(System.in);
@@ -117,6 +119,7 @@ public class GamePlayUI implements NotificationHandler {
         if(playerColor.equalsIgnoreCase("black")){
           board.drawHighlightGrid(start);
         }
+        options();
 
       } else if (line.equals("6")) {
         Scanner newScanner=new Scanner(System.in);
@@ -172,7 +175,8 @@ public class GamePlayUI implements NotificationHandler {
     switch(message.getServerMessageType()){
       case LOAD_GAME:
         LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
-        DrawBoard board=new DrawBoard(load.getGame().getBoard());
+        game = load.getGame();
+        board=new DrawBoard(load.getGame().getBoard());
         if (playerColor.equalsIgnoreCase("black")) {
           board.drawBlackPlayer();
           options();

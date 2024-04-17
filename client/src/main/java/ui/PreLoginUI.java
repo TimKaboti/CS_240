@@ -52,6 +52,8 @@ public class PreLoginUI {
           postMenu.run(facade, token);
         } catch (ResponseException e) {
           System.out.println("\nTrouble logging in with this info. Please try again.");
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
 
       } else if (line.equals("3")) {
@@ -94,6 +96,8 @@ public class PreLoginUI {
           postMenu.run(facade, token);
         } catch (ResponseException e) {
           System.out.println("\nTrouble registering this account. Please try again.");
+        } catch (Exception e) {
+          throw new RuntimeException(e);
         }
 
       } else if (line.equals("1")) {
