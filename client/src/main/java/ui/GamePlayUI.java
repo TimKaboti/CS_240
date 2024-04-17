@@ -89,6 +89,10 @@ public class GamePlayUI implements NotificationHandler {
         options();
 
       } else if (line.equals("3")) {
+        if(playerColor == null){
+          board.draw();
+          options();
+        }
         if (playerColor.equalsIgnoreCase("black")) {
           board.drawBlackPlayer();
           options();
