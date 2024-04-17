@@ -99,7 +99,7 @@ public class GameSQL implements GameDAO {
   public List<GameData> listGames() throws DataAccessException {
     List<GameData> temp=new ArrayList<>() {
     };
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT * FROM gamedata")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT * FROM gameData")) {
 
       try (ResultSet result=preparedStatement.executeQuery()) {
         // Use result.next() to check if there is any result
@@ -134,7 +134,7 @@ public class GameSQL implements GameDAO {
 
   @Override
   public void joinGame(String username, String color, Integer gameID) throws DataAccessException {
-    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gamedata WHERE gameID = ?")) {
+    try (Connection connection=DatabaseManager.getConnection(); PreparedStatement preparedStatement=connection.prepareStatement("SELECT game FROM gameData WHERE gameID = ?")) {
       color=color.toUpperCase();
       preparedStatement.setInt(1, gameID);
       try (ResultSet result=preparedStatement.executeQuery()) {
