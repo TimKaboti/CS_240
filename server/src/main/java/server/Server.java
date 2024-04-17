@@ -18,7 +18,7 @@ public class Server {
             //createDatabase();
             DatabaseManager.configureDatabase();
         } catch(DataAccessException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
 //            return -1;
         }
 
