@@ -68,6 +68,7 @@ public class GameSQL implements GameDAO {
       preparedStatement.executeUpdate();
 
     } catch (SQLException e) {
+      e.printStackTrace();
       throw new DataAccessException("unable to create");
     }
 

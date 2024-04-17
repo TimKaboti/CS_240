@@ -20,7 +20,6 @@ public class CreateGameService {
             try{games.createGame(gameID, game);
                 newGameResult = new CreateGameResult(gameID, null);
             } catch(DataAccessException e) {
-                e.printStackTrace();
                 newGameResult = new CreateGameResult(null, "Error: create service failed");}
         } else { newGameResult = new CreateGameResult(null, "Error: bad request");}
         return newGameResult;
