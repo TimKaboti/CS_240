@@ -89,13 +89,15 @@ public class GamePlayUI implements NotificationHandler {
         options();
 
       } else if (line.equals("3")) {
-        Scanner newScanner=new Scanner(System.in);
         if (playerColor.equalsIgnoreCase("black")) {
           board.drawBlackPlayer();
           options();
         }
-        if (playerColor.equalsIgnoreCase("white")) {
-          board.drawBlackPlayer();
+        else if (playerColor.equalsIgnoreCase("white")) {
+          board.drawWhitePlayer();
+          options();
+        } else{
+          board.draw();
           options();
         }
 
@@ -164,17 +166,19 @@ public class GamePlayUI implements NotificationHandler {
     int col=0;
     int row=0;
     char letter = location.charAt(0);
-    col = letter - 'a' + 1;
+    col = letter -'a' + 1;
     char num = location.charAt(1);
     row = num - '1' + 1;
     return new ChessPosition(row, col);
   }
 
   @Override
-  public void notify(ServerMessage message) {
-    switch(message.getServerMessageType()){
+  public void notify(String message) {
+    ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+    switch(msg.getServerMessageType()){
       case LOAD_GAME:
-        LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
+        System.out.println(message);
+        LoadGame load = new Gson().fromJson(message, LoadGame.class);
         game = load.getGame();
         board=new DrawBoard(load.getGame().getBoard());
         if (playerColor.equalsIgnoreCase("black")) {
@@ -188,11 +192,11 @@ public class GamePlayUI implements NotificationHandler {
         load.notify();
         break;
       case NOTIFICATION:
-        Notification notification = new Gson().fromJson(message.toString(), Notification.class);
+        Notification notification = new Gson().fromJson(message, Notification.class);
         System.out.println(notification.getMessage());
         break;
       case ERROR:
-        Error error = new Gson().fromJson(message.toString(), Error.class);
+        Error error = new Gson().fromJson(message, Error.class);
         System.out.println(error.getMessage());
         break;
     }

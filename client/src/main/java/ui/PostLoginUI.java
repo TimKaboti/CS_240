@@ -107,23 +107,23 @@ public class PostLoginUI implements NotificationHandler {
           JoinGameResult temp = server.facadeJoin(join);
           DrawBoard board=new DrawBoard(temp.board());
           if(color.equalsIgnoreCase("white")){
-            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, "white"));
+            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, ChessGame.TeamColor.WHITE));
             communicator.send(playerJoin);
             board.drawWhitePlayer();
             System.out.println("\n");
             play.run(server, authToken);
             //            run the gameplay UI and send a websocket message maybe?
-            String joinPlayer =  new Gson().toJson(new JoinPlayer(authToken, id, color));
+            String joinPlayer =  new Gson().toJson(new JoinPlayer(authToken, id, ChessGame.TeamColor.WHITE));
             communicator.send(joinPlayer);
           }
           if(color.equalsIgnoreCase("black")){
-            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, "black"));
+            String playerJoin = new Gson().toJson(new JoinPlayer(authToken, id, ChessGame.TeamColor.BLACK));
             communicator.send(playerJoin);
             board.drawBlackPlayer();
             System.out.println("\n");
             play.run(server, authToken);
             //            run the gameplay UI and send a websocket message maybe?
-              String joinPlayer = new Gson().toJson(new JoinPlayer(authToken, id, color));
+              String joinPlayer = new Gson().toJson(new JoinPlayer(authToken, id, ChessGame.TeamColor.BLACK));
               communicator.send(joinPlayer);
           }
 
@@ -155,11 +155,9 @@ public class PostLoginUI implements NotificationHandler {
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
           board.draw();
-//          JoinObserver join = new JoinObserver(authToken, id);
-//          join.
-//          send websocket message
           String obbyJoin = new Gson().toJson(new JoinObserver(authToken, id));
           communicator.send(obbyJoin);
+          play.run(server, authToken);
         } catch (ResponseException e) {
           System.out.println("\nTrouble observing game, please try again.");
 
@@ -221,32 +219,30 @@ public class PostLoginUI implements NotificationHandler {
     System.out.print("\n" + RESET + ">>> " + GREEN);
   }
 
-
   @Override
-  public void notify(ServerMessage message) {
-    switch(message.getServerMessageType()){
+  public void notify(String message) {
+    ServerMessage msg = new Gson().fromJson(message, ServerMessage.class);
+    switch(msg.getServerMessageType()) {
       case LOAD_GAME:
-        LoadGame load = new Gson().fromJson(message.toString(), LoadGame.class);
-        ChessGame temp = load.getGame();
-        if(color.equalsIgnoreCase("black")){
+        LoadGame load=new Gson().fromJson(message.toString(), LoadGame.class);
+        ChessGame temp=load.getGame();
+        if (color.equalsIgnoreCase("black")) {
           DrawBoard board=new DrawBoard(temp.getBoard());
           board.drawBlackPlayer();
-        }
-        else if(color.equalsIgnoreCase("white")){
+        } else if (color.equalsIgnoreCase("white")) {
           DrawBoard board=new DrawBoard(temp.getBoard());
           board.drawWhitePlayer();
-        }
-        else{
+        } else {
           DrawBoard board=new DrawBoard(temp.getBoard());
           board.draw();
         }
         break;
       case NOTIFICATION:
-        Notification notification = new Gson().fromJson(message.toString(), Notification.class);
+        Notification notification=new Gson().fromJson(message.toString(), Notification.class);
         System.out.println(notification.getMessage());
         break;
       case ERROR:
-        Error error = new Gson().fromJson(message.toString(), Error.class);
+        Error error=new Gson().fromJson(message.toString(), Error.class);
         System.out.println(error.getErrorMessge());
         break;
     }

@@ -31,7 +31,7 @@ public class WebSocketHandler {
 
 
   @OnWebSocketMessage
-  public void onMessage(Session session, String message) throws IOException, DataAccessException {
+  public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
     UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
     switch(command.getCommandType()){
       case LEAVE:
@@ -246,7 +246,8 @@ public class WebSocketHandler {
 //            may need to mess with the toStrings to get this to print properly. also may need to do something like coordConvert for start and end.
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
             connections.broadcast(gameID,thisName,session,notification);
-            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,game);
+            ChessGame newGame = gameDao.getGame(gameID);
+            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME,newGame);
             connections.broadcast(gameID, thisName, session, loadGame);
             String newLoad = new Gson().toJson(loadGame);
             send(session, newLoad);
@@ -259,7 +260,7 @@ public class WebSocketHandler {
         JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
         authToken = joinPlayer.getAuthString();
         gameID =joinPlayer.getGameID();
-        String color =joinPlayer.getPlayerColor();
+        String color =joinPlayer.getPlayerColor().toString();
         ChessGame thisGame = null;
         String blkPlayer;
         String whtPlayer;

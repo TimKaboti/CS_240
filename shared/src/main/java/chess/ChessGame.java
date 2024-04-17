@@ -104,6 +104,9 @@ public class ChessGame {
         HashSet<ChessMove> valid_moves = new HashSet<>();
         ChessPosition start_position = move.getStartPosition();
         valid_moves.addAll(validMoves(start_position));
+        if(board.getPiece(start_position) == null){
+            throw new InvalidMoveException("no piece at given start position");
+        }
         ChessPiece this_piece = new ChessPiece(board.getPiece(start_position).getTeamColor(),board.getPiece(start_position).getPieceType());
         if (!valid_moves.contains(move)){
             throw new InvalidMoveException("Move does not Exist");
