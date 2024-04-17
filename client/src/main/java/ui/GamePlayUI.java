@@ -33,7 +33,7 @@ public class GamePlayUI implements NotificationHandler {
   public String authToken;
   public String playerColor;
   public int gameID;
-  DrawBoard board;
+  public DrawBoard board;
 
 
   public GamePlayUI(PostLoginUI postMenu, String authToken, String playerColor, ChessGame game, int gameID, WebsocketCommunicator communicator) {
@@ -89,10 +89,7 @@ public class GamePlayUI implements NotificationHandler {
         options();
 
       } else if (line.equals("3")) {
-        if(playerColor == null){
-          board.draw();
-          options();
-        }
+        if(playerColor != null){
         if (playerColor.equalsIgnoreCase("black")) {
           board.drawBlackPlayer();
           options();
@@ -100,10 +97,9 @@ public class GamePlayUI implements NotificationHandler {
         else if (playerColor.equalsIgnoreCase("white")) {
           board.drawWhitePlayer();
           options();
-        } else{
-          board.draw();
-          options();
         }
+        } else{board.draw();
+          options();}
 
       } else if (line.equals("5")) {
         Scanner newScanner=new Scanner(System.in);
