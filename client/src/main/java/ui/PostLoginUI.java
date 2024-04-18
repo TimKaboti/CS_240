@@ -154,7 +154,7 @@ public class PostLoginUI implements NotificationHandler {
         GamePlayUI play = new GamePlayUI(this,authToken,null,game.getGame(), id, communicator);
         try {
           DrawBoard board=new DrawBoard(server.facadeJoin(observe).board());
-          board.draw();
+          board.drawWhitePlayer();
           String obbyJoin = new Gson().toJson(new JoinObserver(authToken, id));
           communicator.send(obbyJoin);
           play.run(server, authToken);

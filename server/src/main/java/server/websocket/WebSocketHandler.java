@@ -201,14 +201,6 @@ public class WebSocketHandler {
           send(session, thisError);
           break;
         }
-        try{gameDao.updateGame(game, move, gameID);}
-        catch (InvalidMoveException e) {
-          Error error = new Error("Error: failed to make the requested move.");
-//          connections.broadcast(gameID, thisName, session, error);
-          String thisError = new Gson().toJson(error);
-          send(session, thisError);
-          break;
-        } catch (Exception e) {e.printStackTrace();}
         try{whitePlayer = gameDao.whitePlayerName(gameID);} catch (DataAccessException e){}
         try{blackPlayer = gameDao.blackPlayerName(gameID);} catch (DataAccessException e){}
           if(game.getGameState()){
@@ -218,10 +210,19 @@ public class WebSocketHandler {
             send(session, thisError);
             break;
           } else {
-            ChessPiece piece =  game.getBoard().getPiece(end);
+            try{gameDao.updateGame(game, move, gameID);}
+            catch (InvalidMoveException e) {
+              Error error = new Error("Error: failed to make the requested move.");
+//          connections.broadcast(gameID, thisName, session, error);
+              String thisError = new Gson().toJson(error);
+              send(session, thisError);
+              break;
+            } catch (Exception e) {e.printStackTrace();}
+            ChessPiece piece = game.getBoard().getPiece(end);
             if (game.isInCheckmate(ChessGame.TeamColor.BLACK)) {
               game.setGameState(true);
-              String webMessage = "Black is in Checkmate." ;
+              gameDao.updateGame(game, move, gameID);
+              String webMessage = "Black is in Checkmate. This game is over." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
               connections.broadcast(gameID,blackPlayer,session,notification);
 
@@ -231,8 +232,9 @@ public class WebSocketHandler {
               connections.broadcast(gameID,blackPlayer,session,notification);
             }
             if (game.isInCheckmate(ChessGame.TeamColor.WHITE)) {
-            game.setGameState(true);
-              String webMessage = "White is in Checkmate." ;
+              game.setGameState(true);
+              gameDao.updateGame(game, move, gameID);
+              String webMessage = "White is in Checkmate. This game is over." ;
               Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
               connections.broadcast(gameID,whitePlayer,session,notification);
 
@@ -243,7 +245,6 @@ public class WebSocketHandler {
             }
 
             String webMessage = thisName + " has moved "+ piece.getPieceType().toString() + " from " + start.toString() + " to " + end.toString() + "." ;
-//            may need to mess with the toStrings to get this to print properly. also may need to do something like coordConvert for start and end.
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, webMessage);
             connections.broadcast(gameID,thisName,session,notification);
             ChessGame newGame = gameDao.getGame(gameID);

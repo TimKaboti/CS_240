@@ -80,10 +80,8 @@ public class GamePlayUI implements NotificationHandler {
 
         ChessPosition start=coordConvert(startPos);
         ChessPosition end=coordConvert(endPos);
-//                i will likely need to look into how to properly do this.
         ChessMove move=new ChessMove(start, end, null);
-//        not sure, but I may need to call the serverFacade with the make move, or 'update game' method
-//        also might need to have a websocket message.
+
         String tmpMove = new Gson().toJson(new MakeMove(authToken, gameID, move));
         communicator.send(tmpMove);
         options();
@@ -98,7 +96,7 @@ public class GamePlayUI implements NotificationHandler {
           board.drawWhitePlayer();
           options();
         }
-        } else{board.draw();
+        } else{board.drawWhitePlayer();
           options();}
 
       } else if (line.equals("5")) {
